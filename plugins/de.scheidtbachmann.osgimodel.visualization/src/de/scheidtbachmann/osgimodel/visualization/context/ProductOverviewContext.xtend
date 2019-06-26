@@ -2,16 +2,14 @@ package de.scheidtbachmann.osgimodel.visualization.context
 
 import com.google.common.collect.ImmutableList
 import de.scheidtbachmann.osgimodel.Product
-import java.util.List
-import org.eclipse.xtend.lib.annotations.Accessors
 import java.util.LinkedList
+import java.util.List
 
 /**
  * Context for the OSGi synthesis that contains information about {@link Product} overviews.
  * 
  * @author nre
  */
-@Accessors
 class ProductOverviewContext implements IOverviewVisualizationContext<Product> {
     
     /**
@@ -49,7 +47,7 @@ class ProductOverviewContext implements IOverviewVisualizationContext<Product> {
     }
     
     override getModelElement() {
-        return ImmutableList.copyOf(detailedProductContexts.map[product] + collapsedProductContexts.map[product])
+        return products
     }
     
     override getDetailedElements() {
@@ -64,6 +62,10 @@ class ProductOverviewContext implements IOverviewVisualizationContext<Product> {
         return parent
     }
     
+    override setParentVisualizationContext(IVisualizationContext<?> parent) {
+        this.parent = parent
+    }
+    
     override initializeChildVisualizationContexts() {
         products.forEach[
             collapsedProductContexts += new ProductContext(it, this)
@@ -75,13 +77,13 @@ class ProductOverviewContext implements IOverviewVisualizationContext<Product> {
         copy.detailedProductContexts = new LinkedList
         detailedProductContexts.forEach[
             val newProductContext = deepCopy as ProductContext
-            newProductContext.parent = copy
+            newProductContext.parentVisualizationContext = copy
             copy.detailedProductContexts.add(newProductContext)
         ]
         copy.collapsedProductContexts = new LinkedList
         collapsedProductContexts.forEach [
             val newProductContext = deepCopy as ProductContext
-            newProductContext.parent = copy
+            newProductContext.parentVisualizationContext = copy
             copy.collapsedProductContexts.add(newProductContext)
         ]
         copy.products = products.clone

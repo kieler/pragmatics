@@ -19,7 +19,7 @@ class SimpleServiceInterfaceSynthesis extends AbstractSubSynthesis<ServiceInterf
     @Inject extension OsgiStyles
     
     override transform(ServiceInterfaceContext s) {
-        val serviceInterface = s.serviceInterface
+        val serviceInterface = s.modelElement
         return #[
             s.createNode() => [
                 associateWith(s)

@@ -1,7 +1,6 @@
 package de.scheidtbachmann.osgimodel.visualization.context
 
 import de.scheidtbachmann.osgimodel.Product
-import java.util.List
 import org.eclipse.xtend.lib.annotations.Accessors
 
 /**
@@ -9,7 +8,6 @@ import org.eclipse.xtend.lib.annotations.Accessors
  * 
  * @author nre
  */
-@Accessors
 class ProductContext implements IVisualizationContext<Product> {
     
     /**
@@ -20,16 +18,17 @@ class ProductContext implements IVisualizationContext<Product> {
     /**
      * The parent visualization context.
      */
-    IVisualizationContext<List<Product>> parent
+    IOverviewVisualizationContext<Product> parent
     
     /**
      * The context for the bundle overview shown in detailed products.
      */
+    @Accessors
     BundleOverviewContext bundleOverviewContext
     
     private new() {}
     
-    new(Product product, IVisualizationContext<List<Product>> parent) {
+    new(Product product, IOverviewVisualizationContext<Product> parent) {
         this.parent = parent
         this.product = product
     }
@@ -42,7 +41,11 @@ class ProductContext implements IVisualizationContext<Product> {
        return product
     }
     
-    override getParentVisualizationContext() {
+    override setParentVisualizationContext(IVisualizationContext<?> parent) {
+        this.parent = parent as IOverviewVisualizationContext<Product>
+    }
+    
+    override IOverviewVisualizationContext<Product> getParentVisualizationContext() {
         return parent
     }
     
@@ -54,7 +57,7 @@ class ProductContext implements IVisualizationContext<Product> {
         val copy = new ProductContext
         if (bundleOverviewContext !== null) {
             copy.bundleOverviewContext = bundleOverviewContext.deepCopy as BundleOverviewContext
-            copy.bundleOverviewContext.parent = copy
+            copy.bundleOverviewContext.parentVisualizationContext = copy
         }
         copy.product = product
         

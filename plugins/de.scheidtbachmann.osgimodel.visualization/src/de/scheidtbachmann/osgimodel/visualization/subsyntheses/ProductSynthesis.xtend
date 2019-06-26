@@ -8,12 +8,12 @@ import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
 import de.scheidtbachmann.osgimodel.OsgiProject
 import de.scheidtbachmann.osgimodel.Product
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
+import de.scheidtbachmann.osgimodel.visualization.context.ProductContext
 import java.util.EnumSet
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.SizeConstraint
 
 import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
-import de.scheidtbachmann.osgimodel.visualization.context.ProductContext
 
 /**
  * Sub-synthesis of {@link OsgiProject}s that handles expanded {@link Product} views.
@@ -27,7 +27,7 @@ class ProductSynthesis extends AbstractSubSynthesis<ProductContext, KNode> {
     @Inject BundleOverviewSynthesis bundleOverviewSynthesis
     
     override transform(ProductContext pc) {
-        val product = pc.product
+        val product = pc.modelElement
         return #[
             pc.createNode() => [
                 associateWith(pc)

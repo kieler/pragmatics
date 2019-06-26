@@ -25,7 +25,7 @@ class SimpleProductSynthesis extends AbstractSubSynthesis<ProductContext, KNode>
     @Inject extension OsgiStyles
     
     override transform(ProductContext pc) {
-        val product = pc.product
+        val product = pc.modelElement
         return #[
             product.createNode() => [
                 associateWith(pc)

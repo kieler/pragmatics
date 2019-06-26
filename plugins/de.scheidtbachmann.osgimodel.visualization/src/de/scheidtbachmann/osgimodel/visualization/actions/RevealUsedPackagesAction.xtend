@@ -36,26 +36,26 @@ class RevealUsedPackagesAction extends AbstractVisualizationContextChangingActio
         val bundleContext = modelVisualizationContext as BundleContext
         
         // The bundle itself from the context.
-        val bundle = bundleContext.bundle
+        val bundle = bundleContext.modelElement
         
         // The bundle overview context this bundle is shown in.
-        val bundleOverviewContext = bundleContext.parent as BundleOverviewContext
+        val bundleOverviewContext = bundleContext.parentVisualizationContext as BundleOverviewContext
         
         // The bundle contexts of all bundles inside this bundle overview, mapped by the bundle.
         val Map<Bundle, BundleContext> bundleContexts = new HashMap
         bundleOverviewContext.childContexts.filter(BundleContext).forEach [
-            bundleContexts.put(it.bundle, it)
+            bundleContexts.put(it.modelElement, it)
         ]
         
         
         // Find out which bundle provides this package in which product.
         val osgiModel = actionContext.viewContext.inputModel as OsgiProject
         
-        val overviewParentContext = bundleOverviewContext.parent
+        val overviewParentContext = bundleOverviewContext.parentVisualizationContext
         
         // Only show the connections for the product in the context, if there is any.
         val List<Product> products = if (overviewParentContext instanceof ProductContext) {
-            #[overviewParentContext.product]
+            #[overviewParentContext.modelElement]
         } else {
             osgiModel.products
         }
@@ -128,7 +128,7 @@ class RevealUsedPackagesAction extends AbstractVisualizationContextChangingActio
         val externalBundlesToReveal = externalProvidedPackagesForBundle.keySet.toList
         val internalBundlesToReveal = providedPackagesForBundleForProduct.values.flatMap [ keySet ].toSet
         Iterables.concat(externalBundlesToReveal, internalBundlesToReveal).forEach [ bundleToMakeDetailedContext |
-            if (bundleOverviewContext.collapsedBundleContexts.contains(bundleToMakeDetailedContext)) {
+            if (bundleOverviewContext.collapsedElements.contains(bundleToMakeDetailedContext)) {
                 ContextUtils.makeDetailed(bundleOverviewContext, bundleToMakeDetailedContext)
             }
         ]

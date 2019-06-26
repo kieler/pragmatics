@@ -6,6 +6,7 @@ import de.cau.cs.kieler.klighd.krendering.ViewSynthesisShared
 import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
 import de.scheidtbachmann.osgimodel.OsgiProject
+import de.scheidtbachmann.osgimodel.ServiceInterface
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceContext
 
@@ -20,7 +21,7 @@ class ServiceInterfaceSynthesis extends AbstractSubSynthesis<ServiceInterfaceCon
     @Inject extension OsgiStyles
     
     override transform(ServiceInterfaceContext si) {
-        val serviceInterface = si.serviceInterface
+        val serviceInterface = si.modelElement
         return #[
             si.createNode() => [
                 associateWith(si)

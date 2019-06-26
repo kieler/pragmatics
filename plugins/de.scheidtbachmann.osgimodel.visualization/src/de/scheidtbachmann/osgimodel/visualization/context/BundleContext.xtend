@@ -1,7 +1,6 @@
 package de.scheidtbachmann.osgimodel.visualization.context
 
 import de.scheidtbachmann.osgimodel.Bundle
-import java.util.List
 import org.eclipse.xtend.lib.annotations.Accessors
 
 /**
@@ -9,22 +8,24 @@ import org.eclipse.xtend.lib.annotations.Accessors
  * 
  * @author nre
  */
-@Accessors
 class BundleContext implements IVisualizationContext<Bundle> {
     /**
      * Indicates if all required bundles and their connections are shown in this parent's context.
      */
+    @Accessors
     boolean allRequiredBundlesShown
     
     /**
      * Indicates if all bundles that require this bundle and their connections are shown in this parent's context.
      */
+    @Accessors
     boolean allRequiringBundlesShown
     
     /**
      * Indicated if all used packages resp. the bundles providing the packages and their connections are shown in this
      * parent's context.
      */
+    @Accessors
     boolean allUsedPackagesShown
     
     /**
@@ -35,11 +36,11 @@ class BundleContext implements IVisualizationContext<Bundle> {
     /**
      * The parent visualization context.
      */
-    IVisualizationContext<List<Bundle>> parent
+    IOverviewVisualizationContext<Bundle> parent
     
     private new() {}
     
-    new(Bundle bundle, IVisualizationContext<List<Bundle>> parent) {
+    new(Bundle bundle, IOverviewVisualizationContext<Bundle> parent) {
         this.parent = parent
         this.bundle = bundle
     }
@@ -52,8 +53,12 @@ class BundleContext implements IVisualizationContext<Bundle> {
        return bundle
     }
     
-    override getParentVisualizationContext() {
+    override IOverviewVisualizationContext<Bundle> getParentVisualizationContext() {
         return parent
+    }
+    
+    override setParentVisualizationContext(IVisualizationContext<?> parent) {
+        this.parent = parent as IOverviewVisualizationContext<Bundle>
     }
     
     override initializeChildVisualizationContexts() {

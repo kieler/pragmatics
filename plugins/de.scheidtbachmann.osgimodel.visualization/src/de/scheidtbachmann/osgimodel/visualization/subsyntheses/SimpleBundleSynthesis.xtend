@@ -25,7 +25,7 @@ class SimpleBundleSynthesis extends AbstractSubSynthesis<BundleContext, KNode> {
     @Inject extension OsgiStyles
     
     override transform(BundleContext bc) {
-        val bundle = bc.bundle
+        val bundle = bc.modelElement
         return #[
             bc.createNode() => [
                 associateWith(bc)

@@ -1,5 +1,6 @@
 package de.scheidtbachmann.osgimodel.visualization.context
 
+import de.scheidtbachmann.osgimodel.Bundle
 import de.scheidtbachmann.osgimodel.OsgiProject
 import de.scheidtbachmann.osgimodel.PackageObject
 import de.scheidtbachmann.osgimodel.Product
@@ -146,16 +147,16 @@ class ContextUtils {
             // Check for both the requiring bundle and the required bundle if all connections are now shown in the 
             // parent context. If they are, remember it in the corresponding bundle context.
             // Requiring context:
-            if (requiringContext.bundle.requiredBundles.forall [ requiredBundle |
-                !parentContext.bundles.contains(requiredBundle) ||
-                parentContext.requiredBundleEdges.exists [ key === requiringContext && value.bundle === requiredBundle ]
+            if (requiringContext.modelElement.requiredBundles.forall [ requiredBundle |
+                !parentContext.modelElement.contains(requiredBundle) ||
+                parentContext.requiredBundleEdges.exists [ key === requiringContext && value.modelElement === requiredBundle ]
             ]) {
                 requiringContext.allRequiredBundlesShown = true
             }
             // Required context:
-            if (requiredContext.bundle.usedByBundle.forall [ requiringBundle |
-                !parentContext.bundles.contains(requiringBundle) ||
-                parentContext.requiredBundleEdges.exists [ key.bundle === requiringBundle && value === requiredContext ]
+            if (requiredContext.modelElement.usedByBundle.forall [ requiringBundle |
+                !parentContext.modelElement.contains(requiringBundle) ||
+                parentContext.requiredBundleEdges.exists [ key.modelElement === requiringBundle && value === requiredContext ]
             ]) {
                 requiredContext.allRequiringBundlesShown = true
             }
@@ -218,7 +219,7 @@ class ContextUtils {
      * @param isSource If the {@code clickedContext} should be checked if it is the source or the target in the
      * potential connection.
      */
-    def static boolean allConnected(BundleContext clickedContext, List<BundleContext> possiblyConnectedContexts,
+    def static boolean allConnected(IVisualizationContext<Bundle> clickedContext, List<? extends IVisualizationContext<Bundle>> possiblyConnectedContexts,
         BundleOverviewContext overviewContext, boolean isSource) {
         val conntectedContexts = if (isSource) {
             overviewContext.requiredBundleEdges.filter [ requiredBundleEdge |
@@ -235,7 +236,7 @@ class ContextUtils {
     }
     
     /**
-     * Determines wheter the {@code project} is the root model this {@code context} comes from.
+     * Determines whether the {@code project} is the root model this {@code context} comes from.
      * 
      * @param context The visualization context in question.
      * @param project The potential root model.

@@ -47,15 +47,15 @@ class BundleOverviewSynthesis extends AbstractSubSynthesis<BundleOverviewContext
                 
                 
                 // Add all simple bundle renderings in a first subgraph (top)
-                val filteredCollapsedBundleContexts = SynthesisUtils.filteredBundleContexts(
-                    bundleOverviewContext.collapsedBundleContexts, usedContext)
-                val collapsedOverviewNode = transformCollapsedBundlesOverview(filteredCollapsedBundleContexts, bundleOverviewContext)
+                val filteredCollapsedBundleContexts = SynthesisUtils.filteredBasicOsgiObjectContexts(
+                    bundleOverviewContext.collapsedElements, usedContext)
+                val collapsedOverviewNode = transformCollapsedBundlesOverview(filteredCollapsedBundleContexts as Iterable<BundleContext>, bundleOverviewContext)
                 children += collapsedOverviewNode
                 
                 // Add all detailed bundle renderings and their connections in a second subgraph (bottom)
-                val filteredDetailedBundleContexts = SynthesisUtils.filteredBundleContexts(
-                    bundleOverviewContext.detailedBundleContexts, usedContext)
-                val detailedOverviewNode = transformDetailedBundlesOverview(filteredDetailedBundleContexts, bundleOverviewContext)
+                val filteredDetailedBundleContexts = SynthesisUtils.filteredBasicOsgiObjectContexts(
+                    bundleOverviewContext.detailedElements, usedContext)
+                val detailedOverviewNode = transformDetailedBundlesOverview(filteredDetailedBundleContexts as Iterable<BundleContext>, bundleOverviewContext)
                 children += detailedOverviewNode
                 
                 // Put an invisible edge between the collapsed and detailed overviews to guarantee the simple renderings

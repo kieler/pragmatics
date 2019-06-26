@@ -1,15 +1,12 @@
 package de.scheidtbachmann.osgimodel.visualization.context
 
 import de.scheidtbachmann.osgimodel.ServiceInterface
-import java.util.List
-import org.eclipse.xtend.lib.annotations.Accessors
 
 /**
  * Context for the OSGi synthesis that contains information about {@link ServiceInterface}s.
  * 
  * @author nre
  */
-@Accessors
 class ServiceInterfaceContext implements IVisualizationContext<ServiceInterface> {
     
     /**
@@ -20,11 +17,11 @@ class ServiceInterfaceContext implements IVisualizationContext<ServiceInterface>
     /**
      * The parent visualization context.
      */
-    IVisualizationContext<List<ServiceInterface>> parent
+    IOverviewVisualizationContext<ServiceInterface> parent
     
     private new() {}
     
-    new(ServiceInterface serviceInterface, IVisualizationContext<List<ServiceInterface>> parent) {
+    new(ServiceInterface serviceInterface, IOverviewVisualizationContext<ServiceInterface> parent) {
         this.parent = parent
         this.serviceInterface = serviceInterface
     }
@@ -37,8 +34,12 @@ class ServiceInterfaceContext implements IVisualizationContext<ServiceInterface>
        return serviceInterface
     }
     
-    override getParentVisualizationContext() {
+    override IOverviewVisualizationContext<ServiceInterface> getParentVisualizationContext() {
         return parent
+    }
+    
+    override setParentVisualizationContext(IVisualizationContext<?> parent) {
+        this.parent = parent as IOverviewVisualizationContext<ServiceInterface>
     }
     
     override initializeChildVisualizationContexts() {

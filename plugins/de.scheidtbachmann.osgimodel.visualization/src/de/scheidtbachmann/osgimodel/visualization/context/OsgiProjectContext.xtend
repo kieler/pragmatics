@@ -10,22 +10,24 @@ import org.eclipse.xtend.lib.annotations.Accessors
  * 
  * @author nre
  */
-@Accessors
 class OsgiProjectContext implements IVisualizationContext<OsgiProject> {
     
     /**
      * The context for the bundle overview.
      */
+    @Accessors
     BundleOverviewContext bundleOverviewContext
     
     /**
      * The context for the product overview.
      */
+    @Accessors
     ProductOverviewContext productOverviewContext
     
     /**
      * The context for the service interface overview.
      */
+    @Accessors
     ServiceInterfaceOverviewContext serviceInterfaceOverviewContext
     
     /**
@@ -59,6 +61,10 @@ class OsgiProjectContext implements IVisualizationContext<OsgiProject> {
         return parent
     }
     
+    override setParentVisualizationContext(IVisualizationContext<?> parent) {
+        this.parent = parent
+    }
+    
     override initializeChildVisualizationContexts() {
         productOverviewContext = new ProductOverviewContext(project.products, this)
         bundleOverviewContext = new BundleOverviewContext(project.bundles, this)
@@ -68,11 +74,11 @@ class OsgiProjectContext implements IVisualizationContext<OsgiProject> {
     override deepCopy() {
         val copy = new OsgiProjectContext
         copy.bundleOverviewContext = bundleOverviewContext.deepCopy as BundleOverviewContext
-        copy.bundleOverviewContext.parent = copy
+        copy.bundleOverviewContext.parentVisualizationContext = copy
         copy.productOverviewContext = productOverviewContext.deepCopy as ProductOverviewContext
-        copy.productOverviewContext.parent = copy
+        copy.productOverviewContext.parentVisualizationContext = copy
         copy.serviceInterfaceOverviewContext = serviceInterfaceOverviewContext.deepCopy as ServiceInterfaceOverviewContext
-        copy.serviceInterfaceOverviewContext.parent = copy
+        copy.serviceInterfaceOverviewContext.parentVisualizationContext = copy
         copy.project = project
         
         return copy

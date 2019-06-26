@@ -27,14 +27,14 @@ class RevealRequiredBundlesAction extends AbstractVisualizationContextChangingAc
         val bundleContext = modelVisualizationContext as BundleContext
         
         // The bundle itself from the context.
-        val bundle = bundleContext.bundle
+        val bundle = bundleContext.modelElement
         
         // The bundle overview context this bundle is shown in.
-        val bundleOverviewContext = bundleContext.parent as BundleOverviewContext
+        val bundleOverviewContext = bundleContext.parentVisualizationContext as BundleOverviewContext
         
         // The required bundles that are currently not yet in their detailed view need to be put in that state first.
-        val collapsedRequiredBundleContexts = bundleOverviewContext.collapsedBundleContexts.filter [
-            bundle.requiredBundles.contains(it.bundle)
+        val collapsedRequiredBundleContexts = bundleOverviewContext.collapsedElements.filter [
+            bundle.requiredBundles.contains(it.modelElement)
         ].toList
         collapsedRequiredBundleContexts.forEach [
             ContextUtils.makeDetailed(bundleOverviewContext, it)
@@ -42,18 +42,18 @@ class RevealRequiredBundlesAction extends AbstractVisualizationContextChangingAc
         
         // The bundle contexts in the overview that the requiredBundle connection can connect to.
         // Use the detailed bundle contexts only, as they are all made detailed above.
-        val requiredBundleContexts = bundleOverviewContext.detailedBundleContexts.filter [
-            bundle.requiredBundles.contains(it.bundle)
+        val requiredBundleContexts = bundleOverviewContext.detailedElements.filter [
+            bundle.requiredBundles.contains(it.modelElement)
         ].toList
         
         // If all bundles are already connected, remove them all. Otherwise, connect them all.
         if (ContextUtils.allConnected(bundleContext, requiredBundleContexts, bundleOverviewContext, true)) {
             requiredBundleContexts.forEach [ requiredBundleContext |
-                ContextUtils.removeRequiredBundleEdge(bundleContext, requiredBundleContext)
+                ContextUtils.removeRequiredBundleEdge(bundleContext, requiredBundleContext as BundleContext)
             ]
         } else {
             requiredBundleContexts.forEach [ requiredBundleContext |
-                ContextUtils.addRequiredBundleEdge(bundleContext, requiredBundleContext)
+                ContextUtils.addRequiredBundleEdge(bundleContext, requiredBundleContext as BundleContext)
             ]
         }
         return null

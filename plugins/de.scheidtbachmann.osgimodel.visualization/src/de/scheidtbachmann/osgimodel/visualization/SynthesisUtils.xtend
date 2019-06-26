@@ -5,9 +5,9 @@ import de.cau.cs.kieler.klighd.ViewContext
 import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
-import de.scheidtbachmann.osgimodel.Bundle
-import de.scheidtbachmann.osgimodel.visualization.context.BundleContext
-import de.scheidtbachmann.osgimodel.visualization.context.BundleOverviewContext
+import de.scheidtbachmann.osgimodel.BasicOsgiObject
+import de.scheidtbachmann.osgimodel.visualization.context.IOverviewVisualizationContext
+import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
 import java.util.List
 import org.eclipse.elk.core.options.CoreOptions
 
@@ -71,36 +71,38 @@ final class SynthesisUtils {
      * Filters the list of given bundles by the filter options of the diagram options and the overview context they are
      * shown in.
      * 
-     * @param bundles The unfiltered list of all bundles.
-     * @param boc The bundle overview context showing which bundles of the given bundles are relevant
-     * @param usedContext The ViewContext used to display the diagram these bundles are shown in.
-     * @return An Iterable of the bundles filtered by the diagram options.
+     * @param elements The unfiltered list of all elements.
+     * @param moc The element overview context showing which of the given elements are relevant
+     * @param usedContext The ViewContext used to display the diagram these elements are shown in.
+     * @return An Iterable of the elements filtered by the diagram options.
      */
-    def static Iterable<Bundle> filteredBundles(List<Bundle> bundles, BundleOverviewContext boc, ViewContext usedContext) {
-        val bundlesInContext = bundles.filter [
-            boc.bundles.contains(it)
+    def static <M extends BasicOsgiObject> Iterable<M> filteredElements(List<M> elements, IOverviewVisualizationContext<M> moc,
+        ViewContext usedContext) {
+        val elementsInContext = elements.filter [
+            moc.modelElement.contains(it)
         ]
         val prefix = usedContext.getOptionValue(FILTER_BY) as String
         if (prefix !== "") {
-            return bundlesInContext.filter[ it.uniqueId.startsWith(prefix) ]
+            return elementsInContext.filter[ it.uniqueId.startsWith(prefix) ]
         } else {
-            return bundlesInContext
+            return elementsInContext
         }
     }
     
     /**
-     * Filters the list of given bundle contexts by the filter options of the diagram options.
+     * Filters the list of given visualization contexts by the filter options of the diagram options.
      * 
-     * @param bundleContexts The unfiltered list of all bundle contexts.
-     * @param usedContext The ViewContext used to display the diagram these bundles are shown in.
-     * @return An Iterable of the bundle contexts filtered by the diagram options.
+     * @param visualizationContexts The unfiltered list of all visualization contexts.
+     * @param usedContext The ViewContext used to display the diagram these visualizations are shown in.
+     * @return An Iterable of the visualization contexts filtered by the diagram options.
      */
-    def static Iterable<BundleContext> filteredBundleContexts(List<BundleContext> bundleContexts, ViewContext usedContext) {
+    def static <M extends BasicOsgiObject> Iterable<? extends IVisualizationContext<M>>
+    filteredBasicOsgiObjectContexts(List<? extends IVisualizationContext<M>> visualizationContexts, ViewContext usedContext) {
         val prefix = usedContext.getOptionValue(FILTER_BY) as String
         if (prefix !== "") {
-            return bundleContexts.filter[ it.bundle.uniqueId.startsWith(prefix) ]
+            return visualizationContexts.filter[ it.modelElement.uniqueId.startsWith(prefix) ]
         } else {
-            return bundleContexts
+            return visualizationContexts
         }
     }
     

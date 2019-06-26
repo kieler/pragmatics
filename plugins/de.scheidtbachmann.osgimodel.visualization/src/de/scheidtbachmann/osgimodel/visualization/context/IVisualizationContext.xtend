@@ -27,6 +27,11 @@ interface IVisualizationContext<M> {
     def IVisualizationContext<?> getParentVisualizationContext()
     
     /**
+     * Set the parent visualization context containing this context.
+     */
+    def void setParentVisualizationContext(IVisualizationContext<?> parent)
+    
+    /**
      * Initializes all child contexts needed for this element, once it is displayed in a detailed fashion.
      */
     def void initializeChildVisualizationContexts()

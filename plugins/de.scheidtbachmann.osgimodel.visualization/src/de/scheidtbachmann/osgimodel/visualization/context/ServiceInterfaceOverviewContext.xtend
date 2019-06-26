@@ -4,14 +4,12 @@ import com.google.common.collect.ImmutableList
 import de.scheidtbachmann.osgimodel.ServiceInterface
 import java.util.LinkedList
 import java.util.List
-import org.eclipse.xtend.lib.annotations.Accessors
 
 /**
  * Context for the OSGi synthesis that contains information about {@link ServiceInterface} overviews.
  * 
  * @author nre
  */
-@Accessors
 class ServiceInterfaceOverviewContext implements IOverviewVisualizationContext<ServiceInterface> {
     
     /**
@@ -49,9 +47,7 @@ class ServiceInterfaceOverviewContext implements IOverviewVisualizationContext<S
     }
     
     override getModelElement() {
-        return ImmutableList.copyOf(detailedServiceInterfaceContexts.map[serviceInterface]
-            + collapsedServiceInterfaceContexts.map[serviceInterface]
-        )
+        return serviceInterfaces
     }
     
     override getDetailedElements() {
@@ -66,6 +62,10 @@ class ServiceInterfaceOverviewContext implements IOverviewVisualizationContext<S
         return parent
     }
     
+    override setParentVisualizationContext(IVisualizationContext<?> parent) {
+        this.parent = parent
+    }
+    
     override initializeChildVisualizationContexts() {
         serviceInterfaces.forEach[
             collapsedServiceInterfaceContexts += new ServiceInterfaceContext(it, this)
@@ -77,13 +77,13 @@ class ServiceInterfaceOverviewContext implements IOverviewVisualizationContext<S
         copy.detailedServiceInterfaceContexts = new LinkedList
         detailedServiceInterfaceContexts.forEach[
             val newServiceInterfaceContext = deepCopy as ServiceInterfaceContext
-            newServiceInterfaceContext.parent = copy
+            newServiceInterfaceContext.parentVisualizationContext = copy
             copy.detailedServiceInterfaceContexts.add(newServiceInterfaceContext)
         ]
         copy.collapsedServiceInterfaceContexts = new LinkedList
         collapsedServiceInterfaceContexts.forEach [
             val newServiceInterfaceContext = deepCopy as ServiceInterfaceContext
-            newServiceInterfaceContext.parent = copy
+            newServiceInterfaceContext.parentVisualizationContext = copy
             copy.collapsedServiceInterfaceContexts.add(newServiceInterfaceContext)
         ]
         copy.serviceInterfaces = serviceInterfaces.clone

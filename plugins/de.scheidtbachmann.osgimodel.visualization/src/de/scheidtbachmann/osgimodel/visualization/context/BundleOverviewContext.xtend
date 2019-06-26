@@ -12,18 +12,19 @@ import org.eclipse.xtend.lib.annotations.Accessors
  * 
  * @author nre
  */
-@Accessors
 class BundleOverviewContext implements IOverviewVisualizationContext<Bundle> {
     
     /**
      * All connections for the required bundles hierarchy that should be drawn.
      * The pairs should be viewed that the first bundle requires the second.
      */
+    @Accessors
     List<Pair<BundleContext, BundleContext>> requiredBundleEdges
     
     /**
      * All connections for the required packages that should be drawn.
      */
+    @Accessors
     List<UsedPackagesEdgeConnection> usedPackagesEdges
     
     /**
@@ -63,7 +64,7 @@ class BundleOverviewContext implements IOverviewVisualizationContext<Bundle> {
     }
     
     override getModelElement() {
-        return ImmutableList.copyOf(detailedBundleContexts.map[bundle] + collapsedBundleContexts.map[bundle])
+        return bundles
     }
     
     override getDetailedElements() {
@@ -76,6 +77,10 @@ class BundleOverviewContext implements IOverviewVisualizationContext<Bundle> {
     
     override getParentVisualizationContext() {
         return parent
+    }
+    
+    override setParentVisualizationContext(IVisualizationContext<?> parent) {
+        this.parent = parent
     }
     
     override initializeChildVisualizationContexts() {
@@ -92,14 +97,14 @@ class BundleOverviewContext implements IOverviewVisualizationContext<Bundle> {
         collapsedBundleContexts.forEach [
             val newBundleContext = deepCopy as BundleContext
             clonedBundleContexts.put(it, newBundleContext)
-            newBundleContext.parent = copy
+            newBundleContext.parentVisualizationContext = copy
             copy.collapsedBundleContexts.add(newBundleContext)
         ]
         copy.detailedBundleContexts = new LinkedList
         detailedBundleContexts.forEach [
             val newBundleContext = deepCopy as BundleContext
             clonedBundleContexts.put(it, newBundleContext)
-            newBundleContext.parent = copy
+            newBundleContext.parentVisualizationContext = copy
             copy.detailedBundleContexts.add(newBundleContext)
         ]
         

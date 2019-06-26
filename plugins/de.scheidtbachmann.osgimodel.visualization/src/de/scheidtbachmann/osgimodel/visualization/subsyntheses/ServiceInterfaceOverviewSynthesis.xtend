@@ -5,6 +5,7 @@ import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
+import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceOverviewContext
 
 import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
@@ -27,11 +28,11 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
                 configureBoxLayout
                 associateWith(serviceInterfaceOverviewContext)
                 addOverviewRendering("Service Interfaces")
-                children += serviceInterfaceOverviewContext.collapsedServiceInterfaceContexts.flatMap[
-                    return simpleServiceInterfaceSynthesis.transform(it)
+                children += serviceInterfaceOverviewContext.collapsedElements.flatMap[
+                    return simpleServiceInterfaceSynthesis.transform(it as ServiceInterfaceContext)
                 ]
-                children += serviceInterfaceOverviewContext.detailedServiceInterfaceContexts.flatMap[
-                    return serviceInterfaceSynthesis.transform(it)
+                children += serviceInterfaceOverviewContext.detailedElements.flatMap[
+                    return serviceInterfaceSynthesis.transform(it as ServiceInterfaceContext)
                 ]
                 initiallyCollapse
             ]
