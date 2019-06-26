@@ -24,6 +24,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.EObjectWithInverseResolvingEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -223,7 +224,7 @@ public class BundleImpl extends BasicOsgiObjectImpl implements Bundle {
 	@Override
 	public EList<ServiceComponent> getServiceComponents() {
 		if (serviceComponents == null) {
-			serviceComponents = new EObjectContainmentEList<ServiceComponent>(ServiceComponent.class, this, OsgimodelPackage.BUNDLE__SERVICE_COMPONENTS);
+			serviceComponents = new EObjectContainmentWithInverseEList<ServiceComponent>(ServiceComponent.class, this, OsgimodelPackage.BUNDLE__SERVICE_COMPONENTS, OsgimodelPackage.SERVICE_COMPONENT__BUNDLE);
 		}
 		return serviceComponents;
 	}
@@ -330,6 +331,8 @@ public class BundleImpl extends BasicOsgiObjectImpl implements Bundle {
 		switch (featureID) {
 			case OsgimodelPackage.BUNDLE__FEATURES:
 				return ((InternalEList<InternalEObject>)(InternalEList<?>)getFeatures()).basicAdd(otherEnd, msgs);
+			case OsgimodelPackage.BUNDLE__SERVICE_COMPONENTS:
+				return ((InternalEList<InternalEObject>)(InternalEList<?>)getServiceComponents()).basicAdd(otherEnd, msgs);
 			case OsgimodelPackage.BUNDLE__REQUIRED_BUNDLES:
 				return ((InternalEList<InternalEObject>)(InternalEList<?>)getRequiredBundles()).basicAdd(otherEnd, msgs);
 			case OsgimodelPackage.BUNDLE__USED_BY_BUNDLE:

@@ -586,7 +586,7 @@ public class OsgimodelPackageImpl extends EPackageImpl implements OsgimodelPacka
 	 * @generated
 	 */
 	@Override
-	public EReference getServiceComponent_ServiceInterfaces() {
+	public EReference getServiceComponent_Bundle() {
 		return (EReference)serviceComponentEClass.getEStructuralFeatures().get(4);
 	}
 
@@ -596,7 +596,7 @@ public class OsgimodelPackageImpl extends EPackageImpl implements OsgimodelPacka
 	 * @generated
 	 */
 	@Override
-	public EReference getServiceComponent_Reference() {
+	public EReference getServiceComponent_ServiceInterfaces() {
 		return (EReference)serviceComponentEClass.getEStructuralFeatures().get(5);
 	}
 
@@ -606,8 +606,18 @@ public class OsgimodelPackageImpl extends EPackageImpl implements OsgimodelPacka
 	 * @generated
 	 */
 	@Override
+	public EReference getServiceComponent_Reference() {
+		return (EReference)serviceComponentEClass.getEStructuralFeatures().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EAttribute getServiceComponent_JavaDocPath() {
-		return (EAttribute)serviceComponentEClass.getEStructuralFeatures().get(6);
+		return (EAttribute)serviceComponentEClass.getEStructuralFeatures().get(7);
 	}
 
 	/**
@@ -895,6 +905,7 @@ public class OsgimodelPackageImpl extends EPackageImpl implements OsgimodelPacka
 		createEAttribute(serviceComponentEClass, SERVICE_COMPONENT__PATH);
 		createEAttribute(serviceComponentEClass, SERVICE_COMPONENT__ABOUT);
 		createEAttribute(serviceComponentEClass, SERVICE_COMPONENT__IMPLEMENTATION_CLASS);
+		createEReference(serviceComponentEClass, SERVICE_COMPONENT__BUNDLE);
 		createEReference(serviceComponentEClass, SERVICE_COMPONENT__SERVICE_INTERFACES);
 		createEReference(serviceComponentEClass, SERVICE_COMPONENT__REFERENCE);
 		createEAttribute(serviceComponentEClass, SERVICE_COMPONENT__JAVA_DOC_PATH);
@@ -989,7 +1000,7 @@ public class OsgimodelPackageImpl extends EPackageImpl implements OsgimodelPacka
 		initEClass(bundleEClass, Bundle.class, "Bundle", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getBundle_Features(), this.getFeature(), this.getFeature_Bundles(), "features", null, 0, -1, Bundle.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getBundle_Vendor(), theEcorePackage.getEString(), "vendor", null, 0, 1, Bundle.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getBundle_ServiceComponents(), this.getServiceComponent(), null, "serviceComponents", null, 0, -1, Bundle.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getBundle_ServiceComponents(), this.getServiceComponent(), this.getServiceComponent_Bundle(), "serviceComponents", null, 0, -1, Bundle.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getBundle_RequiredBundles(), this.getBundle(), this.getBundle_UsedByBundle(), "requiredBundles", null, 0, -1, Bundle.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getBundle_UsedByBundle(), this.getBundle(), this.getBundle_RequiredBundles(), "usedByBundle", null, 0, -1, Bundle.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getBundle_ImportedPackages(), this.getPackageObject(), this.getPackageObject_ImplementedBy(), "importedPackages", null, 0, -1, Bundle.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1008,6 +1019,7 @@ public class OsgimodelPackageImpl extends EPackageImpl implements OsgimodelPacka
 		initEAttribute(getServiceComponent_Path(), theEcorePackage.getEString(), "path", null, 0, 1, ServiceComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getServiceComponent_About(), theEcorePackage.getEString(), "about", null, 0, 1, ServiceComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getServiceComponent_ImplementationClass(), theEcorePackage.getEString(), "implementationClass", null, 0, 1, ServiceComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getServiceComponent_Bundle(), this.getBundle(), this.getBundle_ServiceComponents(), "bundle", null, 0, 1, ServiceComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getServiceComponent_ServiceInterfaces(), this.getServiceInterface(), this.getServiceInterface_ServiceComponent(), "serviceInterfaces", null, 0, -1, ServiceComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getServiceComponent_Reference(), this.getReference(), null, "reference", null, 0, -1, ServiceComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getServiceComponent_JavaDocPath(), theEcorePackage.getEString(), "javaDocPath", "", 0, 1, ServiceComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

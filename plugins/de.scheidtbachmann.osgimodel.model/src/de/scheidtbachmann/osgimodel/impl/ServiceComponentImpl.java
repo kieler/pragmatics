@@ -2,6 +2,7 @@
  */
 package de.scheidtbachmann.osgimodel.impl;
 
+import de.scheidtbachmann.osgimodel.Bundle;
 import de.scheidtbachmann.osgimodel.OsgimodelPackage;
 import de.scheidtbachmann.osgimodel.Reference;
 import de.scheidtbachmann.osgimodel.ServiceComponent;
@@ -22,6 +23,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EObjectWithInverseResolvingEList;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
@@ -36,6 +38,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link de.scheidtbachmann.osgimodel.impl.ServiceComponentImpl#getPath <em>Path</em>}</li>
  *   <li>{@link de.scheidtbachmann.osgimodel.impl.ServiceComponentImpl#getAbout <em>About</em>}</li>
  *   <li>{@link de.scheidtbachmann.osgimodel.impl.ServiceComponentImpl#getImplementationClass <em>Implementation Class</em>}</li>
+ *   <li>{@link de.scheidtbachmann.osgimodel.impl.ServiceComponentImpl#getBundle <em>Bundle</em>}</li>
  *   <li>{@link de.scheidtbachmann.osgimodel.impl.ServiceComponentImpl#getServiceInterfaces <em>Service Interfaces</em>}</li>
  *   <li>{@link de.scheidtbachmann.osgimodel.impl.ServiceComponentImpl#getReference <em>Reference</em>}</li>
  *   <li>{@link de.scheidtbachmann.osgimodel.impl.ServiceComponentImpl#getJavaDocPath <em>Java Doc Path</em>}</li>
@@ -281,6 +284,59 @@ public class ServiceComponentImpl extends MinimalEObjectImpl.Container implement
 	 * @generated
 	 */
 	@Override
+	public Bundle getBundle() {
+		if (eContainerFeatureID() != OsgimodelPackage.SERVICE_COMPONENT__BUNDLE) return null;
+		return (Bundle)eContainer();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Bundle basicGetBundle() {
+		if (eContainerFeatureID() != OsgimodelPackage.SERVICE_COMPONENT__BUNDLE) return null;
+		return (Bundle)eInternalContainer();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public NotificationChain basicSetBundle(Bundle newBundle, NotificationChain msgs) {
+		msgs = eBasicSetContainer((InternalEObject)newBundle, OsgimodelPackage.SERVICE_COMPONENT__BUNDLE, msgs);
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setBundle(Bundle newBundle) {
+		if (newBundle != eInternalContainer() || (eContainerFeatureID() != OsgimodelPackage.SERVICE_COMPONENT__BUNDLE && newBundle != null)) {
+			if (EcoreUtil.isAncestor(this, newBundle))
+				throw new IllegalArgumentException("Recursive containment not allowed for " + toString());
+			NotificationChain msgs = null;
+			if (eInternalContainer() != null)
+				msgs = eBasicRemoveFromContainer(msgs);
+			if (newBundle != null)
+				msgs = ((InternalEObject)newBundle).eInverseAdd(this, OsgimodelPackage.BUNDLE__SERVICE_COMPONENTS, Bundle.class, msgs);
+			msgs = basicSetBundle(newBundle, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OsgimodelPackage.SERVICE_COMPONENT__BUNDLE, newBundle, newBundle));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EList<ServiceInterface> getServiceInterfaces() {
 		if (serviceInterfaces == null) {
 			serviceInterfaces = new EObjectWithInverseResolvingEList.ManyInverse<ServiceInterface>(ServiceInterface.class, this, OsgimodelPackage.SERVICE_COMPONENT__SERVICE_INTERFACES, OsgimodelPackage.SERVICE_INTERFACE__SERVICE_COMPONENT);
@@ -333,6 +389,10 @@ public class ServiceComponentImpl extends MinimalEObjectImpl.Container implement
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
+			case OsgimodelPackage.SERVICE_COMPONENT__BUNDLE:
+				if (eInternalContainer() != null)
+					msgs = eBasicRemoveFromContainer(msgs);
+				return basicSetBundle((Bundle)otherEnd, msgs);
 			case OsgimodelPackage.SERVICE_COMPONENT__SERVICE_INTERFACES:
 				return ((InternalEList<InternalEObject>)(InternalEList<?>)getServiceInterfaces()).basicAdd(otherEnd, msgs);
 		}
@@ -347,12 +407,28 @@ public class ServiceComponentImpl extends MinimalEObjectImpl.Container implement
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
+			case OsgimodelPackage.SERVICE_COMPONENT__BUNDLE:
+				return basicSetBundle(null, msgs);
 			case OsgimodelPackage.SERVICE_COMPONENT__SERVICE_INTERFACES:
 				return ((InternalEList<?>)getServiceInterfaces()).basicRemove(otherEnd, msgs);
 			case OsgimodelPackage.SERVICE_COMPONENT__REFERENCE:
 				return ((InternalEList<?>)getReference()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
+		switch (eContainerFeatureID()) {
+			case OsgimodelPackage.SERVICE_COMPONENT__BUNDLE:
+				return eInternalContainer().eInverseRemove(this, OsgimodelPackage.BUNDLE__SERVICE_COMPONENTS, Bundle.class, msgs);
+		}
+		return super.eBasicRemoveFromContainerFeature(msgs);
 	}
 
 	/**
@@ -371,6 +447,9 @@ public class ServiceComponentImpl extends MinimalEObjectImpl.Container implement
 				return getAbout();
 			case OsgimodelPackage.SERVICE_COMPONENT__IMPLEMENTATION_CLASS:
 				return getImplementationClass();
+			case OsgimodelPackage.SERVICE_COMPONENT__BUNDLE:
+				if (resolve) return getBundle();
+				return basicGetBundle();
 			case OsgimodelPackage.SERVICE_COMPONENT__SERVICE_INTERFACES:
 				return getServiceInterfaces();
 			case OsgimodelPackage.SERVICE_COMPONENT__REFERENCE:
@@ -401,6 +480,9 @@ public class ServiceComponentImpl extends MinimalEObjectImpl.Container implement
 				return;
 			case OsgimodelPackage.SERVICE_COMPONENT__IMPLEMENTATION_CLASS:
 				setImplementationClass((String)newValue);
+				return;
+			case OsgimodelPackage.SERVICE_COMPONENT__BUNDLE:
+				setBundle((Bundle)newValue);
 				return;
 			case OsgimodelPackage.SERVICE_COMPONENT__SERVICE_INTERFACES:
 				getServiceInterfaces().clear();
@@ -437,6 +519,9 @@ public class ServiceComponentImpl extends MinimalEObjectImpl.Container implement
 			case OsgimodelPackage.SERVICE_COMPONENT__IMPLEMENTATION_CLASS:
 				setImplementationClass(IMPLEMENTATION_CLASS_EDEFAULT);
 				return;
+			case OsgimodelPackage.SERVICE_COMPONENT__BUNDLE:
+				setBundle((Bundle)null);
+				return;
 			case OsgimodelPackage.SERVICE_COMPONENT__SERVICE_INTERFACES:
 				getServiceInterfaces().clear();
 				return;
@@ -466,6 +551,8 @@ public class ServiceComponentImpl extends MinimalEObjectImpl.Container implement
 				return ABOUT_EDEFAULT == null ? about != null : !ABOUT_EDEFAULT.equals(about);
 			case OsgimodelPackage.SERVICE_COMPONENT__IMPLEMENTATION_CLASS:
 				return IMPLEMENTATION_CLASS_EDEFAULT == null ? implementationClass != null : !IMPLEMENTATION_CLASS_EDEFAULT.equals(implementationClass);
+			case OsgimodelPackage.SERVICE_COMPONENT__BUNDLE:
+				return basicGetBundle() != null;
 			case OsgimodelPackage.SERVICE_COMPONENT__SERVICE_INTERFACES:
 				return serviceInterfaces != null && !serviceInterfaces.isEmpty();
 			case OsgimodelPackage.SERVICE_COMPONENT__REFERENCE:

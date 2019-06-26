@@ -69,11 +69,13 @@ public interface Bundle extends BasicOsgiObject {
 	/**
 	 * Returns the value of the '<em><b>Service Components</b></em>' containment reference list.
 	 * The list contents are of type {@link de.scheidtbachmann.osgimodel.ServiceComponent}.
+	 * It is bidirectional and its opposite is '{@link de.scheidtbachmann.osgimodel.ServiceComponent#getBundle <em>Bundle</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Service Components</em>' containment reference list.
 	 * @see de.scheidtbachmann.osgimodel.OsgimodelPackage#getBundle_ServiceComponents()
-	 * @model containment="true"
+	 * @see de.scheidtbachmann.osgimodel.ServiceComponent#getBundle
+	 * @model opposite="bundle" containment="true"
 	 * @generated
 	 */
 	EList<ServiceComponent> getServiceComponents();

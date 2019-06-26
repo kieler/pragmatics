@@ -46,7 +46,7 @@ class Bundle extends BasicOsgiObject
 {
     refers Feature[] features opposite bundles
     String vendor
-    contains ServiceComponent[0..*] serviceComponents
+    contains ServiceComponent[0..*] serviceComponents opposite bundle
     refers Bundle[0..*] requiredBundles opposite usedByBundle
     refers Bundle[] usedByBundle opposite requiredBundles
     refers PackageObject[] importedPackages opposite implementedBy
@@ -69,6 +69,7 @@ class ServiceComponent
     String path
     String about
     String implementationClass
+    refers Bundle bundle opposite serviceComponents
     refers ServiceInterface[] serviceInterfaces opposite serviceComponent
     contains Reference[] reference
     String javaDocPath = ""

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
-    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/de.scheidtbachmann.osgimodel.model/src" modelPluginID="de.scheidtbachmann.osgimodel.model"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="de.scheidtbachmann.osgimodel.model/src" modelPluginID="de.scheidtbachmann.osgimodel.model"
     runtimeJar="true" modelName="OsgiModel" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     testsDirectory="" booleanFlagsField="eFlags" booleanFlagsReservedBits="8" importerID="org.eclipse.emf.ecore.xcore.importer"
-    containmentProxies="true" complianceLevel="10.0" language="en" usedGenPackages="../../org.eclipse.emf.ecore/model/Ecore.genmodel#//ecore"
+    containmentProxies="true" complianceLevel="8.0" language="en" usedGenPackages="../../org.eclipse.emf.ecore/model/Ecore.genmodel#//ecore"
     operationReflection="true" importOrganizing="true" decoration="Live" oSGiCompatible="true"
     eclipsePlatformVersion="Juno" autoResizeProperties="true" autoExpandProperties="10"
     findAction="true" expandAllAction="true" collapseAllAction="true" revertAction="true">
@@ -70,6 +70,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute osgimodel.ecore#//ServiceComponent/path"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute osgimodel.ecore#//ServiceComponent/about"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute osgimodel.ecore#//ServiceComponent/implementationClass"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference osgimodel.ecore#//ServiceComponent/bundle"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference osgimodel.ecore#//ServiceComponent/serviceInterfaces"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference osgimodel.ecore#//ServiceComponent/reference"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute osgimodel.ecore#//ServiceComponent/javaDocPath"/>

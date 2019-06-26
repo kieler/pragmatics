@@ -641,13 +641,22 @@ public interface OsgimodelPackage extends EPackage {
 	int SERVICE_COMPONENT__IMPLEMENTATION_CLASS = 3;
 
 	/**
+	 * The feature id for the '<em><b>Bundle</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SERVICE_COMPONENT__BUNDLE = 4;
+
+	/**
 	 * The feature id for the '<em><b>Service Interfaces</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SERVICE_COMPONENT__SERVICE_INTERFACES = 4;
+	int SERVICE_COMPONENT__SERVICE_INTERFACES = 5;
 
 	/**
 	 * The feature id for the '<em><b>Reference</b></em>' containment reference list.
@@ -656,7 +665,7 @@ public interface OsgimodelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SERVICE_COMPONENT__REFERENCE = 5;
+	int SERVICE_COMPONENT__REFERENCE = 6;
 
 	/**
 	 * The feature id for the '<em><b>Java Doc Path</b></em>' attribute.
@@ -665,7 +674,7 @@ public interface OsgimodelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SERVICE_COMPONENT__JAVA_DOC_PATH = 6;
+	int SERVICE_COMPONENT__JAVA_DOC_PATH = 7;
 
 	/**
 	 * The number of structural features of the '<em>Service Component</em>' class.
@@ -674,7 +683,7 @@ public interface OsgimodelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SERVICE_COMPONENT_FEATURE_COUNT = 7;
+	int SERVICE_COMPONENT_FEATURE_COUNT = 8;
 
 	/**
 	 * The number of operations of the '<em>Service Component</em>' class.
@@ -1404,6 +1413,17 @@ public interface OsgimodelPackage extends EPackage {
 	EAttribute getServiceComponent_ImplementationClass();
 
 	/**
+	 * Returns the meta object for the container reference '{@link de.scheidtbachmann.osgimodel.ServiceComponent#getBundle <em>Bundle</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the container reference '<em>Bundle</em>'.
+	 * @see de.scheidtbachmann.osgimodel.ServiceComponent#getBundle()
+	 * @see #getServiceComponent()
+	 * @generated
+	 */
+	EReference getServiceComponent_Bundle();
+
+	/**
 	 * Returns the meta object for the reference list '{@link de.scheidtbachmann.osgimodel.ServiceComponent#getServiceInterfaces <em>Service Interfaces</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2018,6 +2038,14 @@ public interface OsgimodelPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute SERVICE_COMPONENT__IMPLEMENTATION_CLASS = eINSTANCE.getServiceComponent_ImplementationClass();
+
+		/**
+		 * The meta object literal for the '<em><b>Bundle</b></em>' container reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference SERVICE_COMPONENT__BUNDLE = eINSTANCE.getServiceComponent_Bundle();
 
 		/**
 		 * The meta object literal for the '<em><b>Service Interfaces</b></em>' reference list feature.

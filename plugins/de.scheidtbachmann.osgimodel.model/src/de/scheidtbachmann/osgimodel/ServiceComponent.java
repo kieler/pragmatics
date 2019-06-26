@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link de.scheidtbachmann.osgimodel.ServiceComponent#getPath <em>Path</em>}</li>
  *   <li>{@link de.scheidtbachmann.osgimodel.ServiceComponent#getAbout <em>About</em>}</li>
  *   <li>{@link de.scheidtbachmann.osgimodel.ServiceComponent#getImplementationClass <em>Implementation Class</em>}</li>
+ *   <li>{@link de.scheidtbachmann.osgimodel.ServiceComponent#getBundle <em>Bundle</em>}</li>
  *   <li>{@link de.scheidtbachmann.osgimodel.ServiceComponent#getServiceInterfaces <em>Service Interfaces</em>}</li>
  *   <li>{@link de.scheidtbachmann.osgimodel.ServiceComponent#getReference <em>Reference</em>}</li>
  *   <li>{@link de.scheidtbachmann.osgimodel.ServiceComponent#getJavaDocPath <em>Java Doc Path</em>}</li>
@@ -116,6 +117,30 @@ public interface ServiceComponent extends EObject {
 	 * @generated
 	 */
 	void setImplementationClass(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Bundle</b></em>' container reference.
+	 * It is bidirectional and its opposite is '{@link de.scheidtbachmann.osgimodel.Bundle#getServiceComponents <em>Service Components</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Bundle</em>' container reference.
+	 * @see #setBundle(Bundle)
+	 * @see de.scheidtbachmann.osgimodel.OsgimodelPackage#getServiceComponent_Bundle()
+	 * @see de.scheidtbachmann.osgimodel.Bundle#getServiceComponents
+	 * @model opposite="serviceComponents" transient="false"
+	 * @generated
+	 */
+	Bundle getBundle();
+
+	/**
+	 * Sets the value of the '{@link de.scheidtbachmann.osgimodel.ServiceComponent#getBundle <em>Bundle</em>}' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Bundle</em>' container reference.
+	 * @see #getBundle()
+	 * @generated
+	 */
+	void setBundle(Bundle value);
 
 	/**
 	 * Returns the value of the '<em><b>Service Interfaces</b></em>' reference list.

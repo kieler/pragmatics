@@ -2,6 +2,7 @@
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="osgimodel" nsURI="de.scheidtbachmann.osgimodel" nsPrefix="osgimodel">
   <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+    <details key="modelDirectory" value="de.scheidtbachmann.osgimodel.model/src"/>
     <details key="basePackage" value="de.scheidtbachmann"/>
   </eAnnotations>
   <eClassifiers xsi:type="ecore:EClass" name="OsgiProject">
@@ -61,7 +62,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="vendor" unique="false"
         eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="serviceComponents" upperBound="-1"
-        eType="#//ServiceComponent" containment="true" resolveProxies="false"/>
+        eType="#//ServiceComponent" containment="true" resolveProxies="false" eOpposite="#//ServiceComponent/bundle"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="requiredBundles" upperBound="-1"
         eType="#//Bundle" eOpposite="#//Bundle/usedByBundle"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="usedByBundle" upperBound="-1"
@@ -91,6 +92,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="about" unique="false" eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="implementationClass" unique="false"
         eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="bundle" eType="#//Bundle"
+        eOpposite="#//Bundle/serviceComponents"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="serviceInterfaces" upperBound="-1"
         eType="#//ServiceInterface" eOpposite="#//ServiceInterface/serviceComponent"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="reference" upperBound="-1"
