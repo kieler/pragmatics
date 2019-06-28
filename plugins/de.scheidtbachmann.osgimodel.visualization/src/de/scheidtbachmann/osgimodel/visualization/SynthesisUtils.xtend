@@ -63,7 +63,7 @@ final class SynthesisUtils {
     def static String getId(String id, ViewContext usedContext) {
         val prefix = usedContext.getOptionValue(SHORTEN_BY) as String
         if (!prefix.empty && id.startsWith(prefix)) {
-            return id.substring(prefix.length)
+            return "..." + id.substring(prefix.length)
         }
         return id
     }
