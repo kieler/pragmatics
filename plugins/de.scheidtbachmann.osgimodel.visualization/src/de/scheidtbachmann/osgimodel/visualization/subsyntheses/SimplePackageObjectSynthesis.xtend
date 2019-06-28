@@ -7,6 +7,9 @@ import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
 import de.scheidtbachmann.osgimodel.PackageObject
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
+import org.eclipse.elk.core.options.CoreOptions
+
+import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
 
 /**
  * Transformation of a simple view of a packages that provides functionality to be expanded, when the specific
@@ -22,7 +25,9 @@ class SimplePackageObjectSynthesis extends AbstractSubSynthesis<PackageObject, K
         return #[
             p.createNode() => [
                 associateWith(p)
-                addGenericRendering(SynthesisUtils.getId(p.uniqueId, usedContext))
+                val label = p.uniqueId
+                setLayoutOption(CoreOptions::PRIORITY, SynthesisUtils.priorityOf(label))
+                addGenericRendering(SynthesisUtils.getId(label, usedContext))
             ]
         ]
     }

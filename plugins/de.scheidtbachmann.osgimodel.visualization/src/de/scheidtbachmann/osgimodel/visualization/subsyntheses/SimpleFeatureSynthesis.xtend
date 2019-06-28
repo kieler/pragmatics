@@ -1,14 +1,18 @@
 package de.scheidtbachmann.osgimodel.visualization.subsyntheses
 
 import com.google.inject.Inject
-import static de.scheidtbachmann.osgimodel.visualization.OsgiOptions.*
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
 import de.scheidtbachmann.osgimodel.Feature
-import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 import de.scheidtbachmann.osgimodel.visualization.OsgiOptions.SimpleTextType
+import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
+import org.eclipse.elk.core.options.CoreOptions
+
+import static de.scheidtbachmann.osgimodel.visualization.OsgiOptions.*
+
+import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
 
 /**
  * Transformation of a simple view of a feature that provides functionality to be expanded, when the specific 
@@ -32,6 +36,7 @@ class SimpleFeatureSynthesis extends AbstractSubSynthesis<Feature, KNode> {
                         f.descriptiveName
                     }
                 } ?: ""
+                setLayoutOption(CoreOptions::PRIORITY, SynthesisUtils.priorityOf(label))
                 addGenericRendering(label)
             ]
         ]

@@ -6,6 +6,10 @@ import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
 import de.scheidtbachmann.osgimodel.BundleCategory
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
+import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
+import org.eclipse.elk.core.options.CoreOptions
+
+import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
 
 /**
  * Transformation of a simple view of a bundle category that provides functionality to be expanded, when the
@@ -21,7 +25,9 @@ class SimpleBundleCategorySynthesis extends AbstractSubSynthesis<BundleCategory,
         return #[
             b.createNode() => [
                 associateWith(b)
-                addGenericRendering(b.categoryName)
+                val label = b.categoryName
+                setLayoutOption(CoreOptions::PRIORITY, SynthesisUtils.priorityOf(label))
+                addGenericRendering(label)
             ]
         ]
     }
