@@ -6,7 +6,6 @@ import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
 import de.scheidtbachmann.osgimodel.BundleCategory
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
-import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
 import org.eclipse.elk.core.options.CoreOptions
 
 import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
@@ -22,11 +21,15 @@ class SimpleBundleCategorySynthesis extends AbstractSubSynthesis<BundleCategory,
     @Inject extension OsgiStyles
     
     override transform(BundleCategory b) {
+        transform(b, 0)
+    }
+    
+    def transform(BundleCategory b, int priority) {
         return #[
             b.createNode() => [
                 associateWith(b)
                 val label = b.categoryName
-                setLayoutOption(CoreOptions::PRIORITY, SynthesisUtils.priorityOf(label))
+                setLayoutOption(CoreOptions::PRIORITY, priority)
                 addGenericRendering(label)
             ]
         ]

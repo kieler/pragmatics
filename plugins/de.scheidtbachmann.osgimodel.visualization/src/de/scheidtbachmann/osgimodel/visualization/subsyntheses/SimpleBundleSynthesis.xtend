@@ -25,6 +25,10 @@ class SimpleBundleSynthesis extends AbstractSubSynthesis<BundleContext, KNode> {
     @Inject extension OsgiStyles
     
     override transform(BundleContext bc) {
+        transform(bc, 0)
+    }
+    
+    def transform(BundleContext bc, int priority) {
         val bundle = bc.modelElement
         return #[
             bc.createNode() => [
@@ -37,7 +41,7 @@ class SimpleBundleSynthesis extends AbstractSubSynthesis<BundleContext, KNode> {
                         bundle.descriptiveName
                     }
                 } ?: ""
-                setLayoutOption(CoreOptions::PRIORITY, SynthesisUtils.priorityOf(label))
+                setLayoutOption(CoreOptions::PRIORITY, priority)
                 addBundleInOverviewRendering(bundle, label)
             ]
         ]

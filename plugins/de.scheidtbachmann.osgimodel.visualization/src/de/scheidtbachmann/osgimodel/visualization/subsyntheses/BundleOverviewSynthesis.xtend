@@ -8,6 +8,7 @@ import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
 import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
+import de.scheidtbachmann.osgimodel.visualization.OsgiOptions.SimpleTextType
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
 import de.scheidtbachmann.osgimodel.visualization.context.BundleContext
@@ -16,6 +17,8 @@ import org.eclipse.elk.core.math.ElkPadding
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.Direction
 import org.eclipse.elk.core.options.EdgeRouting
+
+import static de.scheidtbachmann.osgimodel.visualization.OsgiOptions.*
 
 import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
 import static extension de.scheidtbachmann.osgimodel.visualization.SynthesisUtils.*
@@ -83,8 +86,18 @@ class BundleOverviewSynthesis extends AbstractSubSynthesis<BundleOverviewContext
             configureBoxLayout
             addInvisibleContainerRendering
             
-            children += filteredCollapsedBundleContexts.flatMap [
-                return simpleBundleSynthesis.transform(it)
+            filteredCollapsedBundleContexts.sortBy [
+                // The string to sort by. Either the shortened ID or the name.
+                switch usedContext.getOptionValue(SIMPLE_TEXT) {
+                    case SimpleTextType.Id: {
+                        SynthesisUtils.getId(modelElement.uniqueId, usedContext)
+                    }
+                    case SimpleTextType.Name: {
+                        modelElement.descriptiveName
+                    }
+                } ?: ""
+            ].forEach [ collapsedBundleContext, index |
+                children += simpleBundleSynthesis.transform(collapsedBundleContext, -index)
             ]
         ]
     }

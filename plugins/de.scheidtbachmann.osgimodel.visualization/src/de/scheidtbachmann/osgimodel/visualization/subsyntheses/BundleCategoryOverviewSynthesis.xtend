@@ -27,7 +27,10 @@ class BundleCategoryOverviewSynthesis extends AbstractSubSynthesis<List<BundleCa
                 configureBoxLayout
                 associateWith(bundleCategories)
                 addOverviewRendering("Bundle Categories")
-                children += bundleCategories.flatMap[ simpleBundleCategorySynthesis.transform(it)]
+                bundleCategories.sortBy [ it.categoryName ]
+                .forEach [ bundleCategory, index |
+                    children += simpleBundleCategorySynthesis.transform(bundleCategory, -index)
+                ]
                 initiallyCollapse
             ]
         ]

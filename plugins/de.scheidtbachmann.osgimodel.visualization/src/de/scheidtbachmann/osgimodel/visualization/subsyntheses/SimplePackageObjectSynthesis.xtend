@@ -22,11 +22,15 @@ class SimplePackageObjectSynthesis extends AbstractSubSynthesis<PackageObject, K
     @Inject extension OsgiStyles
     
     override transform(PackageObject p) {
+        transform(p, 0)
+    }
+    
+    def transform(PackageObject p, int priority) {
         return #[
             p.createNode() => [
                 associateWith(p)
                 val label = p.uniqueId
-                setLayoutOption(CoreOptions::PRIORITY, SynthesisUtils.priorityOf(label))
+                setLayoutOption(CoreOptions::PRIORITY, priority)
                 addGenericRendering(SynthesisUtils.getId(label, usedContext))
             ]
         ]

@@ -140,36 +140,6 @@ final class SynthesisUtils {
         return text.substring(0, threshold.intValue) + " ..."
     }
     
-    
-    /**
-     * Turns any string into an int roughly matching its alphabetical ordering.
-     * It does that by taking the first 6 alphabetical characters as lowercase characters and maps them to ascending
-     * numbers based on those first characters.
-     * 
-     * @param label The string that should be converted.
-     * @return A number for the string that is higher for lexicographic earlier strings and lower for later elements.
-     */
-    def static int priorityOf(String label) {
-        // Take the first 6 alphabetical chars as lowercase chars to limit them to one of 26 values each.
-        // 6 chars are taken, because 26^6 < 2^32 < 26^7, so 6 chars is the limit of what can be represented as a unique
-        // orderable int, which can take 2^32 different values.
-        val alphabeticalChars = label.chars.filter [
-            Character.isAlphabetic(it)
-        ].map [
-            Character.toLowerCase(it)
-        ].limit(6).toArray.toList
-        val numChars = alphabeticalChars.size
-        
-        // Convert the remaining string into a number as if the string would be a base-26 number with 'a' as the lowest
-        // and 'z' as the highest digit for that number. 
-        val number = alphabeticalChars.fold(0, [ prevValue, nextChar |
-            return prevValue * 26 + nextChar - 'a' + 1
-        ])
-        // Always have the *26 happen 6 times, so do the remaining ones here if the fold exited earlier.
-        // Also return the negative value to have the ordering going a->z and not z->a.
-        return -number * Math.toIntExact(Math.round(Math.pow(26, 6 - numChars)))
-    }
-    
     /**
      * Configures the layout of any overview node. Configures the box layout algorithm of elk.
      */

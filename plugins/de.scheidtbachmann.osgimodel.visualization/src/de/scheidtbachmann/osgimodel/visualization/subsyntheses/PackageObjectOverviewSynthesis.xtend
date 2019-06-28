@@ -27,7 +27,10 @@ class PackageObjectOverviewSynthesis extends AbstractSubSynthesis<List<PackageOb
                 configureBoxLayout
                 associateWith(packageObjects)
                 addOverviewRendering("Imported Packages")
-                children += packageObjects.flatMap[ simplePackageObjectSynthesis.transform(it)]
+                packageObjects.sortBy [ uniqueId ]
+                .forEach [ packageObject, index |
+                    children += simplePackageObjectSynthesis.transform(packageObject, -index)
+                ]
                 initiallyCollapse
             ]
         ]

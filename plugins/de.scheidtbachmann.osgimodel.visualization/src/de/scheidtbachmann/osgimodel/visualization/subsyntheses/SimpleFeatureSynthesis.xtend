@@ -25,6 +25,10 @@ class SimpleFeatureSynthesis extends AbstractSubSynthesis<Feature, KNode> {
     @Inject extension OsgiStyles
     
     override transform(Feature f) {
+        transform(f, 0)
+    }
+    
+    def transform(Feature f, int priority) {
         return #[
             f.createNode() => [
                 associateWith(f)
@@ -36,7 +40,7 @@ class SimpleFeatureSynthesis extends AbstractSubSynthesis<Feature, KNode> {
                         f.descriptiveName
                     }
                 } ?: ""
-                setLayoutOption(CoreOptions::PRIORITY, SynthesisUtils.priorityOf(label))
+                setLayoutOption(CoreOptions::PRIORITY, priority)
                 addGenericRendering(label)
             ]
         ]

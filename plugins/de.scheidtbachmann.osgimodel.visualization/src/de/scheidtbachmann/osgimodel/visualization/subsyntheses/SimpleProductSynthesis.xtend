@@ -25,6 +25,10 @@ class SimpleProductSynthesis extends AbstractSubSynthesis<ProductContext, KNode>
     @Inject extension OsgiStyles
     
     override transform(ProductContext pc) {
+        transform(pc, 0)
+    }
+    
+    def transform(ProductContext pc, int priority) {
         val product = pc.modelElement
         return #[
             product.createNode() => [
@@ -37,7 +41,7 @@ class SimpleProductSynthesis extends AbstractSubSynthesis<ProductContext, KNode>
                         product.descriptiveName
                     }
                 } ?: ""
-                setLayoutOption(CoreOptions::PRIORITY, SynthesisUtils.priorityOf(label))
+                setLayoutOption(CoreOptions::PRIORITY, priority)
                 addProductInOverviewRendering(product, label)
             ]
         ]

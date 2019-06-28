@@ -31,12 +31,13 @@ class ProductOverviewSynthesis extends AbstractSubSynthesis<ProductOverviewConte
                 
                 val filteredCollapsedProducts = SynthesisUtils.filteredBasicOsgiObjectContexts(
                     productOverviewContext.collapsedElements, usedContext)
-                children += filteredCollapsedProducts.flatMap[
-                    return simpleProductSynthesis.transform(it as ProductContext)
+                children += filteredCollapsedProducts.flatMap [
+                    return simpleProductSynthesis.transform(it as ProductContext) // TODO: add priority ordering.
                 ]
+                
                 val filteredDetailedProducts = SynthesisUtils.filteredBasicOsgiObjectContexts(
                     productOverviewContext.detailedElements, usedContext)
-                children += filteredDetailedProducts.flatMap[
+                children += filteredDetailedProducts.flatMap [
                     return productSynthesis.transform(it as ProductContext)
                 ]
             ]

@@ -91,8 +91,11 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
             configureBoxLayout
             addInvisibleContainerRendering
             
-            children += filteredCollapsedServiceInterfaceContexts.flatMap [
-                return simpleServiceInterfaceSynthesis.transform(it)
+            filteredCollapsedServiceInterfaceContexts.sortBy [
+                SynthesisUtils.getId(modelElement.name, usedContext)
+            ]
+            filteredCollapsedServiceInterfaceContexts.forEach [ serviceInterfaceContext, index |
+                children += simpleServiceInterfaceSynthesis.transform(serviceInterfaceContext, index)
             ]
         ]
     }

@@ -22,12 +22,16 @@ class SimpleServiceInterfaceSynthesis extends AbstractSubSynthesis<ServiceInterf
     @Inject extension OsgiStyles
     
     override transform(ServiceInterfaceContext s) {
+        transform(s, 0)
+    }
+    
+    def transform(ServiceInterfaceContext s, int priority) {
         val serviceInterface = s.modelElement
         return #[
             s.createNode() => [
                 associateWith(s)
                 val label = SynthesisUtils.getId(serviceInterface.name, usedContext)
-                setLayoutOption(CoreOptions::PRIORITY, SynthesisUtils.priorityOf(label))
+                setLayoutOption(CoreOptions::PRIORITY, priority)
                 // The 'name' attribute of service interfaces really are their ID.
                 addServiceInterfaceInOverviewRendering(serviceInterface, label)
             ]
