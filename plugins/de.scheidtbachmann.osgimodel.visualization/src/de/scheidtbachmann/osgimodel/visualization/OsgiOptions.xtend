@@ -29,7 +29,7 @@ class OsgiOptions {
     
     /** Option for filtering an overview by only bundles starting with the id in the option. */
     public static final SynthesisOption FILTER_BY = SynthesisOption.createTextOption(
-        "Filter by IDs starting with 'de.scheidtbachmann")
+        "Filter by IDs starting with")
         
     /** Option for limiting the length of descriptive texts. */
     public static final SynthesisOption DESCRIPTION_LENGTH = SynthesisOption.createRangeOption(

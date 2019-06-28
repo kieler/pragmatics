@@ -7,32 +7,12 @@
             class="de.cau.cs.kieler.klighd.syntheses.GuiceBasedSynthesisFactory:de.scheidtbachmann.osgimodel.visualization.OsgiDiagramSynthesis"
             id="de.scheidtbachmann.osgimodel.visualization.OsgiDiagramSynthesis">
       </diagramSynthesis>
-      <diagramSynthesis
-            class="de.cau.cs.kieler.klighd.syntheses.GuiceBasedSynthesisFactory:de.scheidtbachmann.osgimodel.visualization.OsgiDiagramSynthesisTest"
-            id="de.scheidtbachmann.osgimodel.visualization.OsgiDiagramSynthesisTest">
-      </diagramSynthesis>
    </extension>
    <extension
          point="de.cau.cs.kieler.klighd.extensions">
       <action
-            class="de.scheidtbachmann.osgimodel.visualization.actions.ContextCollapseExpandAction"
-            id="de.scheidtbachmann.osgimodel.visualization.actions.ContextCollapseExpandAction">
-      </action>
-      <action
-            class="de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedByBundlesAction"
-            id="de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedByBundlesAction">
-      </action>
-      <action
-            class="de.scheidtbachmann.osgimodel.visualization.actions.RevealRequiredBundlesAction"
-            id="de.scheidtbachmann.osgimodel.visualization.actions.RevealRequiredBundlesAction">
-      </action>
-      <action
             class="de.scheidtbachmann.osgimodel.visualization.actions.FocusAction"
             id="de.scheidtbachmann.osgimodel.visualization.actions.FocusAction">
-      </action>
-      <action
-            class="de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedPackagesAction"
-            id="de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedPackagesAction">
       </action>
       <action
             class="de.scheidtbachmann.osgimodel.visualization.actions.UndoAction"
@@ -45,6 +25,26 @@
       <action
             class="de.scheidtbachmann.osgimodel.visualization.actions.ResetViewAction"
             id="de.scheidtbachmann.osgimodel.visualization.actions.ResetViewAction">
+      </action>
+      <action
+            class="de.scheidtbachmann.osgimodel.visualization.actions.ContextCollapseExpandAction"
+            id="de.scheidtbachmann.osgimodel.visualization.actions.ContextCollapseExpandAction">
+      </action>
+      <action
+            class="de.scheidtbachmann.osgimodel.visualization.actions.RevealRequiredBundlesAction"
+            id="de.scheidtbachmann.osgimodel.visualization.actions.RevealRequiredBundlesAction">
+      </action>
+      <action
+            class="de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedByBundlesAction"
+            id="de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedByBundlesAction">
+      </action>
+      <action
+            class="de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedPackagesAction"
+            id="de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedPackagesAction">
+      </action>
+      <action
+            class="de.scheidtbachmann.osgimodel.visualization.actions.RevealImplementingServiceComponentsAction"
+            id="de.scheidtbachmann.osgimodel.visualization.actions.RevealImplementingServiceComponentsAction">
       </action>
    </extension>
 

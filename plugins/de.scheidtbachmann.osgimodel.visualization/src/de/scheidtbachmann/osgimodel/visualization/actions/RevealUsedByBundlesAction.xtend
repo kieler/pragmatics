@@ -7,9 +7,8 @@ import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
 import org.eclipse.emf.ecore.EObject
 
 /**
- * Reveals and synthesizes the bundles used by any bundle into the KNode surrounding the Bundle node this action
- * is performed on and connects the new bundles with a connecting edge from this bundle's 'requiredBundles' port to
- * the new bundle's 'usedByBundles' port.
+ * Expands the bundles used by any bundle and connects the bundles with an edge from the new bundle's
+ * 'requiredBundles' port to this bundle's 'usedByBundles' port. 
  * If all used by bundles are already shown, this action reverses its functionality and removes all bundles again.
  * 
  * @author nre

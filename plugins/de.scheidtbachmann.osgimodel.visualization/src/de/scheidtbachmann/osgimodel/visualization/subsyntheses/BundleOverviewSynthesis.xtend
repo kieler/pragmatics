@@ -45,7 +45,6 @@ class BundleOverviewSynthesis extends AbstractSubSynthesis<BundleOverviewContext
                 // remove the padding of the invisible container.
                 addLayoutParam(CoreOptions.PADDING, new ElkPadding(0, 0, 0, 0))
                 
-                
                 // Add all simple bundle renderings in a first subgraph (top)
                 val filteredCollapsedBundleContexts = SynthesisUtils.filteredBasicOsgiObjectContexts(
                     bundleOverviewContext.collapsedElements, usedContext)
@@ -84,7 +83,7 @@ class BundleOverviewSynthesis extends AbstractSubSynthesis<BundleOverviewContext
             configureBoxLayout
             addInvisibleContainerRendering
             
-            children += filteredCollapsedBundleContexts.flatMap[
+            children += filteredCollapsedBundleContexts.flatMap [
                 return simpleBundleSynthesis.transform(it)
             ]
         ]
@@ -105,7 +104,7 @@ class BundleOverviewSynthesis extends AbstractSubSynthesis<BundleOverviewContext
             configureBundleOverviewLayout
             addInvisibleContainerRendering
             
-            children += filteredDetailedBundleContexts.flatMap[
+            children += filteredDetailedBundleContexts.flatMap [
                 return bundleSynthesis.transform(it)
             ]
             

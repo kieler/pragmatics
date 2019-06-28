@@ -236,6 +236,31 @@ class ContextUtils {
     }
     
     /**
+     * Adds a implementing service component edge to the parent service interface context of the two given contexts.
+     * The direction of the edge indicates that the service interface of the {@code serviceInterfaceContext} is
+     * implemented by the service component of the {@code serviceComponentContext}.
+     * [component] ---implements---|> [interface]
+     * 
+     * @param serviceInterfaceContext The service interface context that gets implemented.
+     * @param serviceComponentContext The service component context that is implementing.
+     */
+    def static void addImplementingServiceComponentEdge(ServiceInterfaceContext serviceInterfaceContext,
+        ServiceComponentContext serviceComponentContext) {
+        val parentContext = serviceInterfaceContext.parentVisualizationContext as ServiceInterfaceOverviewContext
+        if (serviceComponentContext.parentVisualizationContext !== parentContext) {
+            throw new IllegalArgumentException("The requiring and the required context both have to have the same " +
+                "parent context!")
+        }
+        // Only if this edge does not exist yet, add it to the list of implementing service component edges.
+        if (!parentContext.implementedInterfaceEdges.exists [
+            key === serviceComponentContext && value === serviceInterfaceContext
+        ]) {
+            parentContext.implementedInterfaceEdges += serviceComponentContext -> serviceInterfaceContext
+            // TODO: check if all components / interfaces are connected and mark that in the contexts.
+        }
+    }
+    
+    /**
      * Determines whether the {@code project} is the root model this {@code context} comes from.
      * 
      * @param context The visualization context in question.
@@ -249,6 +274,5 @@ class ContextUtils {
         }
         return currentContext.modelElement === project
     }
-    
     
 }

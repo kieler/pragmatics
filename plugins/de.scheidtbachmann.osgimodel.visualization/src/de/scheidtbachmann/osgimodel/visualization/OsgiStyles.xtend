@@ -23,9 +23,11 @@ import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.scheidtbachmann.osgimodel.Bundle
 import de.scheidtbachmann.osgimodel.PackageObject
 import de.scheidtbachmann.osgimodel.Product
+import de.scheidtbachmann.osgimodel.ServiceComponent
 import de.scheidtbachmann.osgimodel.ServiceInterface
 import de.scheidtbachmann.osgimodel.visualization.actions.ContextCollapseExpandAction
 import de.scheidtbachmann.osgimodel.visualization.actions.FocusAction
+import de.scheidtbachmann.osgimodel.visualization.actions.RevealImplementingServiceComponentsAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealRequiredBundlesAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedByBundlesAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedPackagesAction
@@ -488,7 +490,7 @@ class OsgiStyles {
      */
     def KRoundedRectangle addServiceInterfaceRendering(KNode node, ServiceInterface si, ViewContext context) {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
-            setBackgroundGradient("#FFE0E0".color, "#FFBFBF".color, 90)
+            setBackgroundGradient("#FFE0E0".color, "#FFC2C2".color, 90)
             setGridPlacement(1)
             addRectangle => [
                 setGridPlacement(3)
@@ -525,6 +527,83 @@ class OsgiStyles {
             ]
             addDoubleClickAction(ContextCollapseExpandAction::ID)
             setShadow("black".color, 4, 4)
+        ]
+    }
+    
+    /**
+     * The rendering of a port that connects a service interface with the service components implementing it. Issues the
+     * {@link RevealImplementingServiceComponentsAction} if clicked.
+     */
+    def KRectangle addImplementingServiceComponentsPortRendering(KPort port, int numImplementingComponents, boolean allShown) {
+        return port.addRectangle => [
+            background = if (allShown) "white".color else "black".color
+            val tooltipText = "Show service components implementing this interface (" + numImplementingComponents + " total)."
+            tooltip = tooltipText
+            addSingleClickAction(RevealImplementingServiceComponentsAction::ID)
+        ]
+    }
+    
+    // ------------------------------------- ServiceComponent renderings -------------------------------------
+    
+    /**
+     * Adds a rendering for a {@link ServiceComponent} to the given node.
+     * 
+     * @param node The KNode this rendering should be attached to.
+     * @param sc The service component this rendering represents.
+     * @param context The view context used in the synthesis.
+     * 
+     * @return The entire rendering for a service component.
+     */
+    def KRoundedRectangle addServiceComponentRendering(KNode node, ServiceComponent sc, ViewContext context) {
+        node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
+            setBackgroundGradient("#FFE0F5".color, "#FFC2EB".color, 90)
+            setGridPlacement(1)
+            addRectangle => [
+                setGridPlacement(3)
+                invisible = true
+                addRectangle => [
+                    invisible = true
+                    addSimpleLabel(sc.name)
+                ]
+                addVerticalLine(RIGHT, 0, 1) => [
+                    setGridPlacementData => [
+                        flexibleWidth = false
+                    ]
+                ]
+                addButton("x", ContextCollapseExpandAction::ID) => [ //TODO: This action should probably completely
+                // remove the sc from the overview again, not just collapse it.
+                    setGridPlacementData => [
+                        flexibleWidth = false
+                    ]
+                    lineWidth = 0
+                ]
+            ]
+            addHorizontalSeperatorLine(1, 0)
+            addRectangle => [
+                invisible = true
+                addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(sc.about, context))
+            ]
+            addHorizontalSeperatorLine(1, 0)
+            addRectangle => [
+                setGridPlacementData => [
+                    minCellHeight = 20
+                    minCellWidth = 20
+                ]
+                invisible = true
+                addChildArea
+            ]
+            addDoubleClickAction(ContextCollapseExpandAction::ID)
+            setShadow("black".color, 4, 4)
+        ]
+    }
+    
+    /**
+     * Adds the rendering for an edge showing an implementation of a service interface by a component.
+     */
+    def addImplementingComponentEdgeRendering(KEdge edge) {
+        edge.addPolyline => [
+            addInheritanceTriangleArrowDecorator
+            lineStyle = LineStyle.DASH
         ]
     }
     

@@ -5,6 +5,7 @@ import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
+import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
 import de.scheidtbachmann.osgimodel.visualization.context.ProductContext
 import de.scheidtbachmann.osgimodel.visualization.context.ProductOverviewContext
 
@@ -27,10 +28,15 @@ class ProductOverviewSynthesis extends AbstractSubSynthesis<ProductOverviewConte
                 associateWith(productOverviewContext)
                 configureBoxLayout
                 addOverviewRendering("Products")
-                children += productOverviewContext.collapsedElements.flatMap[
+                
+                val filteredCollapsedProducts = SynthesisUtils.filteredBasicOsgiObjectContexts(
+                    productOverviewContext.collapsedElements, usedContext)
+                children += filteredCollapsedProducts.flatMap[
                     return simpleProductSynthesis.transform(it as ProductContext)
                 ]
-                children += productOverviewContext.detailedElements.flatMap[
+                val filteredDetailedProducts = SynthesisUtils.filteredBasicOsgiObjectContexts(
+                    productOverviewContext.detailedElements, usedContext)
+                children += filteredDetailedProducts.flatMap[
                     return productSynthesis.transform(it as ProductContext)
                 ]
             ]

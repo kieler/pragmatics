@@ -1,6 +1,7 @@
 package de.scheidtbachmann.osgimodel.visualization.context
 
 import de.scheidtbachmann.osgimodel.ServiceInterface
+import org.eclipse.xtend.lib.annotations.Accessors
 
 /**
  * Context for the OSGi synthesis that contains information about {@link ServiceInterface}s.
@@ -18,6 +19,12 @@ class ServiceInterfaceContext implements IVisualizationContext<ServiceInterface>
      * The parent visualization context.
      */
     IOverviewVisualizationContext<ServiceInterface> parent
+    
+    /**
+     * Indicates whether all service components implementing this service interface are shown and connected to this.
+     */
+    @Accessors
+    boolean allImplementingComponentsShown
     
     private new() {}
     
@@ -48,7 +55,9 @@ class ServiceInterfaceContext implements IVisualizationContext<ServiceInterface>
     
     override deepCopy() {
         val copy = new ServiceInterfaceContext
+        copy.allImplementingComponentsShown = allImplementingComponentsShown
         copy.serviceInterface = serviceInterface
+        copy.parent = null
         
         return copy
     }

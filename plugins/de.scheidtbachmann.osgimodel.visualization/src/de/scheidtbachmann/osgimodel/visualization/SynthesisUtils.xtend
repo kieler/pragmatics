@@ -6,6 +6,7 @@ import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
 import de.scheidtbachmann.osgimodel.BasicOsgiObject
+import de.scheidtbachmann.osgimodel.ServiceInterface
 import de.scheidtbachmann.osgimodel.visualization.context.IOverviewVisualizationContext
 import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
 import java.util.List
@@ -101,6 +102,22 @@ final class SynthesisUtils {
         val prefix = usedContext.getOptionValue(FILTER_BY) as String
         if (prefix !== "") {
             return visualizationContexts.filter[ it.modelElement.uniqueId.startsWith(prefix) ]
+        } else {
+            return visualizationContexts
+        }
+    }
+    
+    /**
+     * Basically the same as {@link #filteredBasicOsgiObjectContexts(List, ViewContext)},
+     * just for the non-BasicOsgiObject of {@link ServiceInterface}s.
+     * 
+     * @see #filteredBasicOsgiObjectContexts(List, ViewContext)
+     */
+    def static Iterable<? extends IVisualizationContext<ServiceInterface>> filteredServiceInterfaceContexts(
+        List<? extends IVisualizationContext<ServiceInterface>> visualizationContexts, ViewContext usedContext) {
+        val prefix = usedContext.getOptionValue(FILTER_BY) as String
+        if (prefix !== "") {
+            return visualizationContexts.filter[ it.modelElement.name.startsWith(prefix) ]
         } else {
             return visualizationContexts
         }

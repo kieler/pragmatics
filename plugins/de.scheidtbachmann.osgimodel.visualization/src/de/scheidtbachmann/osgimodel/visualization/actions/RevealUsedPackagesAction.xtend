@@ -17,8 +17,7 @@ import java.util.Map
 import org.eclipse.emf.ecore.EObject
 
 /**
- * Reveals and synthesizes the bundles providing packages used by any bundle into the KNode surrounding the Bundle node
- * this action is performed on and connects the new bundles with a connecting edge from the new bundle to this bundle's
+ * Expands the bundles providing packages used by any bundle with and edge from the new bundle to this bundle's
  * 'requiredBundles' port.
  * 
  * @author nre
