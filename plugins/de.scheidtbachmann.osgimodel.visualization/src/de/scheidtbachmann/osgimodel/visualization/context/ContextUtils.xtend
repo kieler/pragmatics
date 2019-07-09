@@ -272,7 +272,15 @@ class ContextUtils {
         while(currentContext.parentVisualizationContext !== null) {
             currentContext = currentContext.parentVisualizationContext
         }
-        return currentContext.modelElement === project
+        
+        if (currentContext instanceof OsgiProjectContext) {
+            return currentContext.modelElement === project
+        } else {
+            // If the parent hierarchy on the context does end in an OsgiProjectContext, it was lost in some focus
+            // action. But that also indicates that the root model has not changed and this context has to come from
+            // that.
+            return true
+        }
     }
     
 }
