@@ -1,6 +1,7 @@
 package de.scheidtbachmann.osgimodel.visualization.subsyntheses
 
 import com.google.inject.Inject
+import de.cau.cs.kieler.klighd.kgraph.KGraphFactory
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
@@ -20,16 +21,18 @@ import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
 class SimpleServiceInterfaceSynthesis extends AbstractSubSynthesis<ServiceInterfaceContext, KNode> {
     @Inject extension KNodeExtensions
     @Inject extension OsgiStyles
+    extension KGraphFactory = KGraphFactory.eINSTANCE
     
-    override transform(ServiceInterfaceContext s) {
-        transform(s, 0)
+    override transform(ServiceInterfaceContext sic) {
+        transform(sic, 0)
     }
     
-    def transform(ServiceInterfaceContext s, int priority) {
-        val serviceInterface = s.modelElement
+    def transform(ServiceInterfaceContext sic, int priority) {
+        val serviceInterface = sic.modelElement
         return #[
-            s.createNode() => [
-                associateWith(s)
+            sic.createNode() => [
+                associateWith(sic)
+                data += createKIdentifier => [ it.id = sic.hashCode.toString ]
                 val label = SynthesisUtils.getId(serviceInterface.name, usedContext)
                 setLayoutOption(CoreOptions::PRIORITY, priority)
                 // The 'name' attribute of service interfaces really are their ID.

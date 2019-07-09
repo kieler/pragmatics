@@ -1,6 +1,7 @@
 package de.scheidtbachmann.osgimodel.visualization.subsyntheses
 
 import com.google.inject.Inject
+import de.cau.cs.kieler.klighd.kgraph.KGraphFactory
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
@@ -21,11 +22,13 @@ class ProductOverviewSynthesis extends AbstractSubSynthesis<ProductOverviewConte
     @Inject extension OsgiStyles
     @Inject SimpleProductSynthesis simpleProductSynthesis
     @Inject ProductSynthesis productSynthesis
+    extension KGraphFactory = KGraphFactory.eINSTANCE
     
     override transform(ProductOverviewContext productOverviewContext) {
         return #[
             createNode => [
                 associateWith(productOverviewContext)
+                data += createKIdentifier => [ it.id = productOverviewContext.hashCode.toString ]
                 configureBoxLayout
                 addOverviewRendering("Products")
                 

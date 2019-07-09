@@ -30,11 +30,11 @@ class BundleSynthesis extends AbstractSubSynthesis<BundleContext, KNode> {
         
     override transform(BundleContext bc) {
         val bundle = bc.modelElement
-        // The top level node that is not shown and will be replaced by KLighD.
         return #[
             bc.createNode() => [
                 addLayoutParam(CoreOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_SIDE)
                 associateWith(bc)
+                data += createKIdentifier => [ it.id = bc.hashCode.toString ]
                 addBundleRendering(bundle, usedContext)
                 
                 // The ports that show the connection to the usedBy / required bundles with actions to add them to

@@ -1,6 +1,7 @@
 package de.scheidtbachmann.osgimodel.visualization.subsyntheses
 
 import com.google.inject.Inject
+import de.cau.cs.kieler.klighd.kgraph.KGraphFactory
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.krendering.ViewSynthesisShared
 import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
@@ -25,12 +26,14 @@ class ProductSynthesis extends AbstractSubSynthesis<ProductContext, KNode> {
     @Inject extension KNodeExtensions
     @Inject extension OsgiStyles
     @Inject BundleOverviewSynthesis bundleOverviewSynthesis
+    extension KGraphFactory = KGraphFactory.eINSTANCE
     
     override transform(ProductContext pc) {
         val product = pc.modelElement
         return #[
             pc.createNode() => [
                 associateWith(pc)
+                data += createKIdentifier => [ it.id = pc.hashCode.toString ]
                 val rendering = addProductRendering(product, usedContext)
 //                val renderingSize = estimateSize(rendering, new Bounds(0,0))
                 setLayoutOption(CoreOptions::NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.MINIMUM_SIZE))

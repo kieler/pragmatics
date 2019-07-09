@@ -1,6 +1,7 @@
 package de.scheidtbachmann.osgimodel.visualization.subsyntheses
 
 import com.google.inject.Inject
+import de.cau.cs.kieler.klighd.kgraph.KGraphFactory
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
@@ -23,6 +24,7 @@ import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
 class SimpleProductSynthesis extends AbstractSubSynthesis<ProductContext, KNode> {
     @Inject extension KNodeExtensions
     @Inject extension OsgiStyles
+    extension KGraphFactory = KGraphFactory.eINSTANCE
     
     override transform(ProductContext pc) {
         transform(pc, 0)
@@ -33,6 +35,7 @@ class SimpleProductSynthesis extends AbstractSubSynthesis<ProductContext, KNode>
         return #[
             product.createNode() => [
                 associateWith(pc)
+                data += createKIdentifier => [ it.id = pc.hashCode.toString ]
                 val label = switch usedContext.getOptionValue(SIMPLE_TEXT) {
                     case SimpleTextType.Id: {
                         SynthesisUtils.getId(product.uniqueId, usedContext)

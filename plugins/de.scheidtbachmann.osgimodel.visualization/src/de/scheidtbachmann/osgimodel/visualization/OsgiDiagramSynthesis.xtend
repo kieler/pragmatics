@@ -3,6 +3,7 @@ package de.scheidtbachmann.osgimodel.visualization
 import com.google.common.collect.ImmutableList
 import com.google.inject.Inject
 import de.cau.cs.kieler.klighd.DisplayedActionData
+import de.cau.cs.kieler.klighd.kgraph.KGraphFactory
 import de.cau.cs.kieler.klighd.krendering.ViewSynthesisShared
 import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
@@ -47,6 +48,8 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
     @Inject PackageObjectOverviewSynthesis packageObjectOverviewSynthesis
     @Inject ProductOverviewSynthesis productOverviewSynthesis
     @Inject ServiceInterfaceOverviewSynthesis serviceInterfaceOverviewSynthesis
+    
+    extension KGraphFactory = KGraphFactory.eINSTANCE
     
     override getInputDataType() {
         OsgiProject
@@ -112,6 +115,7 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
             // The overview of the entire OSGi Project.
             modelNode.children += createNode => [
                 associateWith(model)
+                data += createKIdentifier => [ it.id = visContext.hashCode.toString ]
                 addOverviewRendering("Overview")
                 
                 children += createNode => [

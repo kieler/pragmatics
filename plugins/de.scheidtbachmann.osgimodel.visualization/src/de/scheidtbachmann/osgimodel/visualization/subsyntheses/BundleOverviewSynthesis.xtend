@@ -1,6 +1,7 @@
 package de.scheidtbachmann.osgimodel.visualization.subsyntheses
 
 import com.google.inject.Inject
+import de.cau.cs.kieler.klighd.kgraph.KGraphFactory
 import de.cau.cs.kieler.klighd.kgraph.KIdentifier
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.krendering.extensions.KEdgeExtensions
@@ -36,10 +37,13 @@ class BundleOverviewSynthesis extends AbstractSubSynthesis<BundleOverviewContext
     @Inject SimpleBundleSynthesis simpleBundleSynthesis
     @Inject BundleSynthesis bundleSynthesis
     
+    extension KGraphFactory = KGraphFactory.eINSTANCE
+    
     override transform(BundleOverviewContext bundleOverviewContext) {
         return #[
             createNode => [
                 associateWith(bundleOverviewContext)
+                data += createKIdentifier => [ it.id = bundleOverviewContext.hashCode.toString ]
                 initiallyCollapse
                 DiagramSyntheses.setLayoutOption(it, CoreOptions::ALGORITHM, "org.eclipse.elk.layered")
                 DiagramSyntheses.setLayoutOption(it, CoreOptions::DIRECTION, Direction.DOWN)

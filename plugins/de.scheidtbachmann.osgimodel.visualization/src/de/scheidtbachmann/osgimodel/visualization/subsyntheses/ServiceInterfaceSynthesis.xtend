@@ -26,24 +26,25 @@ class ServiceInterfaceSynthesis extends AbstractSubSynthesis<ServiceInterfaceCon
     @Inject extension OsgiStyles
     extension KGraphFactory = KGraphFactory.eINSTANCE
     
-    override transform(ServiceInterfaceContext si) {
-        val serviceInterface = si.modelElement
+    override transform(ServiceInterfaceContext sic) {
+        val serviceInterface = sic.modelElement
         return #[
-            si.createNode() => [
-                associateWith(si)
+            sic.createNode() => [
+                associateWith(sic)
+                data += createKIdentifier => [ it.id = sic.hashCode.toString ]
                 addServiceInterfaceRendering(serviceInterface, usedContext)
                 
                 // The ports that show the connection to the service components this service interface with actions to
                 // add them to the view.
                 val components = serviceInterface.serviceComponent
                 if (!components.empty) {
-                    ports += createPort(si, "implementingServiceComponents") => [
-                        associateWith(si)
+                    ports += createPort(sic, "implementingServiceComponents") => [
+                        associateWith(sic)
                         // Identifier helps for connecting to this port later.
                         data += createKIdentifier => [ it.id = "implementingServiceComponents" ]
                         // Implementing components are always shown and expanded to the east with the drawing direction.
                         addLayoutParam(CoreOptions::PORT_SIDE, PortSide::EAST)
-                        addImplementingServiceComponentsPortRendering(components.size, si.allImplementingComponentsShown)
+                        addImplementingServiceComponentsPortRendering(components.size, sic.allImplementingComponentsShown)
                         width = 12
                         height = 12
                     ]

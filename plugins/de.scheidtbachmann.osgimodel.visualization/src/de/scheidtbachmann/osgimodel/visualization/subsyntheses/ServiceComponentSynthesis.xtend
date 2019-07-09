@@ -1,6 +1,7 @@
 package de.scheidtbachmann.osgimodel.visualization.subsyntheses
 
 import com.google.inject.Inject
+import de.cau.cs.kieler.klighd.kgraph.KGraphFactory
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.krendering.ViewSynthesisShared
 import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
@@ -19,12 +20,14 @@ import de.scheidtbachmann.osgimodel.visualization.context.ServiceComponentContex
 class ServiceComponentSynthesis extends AbstractSubSynthesis<ServiceComponentContext, KNode> {
     @Inject extension KNodeExtensions
     @Inject extension OsgiStyles
+    extension KGraphFactory = KGraphFactory.eINSTANCE
     
     override transform(ServiceComponentContext sc) {
         val serviceComponent = sc.modelElement
         return #[
             sc.createNode() => [
                 associateWith(sc)
+                data += createKIdentifier => [ it.id = sc.hashCode.toString ]
                 addServiceComponentRendering(serviceComponent, usedContext)
             ]
         ]
