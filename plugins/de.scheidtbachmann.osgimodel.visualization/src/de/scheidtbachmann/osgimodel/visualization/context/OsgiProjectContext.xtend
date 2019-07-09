@@ -67,6 +67,7 @@ class OsgiProjectContext implements IVisualizationContext<OsgiProject> {
     
     override initializeChildVisualizationContexts() {
         productOverviewContext = new ProductOverviewContext(project.products, this)
+        productOverviewContext.expanded = true
         bundleOverviewContext = new BundleOverviewContext(project.bundles, this)
         serviceInterfaceOverviewContext = new ServiceInterfaceOverviewContext(project.serviceInterfaces, this)
     }

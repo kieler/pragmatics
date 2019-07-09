@@ -47,6 +47,11 @@ class BundleOverviewContext implements IOverviewVisualizationContext<Bundle> {
      */
     IVisualizationContext<?> parent
     
+    /**
+     * boolean value storing the current value for the {@link IOverviewVisualizationContext#isExpanded} method.
+     */
+    boolean expanded
+    
     private new() {}
     
     new(List<Bundle> bundles, IVisualizationContext<?> parent) {
@@ -56,6 +61,7 @@ class BundleOverviewContext implements IOverviewVisualizationContext<Bundle> {
         usedPackagesEdges = new LinkedList
         collapsedBundleContexts = new LinkedList
         detailedBundleContexts = new LinkedList
+        expanded = false
         initializeChildVisualizationContexts
     }
     
@@ -89,6 +95,14 @@ class BundleOverviewContext implements IOverviewVisualizationContext<Bundle> {
         ]
     }
     
+    override isExpanded() {
+        return expanded
+    }
+    
+    override setExpanded(boolean newExpanded) {
+        this.expanded = newExpanded
+    }
+    
     override deepCopy() {
         val copy = new BundleOverviewContext
         // remember the cloned bundle contexts, as they may be used multiple times.
@@ -120,6 +134,8 @@ class BundleOverviewContext implements IOverviewVisualizationContext<Bundle> {
         ]
         
         copy.bundles = bundles.clone
+        
+        copy.expanded = isExpanded
         
         return copy
     }

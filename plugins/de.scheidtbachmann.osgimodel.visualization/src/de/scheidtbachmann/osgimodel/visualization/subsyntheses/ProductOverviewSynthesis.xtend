@@ -10,6 +10,7 @@ import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
 import de.scheidtbachmann.osgimodel.visualization.context.ProductContext
 import de.scheidtbachmann.osgimodel.visualization.context.ProductOverviewContext
 
+import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
 import static extension de.scheidtbachmann.osgimodel.visualization.SynthesisUtils.*
 
 /**
@@ -29,6 +30,11 @@ class ProductOverviewSynthesis extends AbstractSubSynthesis<ProductOverviewConte
             createNode => [
                 associateWith(productOverviewContext)
                 data += createKIdentifier => [ it.id = productOverviewContext.hashCode.toString ]
+                if (productOverviewContext.expanded) {
+                    initiallyExpand
+                } else {
+                    initiallyCollapse
+                }
                 configureBoxLayout
                 addOverviewRendering("Products")
                 

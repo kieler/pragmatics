@@ -43,7 +43,11 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
             createNode => [
                 associateWith(serviceInterfaceOverviewContext)
                 data += createKIdentifier => [ it.id = serviceInterfaceOverviewContext.hashCode.toString ]
-                initiallyCollapse
+                if (serviceInterfaceOverviewContext.expanded) {
+                    initiallyExpand
+                } else {
+                    initiallyCollapse
+                }
                 DiagramSyntheses.setLayoutOption(it, CoreOptions::ALGORITHM, "org.eclipse.elk.layered")
                 DiagramSyntheses.setLayoutOption(it, CoreOptions::DIRECTION, Direction.DOWN)
                 addOverviewRendering("Service Interfaces")

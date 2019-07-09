@@ -48,6 +48,11 @@ class ServiceInterfaceOverviewContext implements IOverviewVisualizationContext<S
      */
     IVisualizationContext<?> parent
     
+    /**
+     * boolean value storing the current value for the {@link IOverviewVisualizationContext#isExpanded} method.
+     */
+    boolean expanded
+    
     private new() {}
     
     new(List<ServiceInterface> serviceInterfaces, IVisualizationContext<?> parent) {
@@ -57,6 +62,7 @@ class ServiceInterfaceOverviewContext implements IOverviewVisualizationContext<S
         collapsedServiceInterfaceContexts = new LinkedList
         implementingServiceComponentContexts = new LinkedList
         implementedInterfaceEdges = new LinkedList
+        expanded = false
         initializeChildVisualizationContexts
     }
     
@@ -88,6 +94,14 @@ class ServiceInterfaceOverviewContext implements IOverviewVisualizationContext<S
         serviceInterfaces.forEach[
             collapsedServiceInterfaceContexts += new ServiceInterfaceContext(it, this)
         ]
+    }
+    
+    override isExpanded() {
+        return expanded
+    }
+    
+    override setExpanded(boolean newExpanded) {
+        this.expanded = newExpanded
     }
     
     override deepCopy() {
@@ -123,6 +137,8 @@ class ServiceInterfaceOverviewContext implements IOverviewVisualizationContext<S
         ]
         
         copy.serviceInterfaces = serviceInterfaces.clone
+        
+        copy.expanded = isExpanded
         
         return copy
     }

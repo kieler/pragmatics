@@ -44,7 +44,11 @@ class BundleOverviewSynthesis extends AbstractSubSynthesis<BundleOverviewContext
             createNode => [
                 associateWith(bundleOverviewContext)
                 data += createKIdentifier => [ it.id = bundleOverviewContext.hashCode.toString ]
-                initiallyCollapse
+                if (bundleOverviewContext.expanded) {
+                    initiallyExpand
+                } else {
+                    initiallyCollapse
+                }
                 DiagramSyntheses.setLayoutOption(it, CoreOptions::ALGORITHM, "org.eclipse.elk.layered")
                 DiagramSyntheses.setLayoutOption(it, CoreOptions::DIRECTION, Direction.DOWN)
                 addOverviewRendering("Bundles")

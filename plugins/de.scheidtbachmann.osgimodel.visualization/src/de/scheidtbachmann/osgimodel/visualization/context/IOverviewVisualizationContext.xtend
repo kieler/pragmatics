@@ -23,6 +23,16 @@ interface IOverviewVisualizationContext<M extends EObject> extends IVisualizatio
      */
     def List<? extends IVisualizationContext<M>> getCollapsedElements()
     
+    /**
+     * Indicates whether the overview should be shown plain or expanded with its contents shown.
+     */
+    def boolean isExpanded()
+    
+    /**
+     * Sets a new value for the expanded state of this overview.
+     */
+    def void setExpanded(boolean newExpanded)
+    
     override List<? extends IVisualizationContext<M>> getChildContexts()
     
 }

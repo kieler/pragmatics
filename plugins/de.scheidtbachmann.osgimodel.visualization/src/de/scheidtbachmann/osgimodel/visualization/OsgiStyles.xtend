@@ -3,7 +3,6 @@ package de.scheidtbachmann.osgimodel.visualization
 import com.google.inject.Inject
 import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.klighd.ViewContext
-import de.cau.cs.kieler.klighd.actions.CollapseExpandAction
 import de.cau.cs.kieler.klighd.kgraph.KEdge
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.kgraph.KPort
@@ -27,6 +26,7 @@ import de.scheidtbachmann.osgimodel.ServiceComponent
 import de.scheidtbachmann.osgimodel.ServiceInterface
 import de.scheidtbachmann.osgimodel.visualization.actions.ContextCollapseExpandAction
 import de.scheidtbachmann.osgimodel.visualization.actions.FocusAction
+import de.scheidtbachmann.osgimodel.visualization.actions.OverviewContextCollapseExpandAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealImplementingServiceComponentsAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealRequiredBundlesAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedByBundlesAction
@@ -74,7 +74,7 @@ class OsgiStyles {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             setAsExpandedView
             setGridPlacement(1)
-            addDoubleClickAction(CollapseExpandAction.ID)
+            addDoubleClickAction(OverviewContextCollapseExpandAction.ID)
             addRectangle => [
                 setGridPlacement(5)
                 invisible = true
@@ -98,7 +98,7 @@ class OsgiStyles {
                         flexibleWidth = false
                     ]
                 ]
-                addButton("-", CollapseExpandAction.ID) => [
+                addButton("-", OverviewContextCollapseExpandAction.ID) => [
                     setGridPlacementData => [
                         flexibleWidth = false
                     ]
@@ -114,7 +114,7 @@ class OsgiStyles {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             setAsCollapsedView
             setGridPlacement(1)
-            addDoubleClickAction(CollapseExpandAction.ID)
+            addDoubleClickAction(OverviewContextCollapseExpandAction.ID)
             addRectangle => [
                 setGridPlacement(5)
                 invisible = true
@@ -138,7 +138,7 @@ class OsgiStyles {
                         flexibleWidth = false
                     ]
                 ]
-                addButton("+", CollapseExpandAction.ID) => [
+                addButton("+", OverviewContextCollapseExpandAction.ID) => [
                     setGridPlacementData => [
                         flexibleWidth = false
                     ]

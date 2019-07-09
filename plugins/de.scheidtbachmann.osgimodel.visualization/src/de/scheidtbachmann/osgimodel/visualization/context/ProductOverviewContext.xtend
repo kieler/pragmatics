@@ -32,6 +32,11 @@ class ProductOverviewContext implements IOverviewVisualizationContext<Product> {
      */
     IVisualizationContext<?> parent
     
+    /**
+     * boolean value storing the current value for the {@link IOverviewVisualizationContext#isExpanded} method.
+     */
+    boolean expanded
+    
     private new() {}
     
     new(List<Product> products, IVisualizationContext<?> parent) {
@@ -39,6 +44,7 @@ class ProductOverviewContext implements IOverviewVisualizationContext<Product> {
         this.products = products
         detailedProductContexts = new LinkedList
         collapsedProductContexts = new LinkedList
+        expanded = false
         initializeChildVisualizationContexts
     }
     
@@ -72,6 +78,14 @@ class ProductOverviewContext implements IOverviewVisualizationContext<Product> {
         ]
     }
     
+    override isExpanded() {
+        return expanded
+    }
+    
+    override setExpanded(boolean newExpanded) {
+        this.expanded = newExpanded
+    }
+    
     override deepCopy() {
         val copy = new ProductOverviewContext
         copy.detailedProductContexts = new LinkedList
@@ -87,6 +101,8 @@ class ProductOverviewContext implements IOverviewVisualizationContext<Product> {
             copy.collapsedProductContexts.add(newProductContext)
         ]
         copy.products = products.clone
+        
+        copy.expanded = isExpanded
         
         return copy
     }
