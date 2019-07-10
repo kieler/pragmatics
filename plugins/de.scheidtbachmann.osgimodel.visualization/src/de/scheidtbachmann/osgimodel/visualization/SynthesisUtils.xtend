@@ -6,15 +6,18 @@ import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
 import de.scheidtbachmann.osgimodel.BasicOsgiObject
+import de.scheidtbachmann.osgimodel.PackageObject
 import de.scheidtbachmann.osgimodel.ServiceInterface
 import de.scheidtbachmann.osgimodel.visualization.context.IOverviewVisualizationContext
 import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
 import java.util.List
 import org.eclipse.elk.core.options.CoreOptions
+import org.eclipse.elk.core.options.Direction
+import org.eclipse.elk.core.options.EdgeRouting
 
 import static de.scheidtbachmann.osgimodel.visualization.OsgiOptions.*
 
-//import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
+import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
 
 /**
  * Util class that contains some static methods commonly used for the Osgi synthesis.
@@ -77,8 +80,8 @@ final class SynthesisUtils {
      * @param usedContext The ViewContext used to display the diagram these elements are shown in.
      * @return An Iterable of the elements filtered by the diagram options.
      */
-    def static <M extends BasicOsgiObject> Iterable<M> filteredElements(List<M> elements, IOverviewVisualizationContext<M> moc,
-        ViewContext usedContext) {
+    def static <M extends BasicOsgiObject> Iterable<M> filteredElements(List<M> elements,
+        IOverviewVisualizationContext<M> moc, ViewContext usedContext) {
         val elementsInContext = elements.filter [
             moc.modelElement.contains(it)
         ]
@@ -98,7 +101,8 @@ final class SynthesisUtils {
      * @return An Iterable of the visualization contexts filtered by the diagram options.
      */
     def static <M extends BasicOsgiObject> Iterable<? extends IVisualizationContext<M>>
-    filteredBasicOsgiObjectContexts(List<? extends IVisualizationContext<M>> visualizationContexts, ViewContext usedContext) {
+    filteredBasicOsgiObjectContexts(List<? extends IVisualizationContext<M>> visualizationContexts,
+        ViewContext usedContext) {
         val prefix = usedContext.getOptionValue(FILTER_BY) as String
         if (prefix !== "") {
             return visualizationContexts.filter[ it.modelElement.uniqueId.startsWith(prefix) ]
@@ -118,6 +122,22 @@ final class SynthesisUtils {
         val prefix = usedContext.getOptionValue(FILTER_BY) as String
         if (prefix !== "") {
             return visualizationContexts.filter[ it.modelElement.name.startsWith(prefix) ]
+        } else {
+            return visualizationContexts
+        }
+    }
+    
+    /**
+     * Basically the same as {@link #filteredBasicOsgiObjectContexts(List, ViewContext)},
+     * just for the non-BasicOsgiObject of {@link PackageObject}s.
+     * 
+     * @see #filteredBasicOsgiObjectContexts(List, ViewContext)
+     */
+    def static Iterable<? extends IVisualizationContext<PackageObject>> filteredPackageObjectContexts(
+        List<? extends IVisualizationContext<PackageObject>> visualizationContexts, ViewContext usedContext) {
+        val prefix = usedContext.getOptionValue(FILTER_BY) as String
+        if (prefix !== "") {
+            return visualizationContexts.filter[ it.modelElement.uniqueId.startsWith(prefix) ]
         } else {
             return visualizationContexts
         }
@@ -147,6 +167,20 @@ final class SynthesisUtils {
         node => [
             DiagramSyntheses.setLayoutOption(node, CoreOptions::ALGORITHM, "org.eclipse.elk.box")
 //            setLayoutOption(CoreOptions::EXPAND_NODES, true)
+        ]
+    }
+    
+    /**
+     * Configures the layout on a overview for the top level node that shows the connection between elements within that
+     * overview.
+     * 
+     * @param node The node containing the elements of the overview.
+     */
+    def static void configureOverviewLayout(KNode node) {
+        node => [
+            setLayoutOption(CoreOptions::ALGORITHM, "org.eclipse.elk.layered")
+            setLayoutOption(CoreOptions::DIRECTION, Direction.RIGHT)
+            setLayoutOption(CoreOptions::EDGE_ROUTING, EdgeRouting.POLYLINE)
         ]
     }
     

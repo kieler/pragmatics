@@ -31,6 +31,24 @@ class OsgiProjectContext implements IVisualizationContext<OsgiProject> {
     ServiceInterfaceOverviewContext serviceInterfaceOverviewContext
     
     /**
+     * The context for the feature overview.
+     */
+    @Accessors
+    FeatureOverviewContext featureOverviewContext
+    
+    /**
+     * The context for the imported package overview.
+     */
+    @Accessors
+    PackageObjectOverviewContext importedPackageOverviewContext
+    
+    /**
+     * The context for the bundle category overview.
+     */
+    @Accessors
+    BundleCategoryOverviewContext bundleCategoryOverviewContext
+    
+    /**
      * The OSGi project model to get the data from when visualizing this context.
      */
     OsgiProject project
@@ -49,7 +67,8 @@ class OsgiProjectContext implements IVisualizationContext<OsgiProject> {
     }
     
     override getChildContexts() {
-        return #[bundleOverviewContext, productOverviewContext, serviceInterfaceOverviewContext]
+        return #[bundleOverviewContext, productOverviewContext, serviceInterfaceOverviewContext, featureOverviewContext,
+            importedPackageOverviewContext, bundleCategoryOverviewContext]
             as List<? extends IVisualizationContext<? extends EObject>>
     }
     
@@ -70,6 +89,9 @@ class OsgiProjectContext implements IVisualizationContext<OsgiProject> {
         productOverviewContext.expanded = true
         bundleOverviewContext = new BundleOverviewContext(project.bundles, this)
         serviceInterfaceOverviewContext = new ServiceInterfaceOverviewContext(project.serviceInterfaces, this)
+        featureOverviewContext = new FeatureOverviewContext(project.features, this)
+        importedPackageOverviewContext = new PackageObjectOverviewContext(project.importedPackages, this)
+        bundleCategoryOverviewContext = new BundleCategoryOverviewContext(project.bundleCategories, this)
     }
     
     override deepCopy() {
@@ -78,8 +100,17 @@ class OsgiProjectContext implements IVisualizationContext<OsgiProject> {
         copy.bundleOverviewContext.parentVisualizationContext = copy
         copy.productOverviewContext = productOverviewContext.deepCopy as ProductOverviewContext
         copy.productOverviewContext.parentVisualizationContext = copy
-        copy.serviceInterfaceOverviewContext = serviceInterfaceOverviewContext.deepCopy as ServiceInterfaceOverviewContext
+        copy.serviceInterfaceOverviewContext = serviceInterfaceOverviewContext.deepCopy
+            as ServiceInterfaceOverviewContext
         copy.serviceInterfaceOverviewContext.parentVisualizationContext = copy
+        copy.featureOverviewContext = featureOverviewContext.deepCopy as FeatureOverviewContext
+        copy.featureOverviewContext.parentVisualizationContext = copy
+        copy.importedPackageOverviewContext = importedPackageOverviewContext.deepCopy as PackageObjectOverviewContext
+        copy.importedPackageOverviewContext.parentVisualizationContext = copy
+        copy.bundleCategoryOverviewContext = bundleCategoryOverviewContext.deepCopy as BundleCategoryOverviewContext
+        copy.bundleCategoryOverviewContext.parentVisualizationContext = copy
+        
+        
         copy.project = project
         
         return copy

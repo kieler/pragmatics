@@ -11,13 +11,12 @@ import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
 import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
+import de.scheidtbachmann.osgimodel.visualization.context.ServiceComponentContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceOverviewContext
-import org.eclipse.elk.alg.layered.options.LayeredMetaDataProvider
 import org.eclipse.elk.core.math.ElkPadding
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.Direction
-import org.eclipse.elk.core.options.EdgeRouting
 
 import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
 import static extension de.scheidtbachmann.osgimodel.visualization.SynthesisUtils.*
@@ -56,19 +55,11 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
                 addLayoutParam(CoreOptions.PADDING, new ElkPadding(0, 0, 0, 0))
                 
                 // Add all simple service interface renderings in a first subgraph (top)
-                val filteredCollapsedServiceInterfaceContexts = SynthesisUtils.filteredServiceInterfaceContexts(
-                    serviceInterfaceOverviewContext.collapsedElements, usedContext)
-                val collapsedOverviewNode = transformCollapsedServiceInterfacesOverview(
-                    filteredCollapsedServiceInterfaceContexts as Iterable<ServiceInterfaceContext>,
-                    serviceInterfaceOverviewContext)
+                val collapsedOverviewNode = transformCollapsedServiceInterfacesOverview(serviceInterfaceOverviewContext)
                 children += collapsedOverviewNode
                 
                 // Add all detailed service interface renderings and their connections in a second subgraph (bottom)
-                val filteredDetailedServiceInterfaceContexts = SynthesisUtils.filteredServiceInterfaceContexts(
-                    serviceInterfaceOverviewContext.detailedElements, usedContext)
-                val detailedOverviewNode = transformDetailedServiceInterfacesOverview(
-                    filteredDetailedServiceInterfaceContexts as Iterable<ServiceInterfaceContext>,
-                    serviceInterfaceOverviewContext)
+                val detailedOverviewNode = transformDetailedServiceInterfacesOverview(serviceInterfaceOverviewContext)
                 children += detailedOverviewNode
                 
                 // Put an invisible edge between the collapsed and detailed overviews to guarantee the simple renderings
@@ -87,13 +78,12 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
      * The top part of the service interface overview rendering containing all collapsed service interface renderings in
      * a box layout.
      * 
-     * @param filteredCollapsedServiceInterfaceContexts The service interface contexts for all collapsed service
-     * Interfaces that are allowed to be shown by the option filters.
      * @param serviceInterfaceOverviewContext The overview context for all service interfaces in this subsynthesis.
      */
     private def KNode transformCollapsedServiceInterfacesOverview(
-        Iterable<ServiceInterfaceContext> filteredCollapsedServiceInterfaceContexts,
         ServiceInterfaceOverviewContext serviceInterfaceOverviewContext) {
+        val filteredCollapsedServiceInterfaceContexts = SynthesisUtils.filteredServiceInterfaceContexts(
+            serviceInterfaceOverviewContext.collapsedElements, usedContext)
         createNode => [
             associateWith(serviceInterfaceOverviewContext)
             configureBoxLayout
@@ -101,9 +91,9 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
             
             filteredCollapsedServiceInterfaceContexts.sortBy [
                 SynthesisUtils.getId(modelElement.name, usedContext)
-            ]
-            filteredCollapsedServiceInterfaceContexts.forEach [ serviceInterfaceContext, index |
-                children += simpleServiceInterfaceSynthesis.transform(serviceInterfaceContext, index)
+            ].forEach [ serviceInterfaceContext, index |
+                children += simpleServiceInterfaceSynthesis.transform(
+                    serviceInterfaceContext as ServiceInterfaceContext, -index)
             ]
         ]
     }
@@ -112,27 +102,27 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
      * The bottom part of the service interface overview rendering containing all detailed service interface renderings
      * and their connections in a layered layout.
      * 
-     * @param filteredDetailedServiceInterfaceContexts The service interface contexts for all detailed service
-     * interfaces that are allowed to be shown by the option filters.
      * @param serviceInterfaceOverviewContext The overview context for all service interfaces in this subsynthesis.
      */
     private def KNode transformDetailedServiceInterfacesOverview(
-        Iterable<ServiceInterfaceContext> filteredDetailedServiceInterfaceContexts,
         ServiceInterfaceOverviewContext serviceInterfaceOverviewContext) {
+        val filteredDetailedServiceInterfaceContexts = SynthesisUtils.filteredServiceInterfaceContexts(
+            serviceInterfaceOverviewContext.detailedElements, usedContext)
+        val filteredImplementingServiceComponentContexts = serviceInterfaceOverviewContext
+            .implementingServiceComponentContexts
         createNode => [
             associateWith(serviceInterfaceOverviewContext)
-            configureServiceInterfaceOverviewLayout
+            configureOverviewLayout
             addInvisibleContainerRendering
             
             // All service interfaces.
             children += filteredDetailedServiceInterfaceContexts.flatMap [
-                return serviceInterfaceSynthesis.transform(it)
+                return serviceInterfaceSynthesis.transform(it as ServiceInterfaceContext)
             ]
             
             // All service components.
-            val serviceComponents = serviceInterfaceOverviewContext.implementingServiceComponentContexts
-            children += serviceComponents.flatMap [
-                return serviceComponentSynthesis.transform(it)
+            children += filteredImplementingServiceComponentContexts.flatMap [
+                return serviceComponentSynthesis.transform(it as ServiceComponentContext)
             ]
             
             // Add all implementing service component edges.
@@ -143,7 +133,9 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
                 val interface = value
                 val componentNode = component.node
                 val interfaceNode = interface.node
-                val interfacePort = interfaceNode.ports.findFirst[ data.filter(KIdentifier).head?.id === "implementingServiceComponents" ]
+                val interfacePort = interfaceNode.ports.findFirst [
+                    data.filter(KIdentifier).head?.id === "implementingServiceComponents"
+                ]
                 
                 val edge = createEdge(component, interface) => [
                     addImplementingComponentEdgeRendering
@@ -153,21 +145,6 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
                 ]
                 componentNode.outgoingEdges += edge
             ]
-        ]
-    }
-    
-    /**
-     * Configures the layout on the service interface view for the top level node that shows the connections between
-     * service interfaces and their implementing service component.
-     * 
-     * @param node The node containing the connected nodes.
-     */
-    private def configureServiceInterfaceOverviewLayout(KNode node) {
-        node => [
-            setLayoutOption(CoreOptions::ALGORITHM, "org.eclipse.elk.layered")
-            setLayoutOption(CoreOptions::DIRECTION, Direction.RIGHT)
-            setLayoutOption(CoreOptions::EDGE_ROUTING, EdgeRouting.POLYLINE)
-            setLayoutOption(LayeredMetaDataProvider::SPACING_NODE_NODE_BETWEEN_LAYERS, 30.0)
         ]
     }
     

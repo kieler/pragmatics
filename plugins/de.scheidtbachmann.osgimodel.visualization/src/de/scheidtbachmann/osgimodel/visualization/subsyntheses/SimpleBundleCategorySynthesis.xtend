@@ -1,11 +1,12 @@
 package de.scheidtbachmann.osgimodel.visualization.subsyntheses
 
 import com.google.inject.Inject
+import de.cau.cs.kieler.klighd.kgraph.KGraphFactory
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
-import de.scheidtbachmann.osgimodel.BundleCategory
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
+import de.scheidtbachmann.osgimodel.visualization.context.BundleCategoryContext
 import org.eclipse.elk.core.options.CoreOptions
 
 import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
@@ -16,21 +17,24 @@ import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
  * 
  * @author nre
  */
-class SimpleBundleCategorySynthesis extends AbstractSubSynthesis<BundleCategory, KNode> {
+class SimpleBundleCategorySynthesis extends AbstractSubSynthesis<BundleCategoryContext, KNode> {
     @Inject extension KNodeExtensions
     @Inject extension OsgiStyles
+    extension KGraphFactory = KGraphFactory.eINSTANCE
     
-    override transform(BundleCategory b) {
-        transform(b, 0)
+    override transform(BundleCategoryContext bcc) {
+        transform(bcc, 0)
     }
     
-    def transform(BundleCategory b, int priority) {
+    def transform(BundleCategoryContext bcc, int priority) {
+        val bundleCategory = bcc.modelElement
         return #[
-            b.createNode() => [
-                associateWith(b)
-                val label = b.categoryName
+            bcc.createNode() => [
+                associateWith(bcc)
+                data += createKIdentifier => [ it.id = bcc.hashCode.toString ]
+                val label = bundleCategory.categoryName
                 setLayoutOption(CoreOptions::PRIORITY, priority)
-                addGenericRendering(label)
+                addGenericRendering(label) // TODO: add a feature specific rendering.
             ]
         ]
     }

@@ -12,10 +12,13 @@ import de.scheidtbachmann.osgimodel.OsgiProject
 import de.scheidtbachmann.osgimodel.visualization.actions.RedoAction
 import de.scheidtbachmann.osgimodel.visualization.actions.ResetViewAction
 import de.scheidtbachmann.osgimodel.visualization.actions.UndoAction
+import de.scheidtbachmann.osgimodel.visualization.context.BundleCategoryOverviewContext
 import de.scheidtbachmann.osgimodel.visualization.context.BundleOverviewContext
 import de.scheidtbachmann.osgimodel.visualization.context.ContextUtils
+import de.scheidtbachmann.osgimodel.visualization.context.FeatureOverviewContext
 import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
 import de.scheidtbachmann.osgimodel.visualization.context.OsgiProjectContext
+import de.scheidtbachmann.osgimodel.visualization.context.PackageObjectOverviewContext
 import de.scheidtbachmann.osgimodel.visualization.context.ProductOverviewContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceOverviewContext
 import de.scheidtbachmann.osgimodel.visualization.subsyntheses.BundleCategoryOverviewSynthesis
@@ -122,26 +125,25 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
                     associateWith(model)
                     addInvisibleContainerRendering
                     
-                    // Product overview
-                    val productOverviewContext = visContext.productOverviewContext
-                    val overviewProductNodes = productOverviewSynthesis.transform(productOverviewContext)
+                    val overviewProductNodes = productOverviewSynthesis.transform(visContext.productOverviewContext)
                     children += overviewProductNodes
                     
-                    val overviewFeatureNodes = featureOverviewSynthesis.transform(model.features)
+                    val overviewFeatureNodes = featureOverviewSynthesis.transform(visContext.featureOverviewContext)
                     children += overviewFeatureNodes
                     
-                    val bundleOverviewContext = visContext.bundleOverviewContext
-                    val overviewBundleNodes = bundleOverviewSynthesis.transform(bundleOverviewContext)
+                    val overviewBundleNodes = bundleOverviewSynthesis.transform(visContext.bundleOverviewContext)
                     children += overviewBundleNodes
                     
-                    val serviceInterfaceOverviewContext = visContext.serviceInterfaceOverviewContext
-                    val overviewServiceInterfaceNodes = serviceInterfaceOverviewSynthesis.transform(serviceInterfaceOverviewContext)
+                    val overviewServiceInterfaceNodes = serviceInterfaceOverviewSynthesis.transform(
+                        visContext.serviceInterfaceOverviewContext)
                     children += overviewServiceInterfaceNodes
                     
-                    val overviewImportedPackagesNodes = packageObjectOverviewSynthesis.transform(model.importedPackages)
+                    val overviewImportedPackagesNodes = packageObjectOverviewSynthesis.transform(
+                        visContext.importedPackageOverviewContext)
                     children += overviewImportedPackagesNodes
                     
-                    val overviewBundleCategoryNodes = bundleCategoryOverviewSynthesis.transform(model.bundleCategories)
+                    val overviewBundleCategoryNodes = bundleCategoryOverviewSynthesis.transform(
+                        visContext.bundleCategoryOverviewContext)
                     children += overviewBundleCategoryNodes
                     
                     // remove the padding of the invisible container.
@@ -163,19 +165,18 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
     
     private def transformSubModel(IVisualizationContext<?> context) {
         switch (context) {
-//            case context instanceof BundleCategoryOverviewContext: {
-//                return bundleCategoryOverviewSynthesis.transform(context as BundleCategoryOverviewContext)
-//                
-//            }
+            case context instanceof BundleCategoryOverviewContext: {
+                return bundleCategoryOverviewSynthesis.transform(context as BundleCategoryOverviewContext)
+            }
             case context instanceof BundleOverviewContext: {
                 return bundleOverviewSynthesis.transform(context as BundleOverviewContext)
             }
-//            case context instanceof FeatureOverviewContext: {
-//                return featureOverviewSynthesis.transform(context as FeatureOverviewContext)
-//            }
-//            case context instanceof PackageObjectOverviewContext: {
-//                return packageObjectOverviewSynthesis.transform(context as PackageObjectOverviewContext)
-//            }
+            case context instanceof FeatureOverviewContext: {
+                return featureOverviewSynthesis.transform(context as FeatureOverviewContext)
+            }
+            case context instanceof PackageObjectOverviewContext: {
+                return packageObjectOverviewSynthesis.transform(context as PackageObjectOverviewContext)
+            }
             case context instanceof ProductOverviewContext: {
                 return productOverviewSynthesis.transform(context as ProductOverviewContext)
             }

@@ -1,12 +1,13 @@
 package de.scheidtbachmann.osgimodel.visualization.subsyntheses
 
 import com.google.inject.Inject
+import de.cau.cs.kieler.klighd.kgraph.KGraphFactory
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
-import de.scheidtbachmann.osgimodel.PackageObject
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
+import de.scheidtbachmann.osgimodel.visualization.context.PackageObjectContext
 import org.eclipse.elk.core.options.CoreOptions
 
 import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
@@ -17,21 +18,24 @@ import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
  * 
  * @author nre
  */
-class SimplePackageObjectSynthesis extends AbstractSubSynthesis<PackageObject, KNode> {
+class SimplePackageObjectSynthesis extends AbstractSubSynthesis<PackageObjectContext, KNode> {
     @Inject extension KNodeExtensions
     @Inject extension OsgiStyles
+    extension KGraphFactory = KGraphFactory.eINSTANCE
     
-    override transform(PackageObject p) {
-        transform(p, 0)
+    override transform(PackageObjectContext poc) {
+        transform(poc, 0)
     }
     
-    def transform(PackageObject p, int priority) {
+    def transform(PackageObjectContext poc, int priority) {
+        val packageObject = poc.modelElement
         return #[
-            p.createNode() => [
-                associateWith(p)
-                val label = p.uniqueId
+            poc.createNode() => [
+                associateWith(poc)
+                data += createKIdentifier => [ it.id = poc.hashCode.toString ]
+                val label = packageObject.uniqueId
                 setLayoutOption(CoreOptions::PRIORITY, priority)
-                addGenericRendering(SynthesisUtils.getId(label, usedContext))
+                addGenericRendering(SynthesisUtils.getId(label, usedContext)) // TODO: add a feature specific rendering.
             ]
         ]
     }

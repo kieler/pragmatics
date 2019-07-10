@@ -1,12 +1,18 @@
 package de.scheidtbachmann.osgimodel.visualization.subsyntheses
 
 import com.google.inject.Inject
+import de.cau.cs.kieler.klighd.kgraph.KGraphFactory
 import de.cau.cs.kieler.klighd.kgraph.KNode
+import de.cau.cs.kieler.klighd.krendering.extensions.KEdgeExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
+import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
-import de.scheidtbachmann.osgimodel.BundleCategory
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
-import java.util.List
+import de.scheidtbachmann.osgimodel.visualization.context.BundleCategoryContext
+import de.scheidtbachmann.osgimodel.visualization.context.BundleCategoryOverviewContext
+import org.eclipse.elk.core.math.ElkPadding
+import org.eclipse.elk.core.options.CoreOptions
+import org.eclipse.elk.core.options.Direction
 
 import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
 import static extension de.scheidtbachmann.osgimodel.visualization.SynthesisUtils.*
@@ -16,23 +22,93 @@ import static extension de.scheidtbachmann.osgimodel.visualization.SynthesisUtil
  * 
  * @author nre
  */
-class BundleCategoryOverviewSynthesis extends AbstractSubSynthesis<List<BundleCategory>, KNode> {
+class BundleCategoryOverviewSynthesis extends AbstractSubSynthesis<BundleCategoryOverviewContext, KNode> {
+    @Inject extension KEdgeExtensions
     @Inject extension KNodeExtensions
+    @Inject extension KRenderingExtensions
     @Inject extension OsgiStyles
     @Inject SimpleBundleCategorySynthesis simpleBundleCategorySynthesis
     
-    override transform(List<BundleCategory> bundleCategories) {
+    extension KGraphFactory = KGraphFactory.eINSTANCE
+    
+    override transform(BundleCategoryOverviewContext bundleCategoryOverviewContext) {
         return #[
             createNode => [
-                configureBoxLayout
-                associateWith(bundleCategories)
+                associateWith(bundleCategoryOverviewContext)
+                data += createKIdentifier => [ it.id = bundleCategoryOverviewContext.hashCode.toString ]
+                if (bundleCategoryOverviewContext.expanded) {
+                    initiallyExpand
+                } else {
+                    initiallyCollapse
+                }
+                setLayoutOption(it, CoreOptions::ALGORITHM, "org.eclipse.elk.layered")
+                setLayoutOption(it, CoreOptions::DIRECTION, Direction.DOWN)
                 addOverviewRendering("Bundle Categories")
-                bundleCategories.sortBy [ it.categoryName ]
-                .forEach [ bundleCategory, index |
-                    children += simpleBundleCategorySynthesis.transform(bundleCategory, -index)
+                
+                // remove the padding of the invisible container.
+                addLayoutParam(CoreOptions.PADDING, new ElkPadding(0, 0, 0, 0))
+                
+                // Add all simple bundle category renderings in a first subgraph (top)
+                val collapsedOverviewNode = transformCollapsedBundleCategoriesOverview(bundleCategoryOverviewContext)
+                children += collapsedOverviewNode
+                
+                // Add all detailed bundle category renderings and their connections in a second subgraph (bottom)
+                val detailedOverviewNode = transformDetailedBundleCategoriesOverview(bundleCategoryOverviewContext)
+                children += detailedOverviewNode
+                
+                // Put an invisible edge between the collapsed and detailed overviews to guarantee the simple renderings
+                // are above the detailed ones.
+                collapsedOverviewNode.outgoingEdges += createEdge => [
+                    addPolyline => [
+                        invisible = true
+                    ]
+                    target = detailedOverviewNode
                 ]
-                initiallyCollapse
             ]
         ]
     }
+    
+    /**
+     * The top part of the bundle category overview rendering containing all collapsed bundle category renderings in a
+     * box layout.
+     * 
+     * @param bundleCategoryOverviewContext The overview context for all bundle categories in this subsynthesis.
+     */
+    private def KNode transformCollapsedBundleCategoriesOverview(
+        BundleCategoryOverviewContext bundleCategoryOverviewContext) {
+        val filteredCollapsedBundleCategoryContexts = bundleCategoryOverviewContext.collapsedElements
+        createNode => [
+            associateWith(bundleCategoryOverviewContext)
+            configureBoxLayout
+            addInvisibleContainerRendering
+            
+            filteredCollapsedBundleCategoryContexts.sortBy [
+                modelElement.categoryName
+            ].forEach [ collapsedBundleCategoryContext, index |
+                children += simpleBundleCategorySynthesis.transform(
+                    collapsedBundleCategoryContext as BundleCategoryContext, -index)
+            ]
+        ]
+    }
+    
+    /**
+     * The bottom part of the bundle category overview rendering containing all detailed bundle category renderings and
+     * their connections in a layered layout.
+     * 
+     * @param bundleCategoryOverviewContext The overview context for all bundle categories in this subsynthesis.
+     */
+    private def KNode transformDetailedBundleCategoriesOverview(
+        BundleCategoryOverviewContext bundleCategoryOverviewContext) {
+        val filteredDetailedBundleCategoryContexts = bundleCategoryOverviewContext.detailedElements
+        createNode => [
+            associateWith(bundleCategoryOverviewContext)
+            configureOverviewLayout
+            addInvisibleContainerRendering
+            
+            children += filteredDetailedBundleCategoryContexts.flatMap [
+                return simpleBundleCategorySynthesis.transform(it as BundleCategoryContext) // TODO: make a specific synthesis for expanded bundle categories!
+            ]
+        ]
+    }
+    
 }

@@ -1,38 +1,117 @@
 package de.scheidtbachmann.osgimodel.visualization.subsyntheses
 
 import com.google.inject.Inject
+import de.cau.cs.kieler.klighd.kgraph.KGraphFactory
 import de.cau.cs.kieler.klighd.kgraph.KNode
+import de.cau.cs.kieler.klighd.krendering.extensions.KEdgeExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
+import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
-import de.scheidtbachmann.osgimodel.PackageObject
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
-import java.util.List
+import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
+import de.scheidtbachmann.osgimodel.visualization.context.PackageObjectContext
+import de.scheidtbachmann.osgimodel.visualization.context.PackageObjectOverviewContext
+import org.eclipse.elk.core.math.ElkPadding
+import org.eclipse.elk.core.options.CoreOptions
+import org.eclipse.elk.core.options.Direction
 
 import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
 import static extension de.scheidtbachmann.osgimodel.visualization.SynthesisUtils.*
 
 /**
- * Transformation as an overview of all imported packages in the given list of imported packages.
+ * Transformation as an overview of all package objects in the given list of package objects.
  * 
  * @author nre
  */
-class PackageObjectOverviewSynthesis extends AbstractSubSynthesis<List<PackageObject>, KNode> {
+class PackageObjectOverviewSynthesis extends AbstractSubSynthesis<PackageObjectOverviewContext, KNode> {
+    @Inject extension KEdgeExtensions
     @Inject extension KNodeExtensions
+    @Inject extension KRenderingExtensions
     @Inject extension OsgiStyles
     @Inject SimplePackageObjectSynthesis simplePackageObjectSynthesis
     
-    override transform(List<PackageObject> packageObjects) {
+    extension KGraphFactory = KGraphFactory.eINSTANCE
+    
+    override transform(PackageObjectOverviewContext packageObjectOverviewContext) {
         return #[
             createNode => [
-                configureBoxLayout
-                associateWith(packageObjects)
-                addOverviewRendering("Imported Packages")
-                packageObjects.sortBy [ uniqueId ]
-                .forEach [ packageObject, index |
-                    children += simplePackageObjectSynthesis.transform(packageObject, -index)
+                associateWith(packageObjectOverviewContext)
+                data += createKIdentifier => [ it.id = packageObjectOverviewContext.hashCode.toString ]
+                if (packageObjectOverviewContext.expanded) {
+                    initiallyExpand
+                } else {
+                    initiallyCollapse
+                }
+                setLayoutOption(it, CoreOptions::ALGORITHM, "org.eclipse.elk.layered")
+                setLayoutOption(it, CoreOptions::DIRECTION, Direction.DOWN)
+                addOverviewRendering("Package Objects")
+                
+                // remove the padding of the invisible container.
+                addLayoutParam(CoreOptions.PADDING, new ElkPadding(0, 0, 0, 0))
+                
+                // Add all simple package object renderings in a first subgraph (top)
+                val collapsedOverviewNode = transformCollapsedPackageObjectsOverview(packageObjectOverviewContext)
+                children += collapsedOverviewNode
+                
+                // Add all detailed package object renderings and their connections in a second subgraph (bottom)
+                val detailedOverviewNode = transformDetailedPackageObjectsOverview(packageObjectOverviewContext)
+                children += detailedOverviewNode
+                
+                // Put an invisible edge between the collapsed and detailed overviews to guarantee the simple renderings
+                // are above the detailed ones.
+                collapsedOverviewNode.outgoingEdges += createEdge => [
+                    addPolyline => [
+                        invisible = true
+                    ]
+                    target = detailedOverviewNode
                 ]
-                initiallyCollapse
             ]
         ]
     }
+    
+    /**
+     * The top part of the package object overview rendering containing all collapsed package object renderings in a box
+     * layout.
+     * 
+     * @param packageObjectOverviewContext The overview context for all package objects in this subsynthesis.
+     */
+    private def KNode transformCollapsedPackageObjectsOverview(
+        PackageObjectOverviewContext packageObjectOverviewContext) {
+        val filteredCollapsedPackageObjectContexts = SynthesisUtils.filteredPackageObjectContexts(
+            packageObjectOverviewContext.collapsedElements, usedContext)
+        createNode => [
+            associateWith(packageObjectOverviewContext)
+            configureBoxLayout
+            addInvisibleContainerRendering
+            
+            filteredCollapsedPackageObjectContexts.sortBy [
+                modelElement.uniqueId
+            ].forEach [ collapsedPackageObjectContext, index |
+                children += simplePackageObjectSynthesis.transform(
+                    collapsedPackageObjectContext as PackageObjectContext, -index)
+            ]
+        ]
+    }
+    
+    /**
+     * The bottom part of the package object overview rendering containing all detailed package object renderings and
+     * their connections in a layered layout.
+     * 
+     * @param packageObjectOverviewContext The overview context for all package objects in this subsynthesis.
+     */
+    private def KNode transformDetailedPackageObjectsOverview(
+        PackageObjectOverviewContext packageObjectOverviewContext) {
+        val filteredDetailedPackageObjectContexts = SynthesisUtils.filteredPackageObjectContexts(
+            packageObjectOverviewContext.detailedElements, usedContext)
+        createNode => [
+            associateWith(packageObjectOverviewContext)
+            configureOverviewLayout
+            addInvisibleContainerRendering
+            
+            children += filteredDetailedPackageObjectContexts.flatMap [
+                return simplePackageObjectSynthesis.transform(it as PackageObjectContext) // TODO: make a specific synthesis for expanded package objects!
+            ]
+        ]
+    }
+    
 }

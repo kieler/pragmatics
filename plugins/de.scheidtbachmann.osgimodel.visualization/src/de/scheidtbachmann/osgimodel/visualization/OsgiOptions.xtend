@@ -8,11 +8,6 @@ import de.cau.cs.kieler.klighd.SynthesisOption
  * @author nre
  */
 class OsgiOptions {
-//    /** The Bundle category */
-//    public static final SynthesisOption BUNDLE = SynthesisOption.createCategory("Bundle Options")
-//    
-//    /** The Overview category */
-//    public static final SynthesisOption OVERVIEW= SynthesisOption.createCategory("Overview Options")
     
     /** The enum holding all possible values for the {@link #BUNDLE_TEXT} option. */
     enum SimpleTextType {
@@ -27,7 +22,7 @@ class OsgiOptions {
     public static final SynthesisOption SHORTEN_BY = SynthesisOption.createTextOption(
         "Shorten IDs by")
     
-    /** Option for filtering an overview by only bundles starting with the id in the option. */
+    /** Option for filtering an overview by only elements starting with the id in the option. */
     public static final SynthesisOption FILTER_BY = SynthesisOption.createTextOption(
         "Filter by IDs starting with")
         

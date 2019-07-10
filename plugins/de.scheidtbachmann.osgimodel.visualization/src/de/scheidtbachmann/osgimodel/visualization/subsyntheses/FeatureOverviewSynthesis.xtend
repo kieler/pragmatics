@@ -1,14 +1,20 @@
 package de.scheidtbachmann.osgimodel.visualization.subsyntheses
 
 import com.google.inject.Inject
+import de.cau.cs.kieler.klighd.kgraph.KGraphFactory
 import de.cau.cs.kieler.klighd.kgraph.KNode
+import de.cau.cs.kieler.klighd.krendering.extensions.KEdgeExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
+import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
-import de.scheidtbachmann.osgimodel.Feature
 import de.scheidtbachmann.osgimodel.visualization.OsgiOptions.SimpleTextType
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
-import java.util.List
+import de.scheidtbachmann.osgimodel.visualization.context.FeatureContext
+import de.scheidtbachmann.osgimodel.visualization.context.FeatureOverviewContext
+import org.eclipse.elk.core.math.ElkPadding
+import org.eclipse.elk.core.options.CoreOptions
+import org.eclipse.elk.core.options.Direction
 
 import static de.scheidtbachmann.osgimodel.visualization.OsgiOptions.*
 
@@ -20,32 +26,99 @@ import static extension de.scheidtbachmann.osgimodel.visualization.SynthesisUtil
  * 
  * @author nre
  */
-class FeatureOverviewSynthesis extends AbstractSubSynthesis<List<Feature>, KNode> {
+class FeatureOverviewSynthesis extends AbstractSubSynthesis<FeatureOverviewContext, KNode> {
+    @Inject extension KEdgeExtensions
     @Inject extension KNodeExtensions
+    @Inject extension KRenderingExtensions
     @Inject extension OsgiStyles
     @Inject SimpleFeatureSynthesis simpleFeatureSynthesis
     
-    override transform(List<Feature> features) {
+    extension KGraphFactory = KGraphFactory.eINSTANCE
+    
+    override transform(FeatureOverviewContext featureOverviewContext) {
         return #[
             createNode => [
-                configureBoxLayout
-                associateWith(features)
+                associateWith(featureOverviewContext)
+                data += createKIdentifier => [ it.id = featureOverviewContext.hashCode.toString ]
+                if (featureOverviewContext.expanded) {
+                    initiallyExpand
+                } else {
+                    initiallyCollapse
+                }
+                setLayoutOption(it, CoreOptions::ALGORITHM, "org.eclipse.elk.layered")
+                setLayoutOption(it, CoreOptions::DIRECTION, Direction.DOWN)
                 addOverviewRendering("Features")
-                features.sortBy [
-                    // The string to sort by. Either the shortened ID or the name.
-                    switch usedContext.getOptionValue(SIMPLE_TEXT) {
-                        case SimpleTextType.Id: {
-                            SynthesisUtils.getId(uniqueId, usedContext)
-                        }
-                        case SimpleTextType.Name: {
-                            descriptiveName
-                        }
-                    } ?: ""
-                ].forEach [ feature, index |
-                    children += simpleFeatureSynthesis.transform(feature, -index)
+                
+                // remove the padding of the invisible container.
+                addLayoutParam(CoreOptions.PADDING, new ElkPadding(0, 0, 0, 0))
+                
+                // Add all simple feature renderings in a first subgraph (top)
+                val collapsedOverviewNode = transformCollapsedFeaturesOverview(featureOverviewContext)
+                children += collapsedOverviewNode
+                
+                // Add all detailed feature renderings and their connections in a second subgraph (bottom)
+                val detailedOverviewNode = transformDetailedFeaturesOverview(featureOverviewContext)
+                children += detailedOverviewNode
+                
+                // Put an invisible edge between the collapsed and detailed overviews to guarantee the simple renderings
+                // are above the detailed ones.
+                collapsedOverviewNode.outgoingEdges += createEdge => [
+                    addPolyline => [
+                        invisible = true
+                    ]
+                    target = detailedOverviewNode
                 ]
-                initiallyCollapse
             ]
         ]
     }
+    
+    /**
+     * The top part of the feature overview rendering containing all collapsed feature renderings in a box layout.
+     * 
+     * @param featureOverviewContext The overview context for all features in this subsynthesis.
+     */
+    private def KNode transformCollapsedFeaturesOverview(FeatureOverviewContext featureOverviewContext) {
+        val filteredCollapsedFeatureContexts = SynthesisUtils.filteredBasicOsgiObjectContexts(
+            featureOverviewContext.collapsedElements, usedContext)
+        createNode => [
+            associateWith(featureOverviewContext)
+            configureBoxLayout
+            addInvisibleContainerRendering
+            
+            filteredCollapsedFeatureContexts.sortBy [
+                // The string to sort by. Either the shortened ID or the name.
+                switch usedContext.getOptionValue(SIMPLE_TEXT) {
+                    case SimpleTextType.Id: {
+                        SynthesisUtils.getId(modelElement.uniqueId, usedContext)
+                    }
+                    case SimpleTextType.Name: {
+                        modelElement.descriptiveName
+                    }
+                } ?: ""
+            ].forEach [ collapsedFeatureContext, index |
+                children += simpleFeatureSynthesis.transform(collapsedFeatureContext as FeatureContext, -index)
+            ]
+        ]
+    }
+    
+    /**
+     * The bottom part of the feature overview rendering containing all detailed feature renderings and their
+     * connections in a layered layout.
+     * 
+     * @param featureOverviewContext The overview context for all features in this subsynthesis.
+     */
+    private def KNode transformDetailedFeaturesOverview(FeatureOverviewContext featureOverviewContext) {
+        val filteredDetailedFeatureContexts = SynthesisUtils.filteredBasicOsgiObjectContexts(
+            featureOverviewContext.detailedElements, usedContext)
+        createNode => [
+            associateWith(featureOverviewContext)
+            configureOverviewLayout
+            addInvisibleContainerRendering
+            
+            children += filteredDetailedFeatureContexts.flatMap [
+                return simpleFeatureSynthesis.transform(it as FeatureContext) // TODO: make a specific synthesis for expanded features!
+            ]
+        ]
+    }
+    
 }
