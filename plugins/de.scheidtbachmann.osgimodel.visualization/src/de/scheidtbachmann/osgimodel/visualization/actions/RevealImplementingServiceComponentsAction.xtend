@@ -19,7 +19,7 @@ class RevealImplementingServiceComponentsAction extends AbstractVisualizationCon
     /**
      * This action's ID.
      */
-    public static val String ID = "de.scheidtbachmann.osgimodel.visualization.actions.RevealImplementingServiceComponentsAction"
+    public static val String ID = RevealImplementingServiceComponentsAction.name
     
     override protected <M extends EObject> IVisualizationContext<?>
     changeVisualization(IVisualizationContext<M> modelVisualizationContext, ActionContext actionContext) {

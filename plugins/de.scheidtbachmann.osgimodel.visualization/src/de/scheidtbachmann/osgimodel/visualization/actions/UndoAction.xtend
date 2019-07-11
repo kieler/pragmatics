@@ -12,7 +12,7 @@ class UndoAction implements IAction {
     /**
      * This action's ID.
      */
-    public static val String ID = "de.scheidtbachmann.osgimodel.visualization.actions.UndoAction"
+    public static val String ID = UndoAction.name
     
     override execute(ActionContext context) {
         // Just decrement the current index pointing towards the current visualization by one.

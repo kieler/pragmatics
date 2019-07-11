@@ -16,7 +16,7 @@ class ContextRemoveAction extends AbstractVisualizationContextChangingAction {
     /**
      * This action's ID.
      */
-    public static val String ID = "de.scheidtbachmann.osgimodel.visualization.actions.ContextRemoveAction" 
+    public static val String ID = ContextRemoveAction.name
     
     override protected <M extends EObject> IVisualizationContext<?>
     changeVisualization(IVisualizationContext<M> modelVisualizationContext, ActionContext actionContext) {

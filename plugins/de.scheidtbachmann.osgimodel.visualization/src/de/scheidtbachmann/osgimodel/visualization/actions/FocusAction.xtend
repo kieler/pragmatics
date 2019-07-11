@@ -12,7 +12,7 @@ class FocusAction extends AbstractVisualizationContextChangingAction {
     /**
      * This action's ID.
      */
-    public static val String ID = "de.scheidtbachmann.osgimodel.visualization.actions.FocusAction"
+    public static val String ID = FocusAction.name
     
     override protected <M extends EObject> changeVisualization(IVisualizationContext<M> modelVisualizationContext, ActionContext actionContext) {
         // Changing the focus element is exactly what returning a non-null visualization context to the

@@ -18,7 +18,7 @@ class RevealUsedByBundlesAction extends AbstractVisualizationContextChangingActi
     /**
      * This action's ID.
      */
-    public static val String ID = "de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedByBundlesAction"
+    public static val String ID = RevealUsedByBundlesAction.name
     
     override protected <M extends EObject> IVisualizationContext<?>
     changeVisualization(IVisualizationContext<M> modelVisualizationContext, ActionContext actionContext) {

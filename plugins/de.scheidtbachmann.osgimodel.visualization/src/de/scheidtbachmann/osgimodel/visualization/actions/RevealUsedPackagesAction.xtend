@@ -27,7 +27,7 @@ class RevealUsedPackagesAction extends AbstractVisualizationContextChangingActio
     /**
      * This action's ID.
      */
-    public static val String ID = "de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedPackagesAction"
+    public static val String ID = RevealUsedPackagesAction.name
     
     override protected <M extends EObject> IVisualizationContext<?>
     changeVisualization(IVisualizationContext<M> modelVisualizationContext, ActionContext actionContext) {

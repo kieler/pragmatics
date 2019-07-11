@@ -12,7 +12,7 @@ class RedoAction implements IAction {
     /**
      * This action's ID.
      */
-    public static val String ID = "de.scheidtbachmann.osgimodel.visualization.actions.RedoAction"
+    public static val String ID = RedoAction.name
     
     override execute(ActionContext context) {
         // Just increment the current index pointing towards the current visualization by one.

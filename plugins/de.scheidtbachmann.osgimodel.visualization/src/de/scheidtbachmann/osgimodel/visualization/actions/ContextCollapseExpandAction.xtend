@@ -14,7 +14,7 @@ class ContextCollapseExpandAction extends AbstractVisualizationContextChangingAc
     /**
      * This action's ID.
      */
-    public static val String ID = "de.scheidtbachmann.osgimodel.visualization.actions.ContextCollapseExpandAction" 
+    public static val String ID = ContextCollapseExpandAction.name
     
     override protected <M extends EObject> IVisualizationContext<?>
     changeVisualization(IVisualizationContext<M> modelVisualizationContext, ActionContext actionContext) {

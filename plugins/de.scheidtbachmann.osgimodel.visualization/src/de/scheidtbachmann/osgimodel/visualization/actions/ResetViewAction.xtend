@@ -12,7 +12,7 @@ class ResetViewAction implements IAction {
     /**
      * This action's ID.
      */
-    public static val String ID = "de.scheidtbachmann.osgimodel.visualization.actions.ResetViewAction"
+    public static val String ID = ResetViewAction.name
     
     override execute(ActionContext context) {
         // Just set the current index pointing towards the current visualization to 0.
