@@ -105,24 +105,42 @@ class ContextUtils {
         ]
     }
     
-    /**
-     * Removes all edges incident to the context.
-     * 
-     * @param overviewContext The overview context containing the edge
-     * @param context The context of that all edges should be removed.
-     */
     def dispatch static void removeEdges(ProductOverviewContext overviewContext, ProductContext context) {
         // There are no edges in product overview contexts. So do nothing.
     }
     
-    /**
-     * Removes all edges incident to the context.
-     * 
-     * @param overviewContext The overview context containing the edge
-     * @param context The context of that all edges should be removed.
-     */
-    def dispatch static void removeEdges(ServiceInterfaceOverviewContext overviewContext, ServiceInterfaceContext context) {
-        // There are no edges in service interface overview contexts. So do nothing.
+    def dispatch static void removeEdges(BundleCategoryOverviewContext overviewContext, BundleCategoryContext context) {
+        // There are no edges in bundle category overview contexts. So do nothing.
+    }
+    
+    def dispatch static void removeEdges(FeatureOverviewContext overviewContext, FeatureContext context) {
+        // There are no edges in feature overview contexts. So do nothing.
+    }
+    
+    def dispatch static void removeEdges(PackageObjectOverviewContext overviewContext, PackageObjectContext context) {
+        // There are no edges in package object overview contexts. So do nothing.
+    }
+    
+    def dispatch static void removeEdges(ServiceInterfaceOverviewContext overviewContext,
+        ServiceInterfaceContext context) {
+        val implementedInterfaceEdges = overviewContext.implementedInterfaceEdges.clone
+        implementedInterfaceEdges.forEach [
+            if (value === context) {
+                overviewContext.implementedInterfaceEdges.remove(it)
+                value.allImplementingComponentsShown = false
+            }
+        ]
+    }
+    
+    def dispatch static void removeEdges(ServiceInterfaceOverviewContext overviewContext,
+        ServiceComponentContext context) {
+        val implementedInterfaceEdges = overviewContext.implementedInterfaceEdges.clone
+        implementedInterfaceEdges.forEach [
+            if (key === context) {
+                overviewContext.implementedInterfaceEdges.remove(it)
+                value.allImplementingComponentsShown = false
+            }
+        ]
     }
     
     /**
@@ -256,7 +274,15 @@ class ContextUtils {
             key === serviceComponentContext && value === serviceInterfaceContext
         ]) {
             parentContext.implementedInterfaceEdges += serviceComponentContext -> serviceInterfaceContext
-            // TODO: check if all components / interfaces are connected and mark that in the contexts.
+            // Check if all components are connected and mark that in the context.
+            if (serviceInterfaceContext.modelElement.serviceComponent.forall [ implementingComponent |
+                parentContext.implementedInterfaceEdges.exists [
+                    key.modelElement === implementingComponent && value == serviceInterfaceContext
+                ]
+            ]) {
+                serviceInterfaceContext.allImplementingComponentsShown = true
+            }
+            // TODO: do the same check as above also for the service interfaces.
         }
     }
     

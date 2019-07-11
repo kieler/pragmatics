@@ -25,6 +25,7 @@ import de.scheidtbachmann.osgimodel.Product
 import de.scheidtbachmann.osgimodel.ServiceComponent
 import de.scheidtbachmann.osgimodel.ServiceInterface
 import de.scheidtbachmann.osgimodel.visualization.actions.ContextCollapseExpandAction
+import de.scheidtbachmann.osgimodel.visualization.actions.ContextRemoveAction
 import de.scheidtbachmann.osgimodel.visualization.actions.FocusAction
 import de.scheidtbachmann.osgimodel.visualization.actions.OverviewContextCollapseExpandAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealImplementingServiceComponentsAction
@@ -570,8 +571,7 @@ class OsgiStyles {
                         flexibleWidth = false
                     ]
                 ]
-                addButton("x", ContextCollapseExpandAction::ID) => [ //TODO: This action should probably completely
-                // remove the sc from the overview again, not just collapse it.
+                addButton("x", ContextRemoveAction::ID) => [
                     setGridPlacementData => [
                         flexibleWidth = false
                     ]
@@ -592,7 +592,6 @@ class OsgiStyles {
                 invisible = true
                 addChildArea
             ]
-            addDoubleClickAction(ContextCollapseExpandAction::ID)
             setShadow("black".color, 4, 4)
         ]
     }

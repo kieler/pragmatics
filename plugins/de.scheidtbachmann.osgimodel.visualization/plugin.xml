@@ -31,6 +31,10 @@
             id="de.scheidtbachmann.osgimodel.visualization.actions.ContextCollapseExpandAction">
       </action>
       <action
+            class="de.scheidtbachmann.osgimodel.visualization.actions.ContextRemoveAction"
+            id="de.scheidtbachmann.osgimodel.visualization.actions.ContextRemoveAction">
+      </action>
+      <action
             class="de.scheidtbachmann.osgimodel.visualization.actions.OverviewContextCollapseExpandAction"
             id="de.scheidtbachmann.osgimodel.visualization.actions.OverviewContextCollapseExpandAction">
       </action>
