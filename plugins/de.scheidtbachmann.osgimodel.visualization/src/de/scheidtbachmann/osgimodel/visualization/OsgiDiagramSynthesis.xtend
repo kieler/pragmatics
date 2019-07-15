@@ -11,6 +11,7 @@ import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import de.scheidtbachmann.osgimodel.OsgiProject
 import de.scheidtbachmann.osgimodel.visualization.actions.RedoAction
 import de.scheidtbachmann.osgimodel.visualization.actions.ResetViewAction
+import de.scheidtbachmann.osgimodel.visualization.actions.ToggleServiceComponentVisualization
 import de.scheidtbachmann.osgimodel.visualization.actions.UndoAction
 import de.scheidtbachmann.osgimodel.visualization.context.BundleCategoryOverviewContext
 import de.scheidtbachmann.osgimodel.visualization.context.BundleOverviewContext
@@ -20,12 +21,14 @@ import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
 import de.scheidtbachmann.osgimodel.visualization.context.OsgiProjectContext
 import de.scheidtbachmann.osgimodel.visualization.context.PackageObjectOverviewContext
 import de.scheidtbachmann.osgimodel.visualization.context.ProductOverviewContext
+import de.scheidtbachmann.osgimodel.visualization.context.ServiceComponentOverviewContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceOverviewContext
 import de.scheidtbachmann.osgimodel.visualization.subsyntheses.BundleCategoryOverviewSynthesis
 import de.scheidtbachmann.osgimodel.visualization.subsyntheses.BundleOverviewSynthesis
 import de.scheidtbachmann.osgimodel.visualization.subsyntheses.FeatureOverviewSynthesis
 import de.scheidtbachmann.osgimodel.visualization.subsyntheses.PackageObjectOverviewSynthesis
 import de.scheidtbachmann.osgimodel.visualization.subsyntheses.ProductOverviewSynthesis
+import de.scheidtbachmann.osgimodel.visualization.subsyntheses.ServiceComponentOverviewSynthesis
 import de.scheidtbachmann.osgimodel.visualization.subsyntheses.ServiceInterfaceOverviewSynthesis
 import java.util.LinkedHashSet
 import org.eclipse.elk.alg.layered.options.LayeredOptions
@@ -51,6 +54,7 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
     @Inject PackageObjectOverviewSynthesis packageObjectOverviewSynthesis
     @Inject ProductOverviewSynthesis productOverviewSynthesis
     @Inject ServiceInterfaceOverviewSynthesis serviceInterfaceOverviewSynthesis
+    @Inject ServiceComponentOverviewSynthesis serviceComponentOverviewSynthesis
     
     extension KGraphFactory = KGraphFactory.eINSTANCE
     
@@ -65,7 +69,12 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
             DisplayedActionData.create(RedoAction.ID, "Redo",
                 "Redoes the last action that was undone on the view model."),
             DisplayedActionData.create(ResetViewAction.ID, "Reset View",
-                "Resets the view to its default overview state.")
+                "Resets the view to its default overview state."),
+            DisplayedActionData.create(ToggleServiceComponentVisualization.ID, "Toggle service component visualization",
+                "Toggles between visualizing service components on their own and visualizing them in their bundle "
+                + "context.\n\n"
+                + "To be able to view the service components in the bundles, the Bundle->Show Service Components "
+                + "option has to be turned on.")
         ]
     }
     
@@ -78,10 +87,10 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
     override getDisplayedSynthesisOptions() {
         val options = new LinkedHashSet()
         // Add Bundle options
-        options.addAll(SIMPLE_TEXT, DESCRIPTION_LENGTH)
+        options.addAll(BUNDLE_SHOW_SERVICE_COMPONENTS)
         
         // Add general options
-        options.addAll(SHORTEN_BY, FILTER_BY)
+        options.addAll(SIMPLE_TEXT, DESCRIPTION_LENGTH, SHORTEN_BY, FILTER_BY)
         
         return options.toList
     }
@@ -182,6 +191,9 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
             }
             case context instanceof ServiceInterfaceOverviewContext: {
                 return serviceInterfaceOverviewSynthesis.transform(context as ServiceInterfaceOverviewContext)
+            }
+            case context instanceof ServiceComponentOverviewContext: {
+                return serviceComponentOverviewSynthesis.transform(context as ServiceComponentOverviewContext)
             }
             default: {
                 throw new IllegalArgumentException("The context class has no known subsynthesis: " + context.class)

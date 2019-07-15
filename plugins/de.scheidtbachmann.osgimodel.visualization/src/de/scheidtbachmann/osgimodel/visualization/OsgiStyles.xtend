@@ -367,6 +367,15 @@ class OsgiStyles {
                 invisible = true
                 addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(b.about, context))
             ]
+            addHorizontalSeperatorLine(1, 0)
+            addRectangle => [
+                setGridPlacementData => [
+                    minCellHeight = 20
+                    minCellWidth = 20
+                ]
+                invisible = true
+                addChildArea
+            ]
             addDoubleClickAction(ContextCollapseExpandAction::ID)
             setShadow("black".color, 4, 4)
         ]
@@ -545,6 +554,35 @@ class OsgiStyles {
     }
     
     // ------------------------------------- ServiceComponent renderings -------------------------------------
+    
+    /**
+     * Adds a simple rendering for a {@link ServiceComponent} to the given node that can be expanded to call the
+     * {link ReferencedSynthesisExpandAction} to dynamically call the service component synthesis for the given bundle.
+     */
+    def addServiceComponentInOverviewRendering(KNode node, ServiceComponent s, String name) {
+        node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
+            setGridPlacement(3)
+            addRectangle => [
+                invisible = true
+                addSimpleLabel(name)
+            ]
+            addVerticalLine(RIGHT, 0, 1) => [
+                setGridPlacementData => [
+                    flexibleWidth = false
+                ]
+            ]
+            addButton("+", ContextCollapseExpandAction::ID) => [
+                setGridPlacementData => [
+                    flexibleWidth = false
+                ]
+                lineWidth = 0
+            ]
+            setBackgroundGradient("#FFE0F5".color, "#FFC2EB".color, 90)
+            addDoubleClickAction(ContextCollapseExpandAction::ID)
+            setShadow("black".color, 4, 4)
+            tooltip = s.name
+        ]
+    }
     
     /**
      * Adds a rendering for a {@link ServiceComponent} to the given node.

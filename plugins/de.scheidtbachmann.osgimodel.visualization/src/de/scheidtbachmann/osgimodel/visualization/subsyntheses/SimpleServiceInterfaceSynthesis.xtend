@@ -33,9 +33,9 @@ class SimpleServiceInterfaceSynthesis extends AbstractSubSynthesis<ServiceInterf
             sic.createNode() => [
                 associateWith(sic)
                 data += createKIdentifier => [ it.id = sic.hashCode.toString ]
+                // The 'name' attribute of service interfaces really are their ID.
                 val label = SynthesisUtils.getId(serviceInterface.name, usedContext)
                 setLayoutOption(CoreOptions::PRIORITY, priority)
-                // The 'name' attribute of service interfaces really are their ID.
                 addServiceInterfaceInOverviewRendering(serviceInterface, label)
             ]
         ]

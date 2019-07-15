@@ -1,5 +1,6 @@
 package de.scheidtbachmann.osgimodel.visualization.actions
 
+import de.scheidtbachmann.osgimodel.visualization.context.BundleContext
 import de.scheidtbachmann.osgimodel.visualization.context.ContextUtils
 import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceComponentContext
@@ -30,25 +31,69 @@ class RevealImplementingServiceComponentsAction extends AbstractVisualizationCon
         val serviceInterface = serviceInterfaceContext.modelElement
         
         // The service interface overview context this service interface is shown in.
-        val serviceInterfaceOverviewContext = serviceInterfaceContext.parentVisualizationContext as ServiceInterfaceOverviewContext
+        val serviceInterfaceOverviewContext = serviceInterfaceContext.parentVisualizationContext
+            as ServiceInterfaceOverviewContext
+        
+        // ----- Put the service components in the context for the PLAIN view -----
         
         // The service components that are not already represented in the overview need to be put in first.
         // Collect all contexts for the service components implementing this interface.
-        val implementingServiceComponentContexts = new ArrayList<ServiceComponentContext>
+        val implementingServiceComponentContextsPlain = new ArrayList<ServiceComponentContext>
         serviceInterface.serviceComponent.forEach [ serviceComponent |
-            var implementingServiceComponentContext = serviceInterfaceOverviewContext.implementingServiceComponentContexts.findFirst [
-                return it.modelElement === serviceComponent
-            ]
+            var implementingServiceComponentContext = serviceInterfaceOverviewContext
+                .implementingServiceComponentContexts.findFirst [
+                    return it.modelElement === serviceComponent
+                ]
             if (implementingServiceComponentContext === null) {
-                implementingServiceComponentContext = new ServiceComponentContext(serviceComponent, serviceInterfaceOverviewContext)
-                serviceInterfaceOverviewContext.implementingServiceComponentContexts.add(implementingServiceComponentContext)
+                implementingServiceComponentContext = new ServiceComponentContext(serviceComponent,
+                    serviceInterfaceOverviewContext)
+                serviceInterfaceOverviewContext.implementingServiceComponentContexts
+                    .add(implementingServiceComponentContext)
             }
-            implementingServiceComponentContexts.add(implementingServiceComponentContext)
+            implementingServiceComponentContextsPlain.add(implementingServiceComponentContext)
         ]
         
-        implementingServiceComponentContexts.forEach [ implementingServiceComponentContext |
-            ContextUtils.addImplementingServiceComponentEdge(serviceInterfaceContext, implementingServiceComponentContext)
+        implementingServiceComponentContextsPlain.forEach [ implementingServiceComponentContext |
+            ContextUtils.addImplementingServiceComponentEdgePlain(serviceInterfaceContext,
+                implementingServiceComponentContext)
         ]
+        
+        // ----- Put the service components and the bundles in the context for the IN_BUNDLES view -----
+        
+        val implementingServiceComponentContextsInBundles = new ArrayList<ServiceComponentContext>
+        serviceInterface.serviceComponent.forEach [ serviceComponent |
+            // Find the bundle context that should be containing a view on this service component.
+            var referencedBundleContext = serviceInterfaceOverviewContext.referencedBundleContexts.findFirst [
+                return it.modelElement === serviceComponent.bundle
+            ]
+            // Create a new bundle context for that bundle if it is not yet in the view.
+            if (referencedBundleContext === null) {
+                referencedBundleContext = new BundleContext(serviceComponent.bundle, serviceInterfaceOverviewContext)
+                serviceInterfaceOverviewContext.referencedBundleContexts.add(referencedBundleContext)
+            }
+            
+            val serviceComponentOverviewContext = referencedBundleContext.serviceComponentOverviewContext
+            serviceComponentOverviewContext.expanded = true
+            var implementingServiceComponentContext = serviceComponentOverviewContext
+                .childContexts.findFirst [
+                    return it.modelElement === serviceComponent
+                ]
+            // Create a new service component context for the component if it is not already in the bundle view.
+            if (implementingServiceComponentContext === null) {
+                throw new IllegalStateException("The bundle context does not contain all its service components as "
+                    + "own contexts!")
+            }
+            ContextUtils.makeDetailed(serviceComponentOverviewContext,
+                implementingServiceComponentContext)
+            implementingServiceComponentContextsInBundles.add(implementingServiceComponentContext
+                as ServiceComponentContext)
+        ]
+        
+        implementingServiceComponentContextsInBundles.forEach [ implementingServiceComponentContext |
+            ContextUtils.addImplementingServiceComponentEdgeInBundle(serviceInterfaceContext,
+                implementingServiceComponentContext)
+        ]
+        
         
         return null
     }

@@ -32,6 +32,12 @@ class ServiceInterfaceOverviewContext implements IOverviewVisualizationContext<S
     List<ServiceComponentContext> implementingServiceComponentContexts
     
     /**
+     * All referenced bundles shown
+     */
+    @Accessors
+    List<BundleContext> referencedBundleContexts
+    
+    /**
      * All connections for the implementing service components that should be drawn.
      * The pairs should be viewed that the first component implements the second interface.
      */
@@ -61,13 +67,14 @@ class ServiceInterfaceOverviewContext implements IOverviewVisualizationContext<S
         detailedServiceInterfaceContexts = new LinkedList
         collapsedServiceInterfaceContexts = new LinkedList
         implementingServiceComponentContexts = new LinkedList
+        referencedBundleContexts = new LinkedList
         implementedInterfaceEdges = new LinkedList
         expanded = false
         initializeChildVisualizationContexts
     }
     
     override getChildContexts() {
-        return ImmutableList.copyOf(detailedServiceInterfaceContexts + collapsedServiceInterfaceContexts) // TODO: + implementingServiceComponentContexts?
+        return ImmutableList.copyOf(detailedServiceInterfaceContexts + collapsedServiceInterfaceContexts) // TODO: + implementingServiceComponentContexts? referencedBundleContexts?
     }
     
     override getModelElement() {
@@ -130,6 +137,12 @@ class ServiceInterfaceOverviewContext implements IOverviewVisualizationContext<S
             clonedServiceComponentContexts.put(it, newServiceComponentContext)
             newServiceComponentContext.parentVisualizationContext = copy
             copy.implementingServiceComponentContexts.add(newServiceComponentContext)
+        ]
+        copy.referencedBundleContexts = new LinkedList
+        referencedBundleContexts.forEach [
+            val newBundleContext = deepCopy as BundleContext
+            newBundleContext.parentVisualizationContext = copy
+            copy.referencedBundleContexts.add(newBundleContext)
         ]
         copy.implementedInterfaceEdges = new LinkedList
         implementedInterfaceEdges.forEach[

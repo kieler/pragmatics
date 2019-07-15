@@ -8,6 +8,10 @@ import de.cau.cs.kieler.klighd.SynthesisOption
  * @author nre
  */
 class OsgiOptions {
+    /** Category option containing bundle specific options. */
+    
+    public static final SynthesisOption BUNDLE = SynthesisOption.createCategory("Bundle", false)
+    
     
     /** The enum holding all possible values for the {@link #BUNDLE_TEXT} option. */
     enum SimpleTextType {
@@ -29,4 +33,8 @@ class OsgiOptions {
     /** Option for limiting the length of descriptive texts. */
     public static final SynthesisOption DESCRIPTION_LENGTH = SynthesisOption.createRangeOption(
         "Description text length", 0, 500, 1, 20)
+    
+    /** Option indicating whether service components should be shown in bundles. */
+    public static final SynthesisOption BUNDLE_SHOW_SERVICE_COMPONENTS = SynthesisOption.createCheckOption(
+        "Show Service Components", true).setCategory(BUNDLE)
 }

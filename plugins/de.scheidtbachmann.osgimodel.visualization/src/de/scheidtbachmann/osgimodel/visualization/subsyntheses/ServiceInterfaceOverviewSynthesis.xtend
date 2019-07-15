@@ -10,7 +10,9 @@ import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
 import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
+import de.scheidtbachmann.osgimodel.visualization.OsgiSynthesisProperties
 import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
+import de.scheidtbachmann.osgimodel.visualization.context.BundleContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceComponentContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceOverviewContext
@@ -18,6 +20,7 @@ import org.eclipse.elk.alg.layered.options.LayeredMetaDataProvider
 import org.eclipse.elk.core.math.ElkPadding
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.Direction
+import org.eclipse.elk.core.options.HierarchyHandling
 
 import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
 import static extension de.scheidtbachmann.osgimodel.visualization.SynthesisUtils.*
@@ -32,9 +35,10 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
     @Inject extension KNodeExtensions
     @Inject extension KRenderingExtensions
     @Inject extension OsgiStyles
-    @Inject SimpleServiceInterfaceSynthesis simpleServiceInterfaceSynthesis
-    @Inject ServiceInterfaceSynthesis serviceInterfaceSynthesis
+    @Inject BundleSynthesis bundleSynthesis
     @Inject ServiceComponentSynthesis serviceComponentSynthesis
+    @Inject ServiceInterfaceSynthesis serviceInterfaceSynthesis
+    @Inject SimpleServiceInterfaceSynthesis simpleServiceInterfaceSynthesis
     
     extension KGraphFactory = KGraphFactory.eINSTANCE
     
@@ -107,25 +111,37 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
      */
     private def KNode transformDetailedServiceInterfacesOverview(
         ServiceInterfaceOverviewContext serviceInterfaceOverviewContext) {
-        val filteredDetailedServiceInterfaceContexts = SynthesisUtils.filteredServiceInterfaceContexts(
-            serviceInterfaceOverviewContext.detailedElements, usedContext)
-        val filteredImplementingServiceComponentContexts = serviceInterfaceOverviewContext
-            .implementingServiceComponentContexts
         createNode => [
             associateWith(serviceInterfaceOverviewContext)
             configureOverviewLayout
             setLayoutOption(LayeredMetaDataProvider::SPACING_NODE_NODE_BETWEEN_LAYERS, 30.0)
+            setLayoutOption(CoreOptions::HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN)
             addInvisibleContainerRendering
             
             // All service interfaces.
+            val filteredDetailedServiceInterfaceContexts = SynthesisUtils.filteredServiceInterfaceContexts(
+                serviceInterfaceOverviewContext.detailedElements, usedContext)
             children += filteredDetailedServiceInterfaceContexts.flatMap [
                 return serviceInterfaceSynthesis.transform(it as ServiceInterfaceContext)
             ]
             
-            // All service components.
-            children += filteredImplementingServiceComponentContexts.flatMap [
-                return serviceComponentSynthesis.transform(it as ServiceComponentContext)
-            ]
+            switch (usedContext.getProperty(OsgiSynthesisProperties.CURRENT_SERVICE_COMPONENT_VISUALIZATION_MODE)) {
+                case PLAIN: {
+                    // All service components.
+                    val filteredImplementingServiceComponentContexts = serviceInterfaceOverviewContext
+                        .implementingServiceComponentContexts
+                    children += filteredImplementingServiceComponentContexts.flatMap [
+                        return serviceComponentSynthesis.transform(it as ServiceComponentContext)
+                    ]
+                }
+                case IN_BUNDLES: {
+                    // All bundles containing the service components.
+                    val filteredBundleContexts = serviceInterfaceOverviewContext.referencedBundleContexts
+                    children += filteredBundleContexts.flatMap [
+                        return bundleSynthesis.transform(it as BundleContext)
+                    ]
+                }
+            }
             
             // Add all implementing service component edges.
             serviceInterfaceOverviewContext.implementedInterfaceEdges.forEach [

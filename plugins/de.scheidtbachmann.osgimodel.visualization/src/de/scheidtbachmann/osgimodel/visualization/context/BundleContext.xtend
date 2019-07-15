@@ -36,24 +36,31 @@ class BundleContext implements IVisualizationContext<Bundle> {
     /**
      * The parent visualization context.
      */
-    IOverviewVisualizationContext<Bundle> parent
+    IOverviewVisualizationContext<?> parent
+    
+    /**
+     * The context for the service component overview shown in detailed bundles.
+     */
+    @Accessors
+    ServiceComponentOverviewContext serviceComponentOverviewContext
     
     private new() {}
     
-    new(Bundle bundle, IOverviewVisualizationContext<Bundle> parent) {
+    new(Bundle bundle, IOverviewVisualizationContext<?> parent) {
         this.parent = parent
         this.bundle = bundle
+        initializeChildVisualizationContexts
     }
     
     override getChildContexts() {
-        return #[]
+        return #[serviceComponentOverviewContext]
     }
     
     override getModelElement() {
        return bundle
     }
     
-    override IOverviewVisualizationContext<Bundle> getParentVisualizationContext() {
+    override IOverviewVisualizationContext<?> getParentVisualizationContext() {
         return parent
     }
     
@@ -62,11 +69,16 @@ class BundleContext implements IVisualizationContext<Bundle> {
     }
     
     override initializeChildVisualizationContexts() {
-        // Nothing to do yet.
+        serviceComponentOverviewContext = new ServiceComponentOverviewContext(bundle.serviceComponents, this)
     }
     
     override deepCopy() {
         val clone = new BundleContext
+        if (serviceComponentOverviewContext !== null) {
+            clone.serviceComponentOverviewContext = serviceComponentOverviewContext.deepCopy
+                as ServiceComponentOverviewContext
+            clone.serviceComponentOverviewContext.parentVisualizationContext = clone
+        }
         clone.allRequiredBundlesShown = allRequiredBundlesShown
         clone.allRequiringBundlesShown = allRequiringBundlesShown
         clone.allUsedPackagesShown = allUsedPackagesShown

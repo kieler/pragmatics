@@ -48,8 +48,14 @@ class ContextUtils {
      * @param collapsedContext The context that is now a collapsed element in the parent overview and should be put in
      * the detailed elements as well as be initialized for its child contexts.
      */
-    def static <M extends EObject> void makeDetailed(IOverviewVisualizationContext<M> overviewContext, IVisualizationContext<M> collapsedContext) {
-        // this element was previously collapsed, so put it in the detailed list now and initialize its child
+    def static <M extends EObject> void makeDetailed(IOverviewVisualizationContext<M> overviewContext,
+        IVisualizationContext<M> collapsedContext) {
+        // Only execute this if the element is not already detailed.
+        if (overviewContext.detailedElements.contains(collapsedContext)) {
+            return
+        }
+        
+        // This element was previously collapsed, so put it in the detailed list now and initialize its child
         // visualization contexts.
         overviewContext.collapsedElements.remove(collapsedContext)
         // Only this cast will allow to add the context. We know this adding is type-safe, as the collapsed- and
@@ -69,8 +75,14 @@ class ContextUtils {
      * @param detailedContext The context that is now a detailed element in the parent overview and should be put in
      * the collapsed elements.
      */
-    def static <M extends EObject> void collapse(IOverviewVisualizationContext<M> overviewContext, IVisualizationContext<M> detailedContext) {
-        // this element was previously detailed, so put it in the collapsed list now.
+    def static <M extends EObject> void collapse(IOverviewVisualizationContext<M> overviewContext,
+        IVisualizationContext<M> detailedContext) {
+        // Only execute this if the element is not already collapsed
+        if (overviewContext.collapsedElements.contains(detailedContext)) {
+            return
+        }
+        
+        // This element was previously detailed, so put it in the collapsed list now.
         overviewContext.detailedElements.remove(detailedContext)
         // Only this cast will allow to add the context. We know this adding is type-safe, as the collapsed- and
         // the detailed elements list are always of the same type. If they are not, the collapsed/detailed state
@@ -262,11 +274,11 @@ class ContextUtils {
      * @param serviceInterfaceContext The service interface context that gets implemented.
      * @param serviceComponentContext The service component context that is implementing.
      */
-    def static void addImplementingServiceComponentEdge(ServiceInterfaceContext serviceInterfaceContext,
+    def static void addImplementingServiceComponentEdgePlain(ServiceInterfaceContext serviceInterfaceContext,
         ServiceComponentContext serviceComponentContext) {
         val parentContext = serviceInterfaceContext.parentVisualizationContext as ServiceInterfaceOverviewContext
         if (serviceComponentContext.parentVisualizationContext !== parentContext) {
-            throw new IllegalArgumentException("The requiring and the required context both have to have the same " +
+            throw new IllegalArgumentException("The interface and the component contexts both have to have the same " +
                 "parent context!")
         }
         // Only if this edge does not exist yet, add it to the list of implementing service component edges.
@@ -281,6 +293,42 @@ class ContextUtils {
                 ]
             ]) {
                 serviceInterfaceContext.allImplementingComponentsShown = true
+            }
+            // TODO: do the same check as above also for the service interfaces.
+        }
+    }
+    
+    /**
+     * Adds a implementing service component edge to the parent service interface context of the two given contexts.
+     * The direction of the edge indicates that the service interface of the {@code serviceInterfaceContext} is
+     * implemented by the service component of the {@code serviceComponentContext}.
+     * [component] ---implements---|> [interface]
+     * 
+     * @param serviceInterfaceContext The service interface context that gets implemented.
+     * @param serviceComponentContext The service component context that is implementing. Is not directly contained in
+     * a common parent service interface context, but in a hierarchy of a service component and bundle context first.
+     */
+    def static void addImplementingServiceComponentEdgeInBundle(ServiceInterfaceContext serviceInterfaceContext,
+        ServiceComponentContext serviceComponentContext) {
+        val parentContext = serviceInterfaceContext.parentVisualizationContext as ServiceInterfaceOverviewContext
+        // The serviceComponent should be in the hierarchy as in: SIOCtx->BundleCtx->SCOCtx->SCCtx
+        if (serviceComponentContext.parentVisualizationContext.parentVisualizationContext.parentVisualizationContext
+            !== parentContext) {
+            throw new IllegalArgumentException("The interface and the component contexts are not in the correct "
+                + "context hierarchy!")
+        }
+        // Only if this edge does not exist yet, add it to the list of implementing service component edges.
+        if (!parentContext.implementedInterfaceEdges.exists [
+            key === serviceComponentContext && value === serviceInterfaceContext
+        ]) {
+            parentContext.implementedInterfaceEdges += serviceComponentContext -> serviceInterfaceContext // TODO: This should also be an own inBundles variant
+            // Check if all components are connected and mark that in the context.
+            if (serviceInterfaceContext.modelElement.serviceComponent.forall [ implementingComponent |
+                parentContext.implementedInterfaceEdges.exists [
+                    key.modelElement === implementingComponent && value == serviceInterfaceContext
+                ]
+            ]) {
+                serviceInterfaceContext.allImplementingComponentsShown = true // TODO: this is now doubled with the other edge. Plain/in_bundles specific boolean?
             }
             // TODO: do the same check as above also for the service interfaces.
         }
