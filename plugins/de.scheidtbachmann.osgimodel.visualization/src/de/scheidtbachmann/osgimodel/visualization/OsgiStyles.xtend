@@ -281,14 +281,7 @@ class OsgiStyles {
                 addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(p.about, context))
             ]
             addHorizontalSeperatorLine(1, 0)
-            addRectangle => [
-                setGridPlacementData => [
-                    minCellHeight = 20
-                    minCellWidth = 20
-                ]
-                invisible = true
-                addChildArea
-            ]
+            addChildArea
             addDoubleClickAction(ContextCollapseExpandAction::ID)
             setShadow("black".color, 4, 4)
         ]
@@ -368,14 +361,7 @@ class OsgiStyles {
                 addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(b.about, context))
             ]
             addHorizontalSeperatorLine(1, 0)
-            addRectangle => [
-                setGridPlacementData => [
-                    minCellHeight = 20
-                    minCellWidth = 20
-                ]
-                invisible = true
-                addChildArea
-            ]
+            addChildArea
             addDoubleClickAction(ContextCollapseExpandAction::ID)
             setShadow("black".color, 4, 4)
         ]
@@ -527,14 +513,7 @@ class OsgiStyles {
                 addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(si.about, context))
             ]
             addHorizontalSeperatorLine(1, 0)
-            addRectangle => [
-                setGridPlacementData => [
-                    minCellHeight = 20
-                    minCellWidth = 20
-                ]
-                invisible = true
-                addChildArea
-            ]
+            addChildArea
             addDoubleClickAction(ContextCollapseExpandAction::ID)
             setShadow("black".color, 4, 4)
         ]
@@ -622,14 +601,7 @@ class OsgiStyles {
                 addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(sc.about, context))
             ]
             addHorizontalSeperatorLine(1, 0)
-            addRectangle => [
-                setGridPlacementData => [
-                    minCellHeight = 20
-                    minCellWidth = 20
-                ]
-                invisible = true
-                addChildArea
-            ]
+            addChildArea
             setShadow("black".color, 4, 4)
         ]
     }
