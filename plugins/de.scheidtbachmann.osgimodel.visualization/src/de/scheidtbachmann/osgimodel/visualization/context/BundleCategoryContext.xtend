@@ -1,6 +1,7 @@
 package de.scheidtbachmann.osgimodel.visualization.context
 
 import de.scheidtbachmann.osgimodel.BundleCategory
+import java.util.Map
 
 /**
  * Context for the OSGi synthesis that contains information about {@link BundleCategory}s.
@@ -46,11 +47,17 @@ class BundleCategoryContext implements IVisualizationContext<BundleCategory> {
         // Nothing to do yet.
     }
     
-    override deepCopy() {
+    override deepCopy(Map<IVisualizationContext<?>, IVisualizationContext<?>> seenContexts) {
+        val alreadyCloned = seenContexts.get(this)
+        if (alreadyCloned !== null) {
+            return alreadyCloned as BundleCategoryContext
+        }
+        
         val clone = new BundleCategoryContext
         clone.bundleCategory = bundleCategory
         clone.parent = null
         
+        seenContexts.put(this, clone)
         return clone
     }
     

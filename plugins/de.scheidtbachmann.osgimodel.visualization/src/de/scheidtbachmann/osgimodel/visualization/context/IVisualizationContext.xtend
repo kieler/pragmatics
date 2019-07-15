@@ -1,6 +1,7 @@
 package de.scheidtbachmann.osgimodel.visualization.context
 
 import java.util.List
+import java.util.Map
 
 /**
  * Interface for visualization contexts of the OSGi model synthesis. Each context may contain child contexts, where each
@@ -43,6 +44,10 @@ interface IVisualizationContext<M> {
      * visualization context.
      * Also, any direct references to classes from the osgi model itself are not cloned, they should always refer to the
      * original model.
+     * 
+     * @param seenContexts A map of all already seen and cloned contexts. If this map contains a context that should be
+     * cloned as a key, the value is the already cloned context for that. If the map does not contain that, a new clone
+     * should be created and added to the map.
      */
-    def IVisualizationContext<M> deepCopy()
+    def IVisualizationContext<M> deepCopy(Map<IVisualizationContext<?>, IVisualizationContext<?>> seenContexts)
 }

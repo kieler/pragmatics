@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList
 import de.scheidtbachmann.osgimodel.Feature
 import java.util.LinkedList
 import java.util.List
+import java.util.Map
 
 /**
  * Context for the OSGi synthesis that contains information about {@link Feature} overviews.
@@ -86,17 +87,22 @@ class FeatureOverviewContext implements IOverviewVisualizationContext<Feature> {
         this.expanded = newExpanded
     }
     
-    override deepCopy() {
+    override deepCopy(Map<IVisualizationContext<?>, IVisualizationContext<?>> seenContexts) {
+        val alreadyCloned = seenContexts.get(this)
+        if (alreadyCloned !== null) {
+            return alreadyCloned as FeatureOverviewContext
+        }
+        
         val copy = new FeatureOverviewContext
         copy.collapsedFeatureContexts = new LinkedList
         collapsedFeatureContexts.forEach [
-            val newFeatureContext = deepCopy as FeatureContext
+            val newFeatureContext = deepCopy(seenContexts) as FeatureContext
             newFeatureContext.parentVisualizationContext = copy
             copy.collapsedFeatureContexts.add(newFeatureContext)
         ]
         copy.detailedFeatureContexts = new LinkedList
         detailedFeatureContexts.forEach [
-            val newFeatureContext = deepCopy as FeatureContext
+            val newFeatureContext = deepCopy(seenContexts) as FeatureContext
             newFeatureContext.parentVisualizationContext = copy
             copy.detailedFeatureContexts.add(newFeatureContext)
         ]
@@ -105,6 +111,7 @@ class FeatureOverviewContext implements IOverviewVisualizationContext<Feature> {
         
         copy.expanded = isExpanded
         
+        seenContexts.put(this, copy)
         return copy
     }
     

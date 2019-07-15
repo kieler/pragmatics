@@ -5,6 +5,7 @@ import de.scheidtbachmann.osgimodel.visualization.OsgiSynthesisProperties
 import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
 import de.scheidtbachmann.osgimodel.visualization.context.ContextUtils
 import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
+import java.util.HashMap
 import org.eclipse.emf.ecore.EObject
 
 /**
@@ -26,7 +27,7 @@ abstract class AbstractVisualizationContextChangingAction implements IAction {
         val currentVisualizationContext = visualizationContexts.get(index)
         
         // Make a deep-copy of the current context and store it as the action that can be undone next.
-        val copiedVisualizationContext = currentVisualizationContext.deepCopy
+        val copiedVisualizationContext = currentVisualizationContext.deepCopy(new HashMap)
         // Remove this visualization context and all after that, a redo after an action is not possible anymore.
         while (visualizationContexts.size > index) {
             visualizationContexts.remove(index)

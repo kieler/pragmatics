@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList
 import de.scheidtbachmann.osgimodel.Product
 import java.util.LinkedList
 import java.util.List
+import java.util.Map
 
 /**
  * Context for the OSGi synthesis that contains information about {@link Product} overviews.
@@ -86,17 +87,22 @@ class ProductOverviewContext implements IOverviewVisualizationContext<Product> {
         this.expanded = newExpanded
     }
     
-    override deepCopy() {
+    override deepCopy(Map<IVisualizationContext<?>, IVisualizationContext<?>> seenContexts) {
+        val alreadyCloned = seenContexts.get(this)
+        if (alreadyCloned !== null) {
+            return alreadyCloned as ProductOverviewContext
+        }
+        
         val copy = new ProductOverviewContext
         copy.detailedProductContexts = new LinkedList
         detailedProductContexts.forEach[
-            val newProductContext = deepCopy as ProductContext
+            val newProductContext = deepCopy(seenContexts) as ProductContext
             newProductContext.parentVisualizationContext = copy
             copy.detailedProductContexts.add(newProductContext)
         ]
         copy.collapsedProductContexts = new LinkedList
         collapsedProductContexts.forEach [
-            val newProductContext = deepCopy as ProductContext
+            val newProductContext = deepCopy(seenContexts) as ProductContext
             newProductContext.parentVisualizationContext = copy
             copy.collapsedProductContexts.add(newProductContext)
         ]
@@ -104,6 +110,7 @@ class ProductOverviewContext implements IOverviewVisualizationContext<Product> {
         
         copy.expanded = isExpanded
         
+        seenContexts.put(this, copy)
         return copy
     }
     

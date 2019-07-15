@@ -1,6 +1,7 @@
 package de.scheidtbachmann.osgimodel.visualization.context
 
 import de.scheidtbachmann.osgimodel.PackageObject
+import java.util.Map
 
 /**
  * Context for the OSGi synthesis that contains information about {@link PackageObject}s.
@@ -46,11 +47,17 @@ class PackageObjectContext implements IVisualizationContext<PackageObject> {
         // Nothing to do yet.
     }
     
-    override deepCopy() {
+    override deepCopy(Map<IVisualizationContext<?>, IVisualizationContext<?>> seenContexts) {
+        val alreadyCloned = seenContexts.get(this)
+        if (alreadyCloned !== null) {
+            return alreadyCloned as PackageObjectContext
+        }
+        
         val clone = new PackageObjectContext
         clone.packageObject = packageObject
         clone.parent = null
         
+        seenContexts.put(this, clone)
         return clone
     }
     

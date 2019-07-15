@@ -1,6 +1,7 @@
 package de.scheidtbachmann.osgimodel.visualization.context
 
 import de.scheidtbachmann.osgimodel.ServiceInterface
+import java.util.Map
 import org.eclipse.xtend.lib.annotations.Accessors
 
 /**
@@ -53,12 +54,18 @@ class ServiceInterfaceContext implements IVisualizationContext<ServiceInterface>
         // Nothing to do yet.
     }
     
-    override deepCopy() {
+    override deepCopy(Map<IVisualizationContext<?>, IVisualizationContext<?>> seenContexts) {
+        val alreadyCloned = seenContexts.get(this)
+        if (alreadyCloned !== null) {
+            return alreadyCloned as ServiceInterfaceContext
+        }
+        
         val copy = new ServiceInterfaceContext
         copy.allImplementingComponentsShown = allImplementingComponentsShown
         copy.serviceInterface = serviceInterface
         copy.parent = null
         
+        seenContexts.put(this, copy)
         return copy
     }
     

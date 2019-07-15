@@ -1,6 +1,7 @@
 package de.scheidtbachmann.osgimodel.visualization.context
 
 import de.scheidtbachmann.osgimodel.Feature
+import java.util.Map
 
 /**
  * Context for the OSGi synthesis that contains information about {@link Feature}s.
@@ -46,11 +47,17 @@ class FeatureContext implements IVisualizationContext<Feature> {
         // Nothing to do yet.
     }
     
-    override deepCopy() {
+    override deepCopy(Map<IVisualizationContext<?>, IVisualizationContext<?>> seenContexts) {
+        val alreadyCloned = seenContexts.get(this)
+        if (alreadyCloned !== null) {
+            return alreadyCloned as FeatureContext
+        }
+        
         val clone = new FeatureContext
         clone.feature = feature
         clone.parent = null
         
+        seenContexts.put(this, clone)
         return clone
     }
     

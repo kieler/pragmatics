@@ -2,9 +2,9 @@ package de.scheidtbachmann.osgimodel.visualization.context
 
 import com.google.common.collect.ImmutableList
 import de.scheidtbachmann.osgimodel.ServiceInterface
-import java.util.HashMap
 import java.util.LinkedList
 import java.util.List
+import java.util.Map
 import org.eclipse.xtend.lib.annotations.Accessors
 
 /**
@@ -111,48 +111,49 @@ class ServiceInterfaceOverviewContext implements IOverviewVisualizationContext<S
         this.expanded = newExpanded
     }
     
-    override deepCopy() {
+    override deepCopy(Map<IVisualizationContext<?>, IVisualizationContext<?>> seenContexts) {
+        val alreadyCloned = seenContexts.get(this)
+        if (alreadyCloned !== null) {
+            return alreadyCloned as ServiceInterfaceOverviewContext
+        }
+        
         val copy = new ServiceInterfaceOverviewContext
-        // Remember the cloned service interface / -component contexts as they are used multiple times.
-        val clonedServiceComponentContexts = new HashMap<ServiceComponentContext, ServiceComponentContext>
-        val clonedServiceInterfaceContexts = new HashMap<ServiceInterfaceContext, ServiceInterfaceContext>
         
         copy.detailedServiceInterfaceContexts = new LinkedList
         detailedServiceInterfaceContexts.forEach[
-            val newServiceInterfaceContext = deepCopy as ServiceInterfaceContext
-            clonedServiceInterfaceContexts.put(it, newServiceInterfaceContext)
+            val newServiceInterfaceContext = deepCopy(seenContexts) as ServiceInterfaceContext
             newServiceInterfaceContext.parentVisualizationContext = copy
             copy.detailedServiceInterfaceContexts.add(newServiceInterfaceContext)
         ]
         copy.collapsedServiceInterfaceContexts = new LinkedList
         collapsedServiceInterfaceContexts.forEach [
-            val newServiceInterfaceContext = deepCopy as ServiceInterfaceContext
-            clonedServiceInterfaceContexts.put(it, newServiceInterfaceContext)
+            val newServiceInterfaceContext = deepCopy(seenContexts) as ServiceInterfaceContext
             newServiceInterfaceContext.parentVisualizationContext = copy
             copy.collapsedServiceInterfaceContexts.add(newServiceInterfaceContext)
         ]
         copy.implementingServiceComponentContexts = new LinkedList
         implementingServiceComponentContexts.forEach [
-            val newServiceComponentContext = deepCopy as ServiceComponentContext
-            clonedServiceComponentContexts.put(it, newServiceComponentContext)
+            val newServiceComponentContext = deepCopy(seenContexts) as ServiceComponentContext
             newServiceComponentContext.parentVisualizationContext = copy
             copy.implementingServiceComponentContexts.add(newServiceComponentContext)
         ]
         copy.referencedBundleContexts = new LinkedList
         referencedBundleContexts.forEach [
-            val newBundleContext = deepCopy as BundleContext
+            val newBundleContext = deepCopy(seenContexts) as BundleContext
             newBundleContext.parentVisualizationContext = copy
             copy.referencedBundleContexts.add(newBundleContext)
         ]
         copy.implementedInterfaceEdges = new LinkedList
         implementedInterfaceEdges.forEach[
-            copy.implementedInterfaceEdges.add(clonedServiceComponentContexts.get(key) -> clonedServiceInterfaceContexts.get(value))
+            copy.implementedInterfaceEdges.add(key.deepCopy(seenContexts) as ServiceComponentContext
+                -> value.deepCopy(seenContexts) as ServiceInterfaceContext)
         ]
         
         copy.serviceInterfaces = serviceInterfaces.clone
         
         copy.expanded = isExpanded
         
+        seenContexts.put(this, copy)
         return copy
     }
     

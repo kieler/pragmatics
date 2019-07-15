@@ -2,9 +2,9 @@ package de.scheidtbachmann.osgimodel.visualization.context
 
 import com.google.common.collect.ImmutableList
 import de.scheidtbachmann.osgimodel.Bundle
-import java.util.HashMap
 import java.util.LinkedList
 import java.util.List
+import java.util.Map
 import org.eclipse.xtend.lib.annotations.Accessors
 
 /**
@@ -103,40 +103,43 @@ class BundleOverviewContext implements IOverviewVisualizationContext<Bundle> {
         this.expanded = newExpanded
     }
     
-    override deepCopy() {
+    override deepCopy(Map<IVisualizationContext<?>, IVisualizationContext<?>> seenContexts) {
+        val alreadyCloned = seenContexts.get(this)
+        if (alreadyCloned !== null) {
+            return alreadyCloned as BundleOverviewContext
+        }
+        
         val copy = new BundleOverviewContext
-        // remember the cloned bundle contexts, as they may be used multiple times.
-        val clonedBundleContexts = new HashMap<BundleContext, BundleContext>
         copy.collapsedBundleContexts = new LinkedList
         collapsedBundleContexts.forEach [
-            val newBundleContext = deepCopy as BundleContext
-            clonedBundleContexts.put(it, newBundleContext)
+            val newBundleContext = deepCopy(seenContexts) as BundleContext
             newBundleContext.parentVisualizationContext = copy
             copy.collapsedBundleContexts.add(newBundleContext)
         ]
         copy.detailedBundleContexts = new LinkedList
         detailedBundleContexts.forEach [
-            val newBundleContext = deepCopy as BundleContext
-            clonedBundleContexts.put(it, newBundleContext)
+            val newBundleContext = deepCopy(seenContexts) as BundleContext
             newBundleContext.parentVisualizationContext = copy
             copy.detailedBundleContexts.add(newBundleContext)
         ]
         
         copy.requiredBundleEdges = new LinkedList<Pair<BundleContext, BundleContext>>
         requiredBundleEdges.forEach[
-            copy.requiredBundleEdges.add(clonedBundleContexts.get(key) -> clonedBundleContexts.get(value))
+            copy.requiredBundleEdges.add(key.deepCopy(seenContexts) as BundleContext
+                -> value.deepCopy(seenContexts)as BundleContext)
         ]
         
         copy.usedPackagesEdges = new LinkedList
         usedPackagesEdges.forEach [
-            copy.usedPackagesEdges.add(new UsedPackagesEdgeConnection(clonedBundleContexts.get(sourceBundleContext),
-                usedPackages, product, clonedBundleContexts.get(targetBundleContext)))
+            copy.usedPackagesEdges.add(new UsedPackagesEdgeConnection(sourceBundleContext.deepCopy(seenContexts)
+                as BundleContext, usedPackages, product, targetBundleContext.deepCopy(seenContexts) as BundleContext))
         ]
         
         copy.bundles = bundles.clone
         
         copy.expanded = isExpanded
         
+        seenContexts.put(this, copy)
         return copy
     }
     

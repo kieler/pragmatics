@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList
 import de.scheidtbachmann.osgimodel.PackageObject
 import java.util.LinkedList
 import java.util.List
+import java.util.Map
 
 /**
  * Context for the OSGi synthesis that contains information about {@link PackageObject} overviews.
@@ -86,17 +87,22 @@ class PackageObjectOverviewContext implements IOverviewVisualizationContext<Pack
         this.expanded = newExpanded
     }
     
-    override deepCopy() {
+    override deepCopy(Map<IVisualizationContext<?>, IVisualizationContext<?>> seenContexts) {
+        val alreadyCloned = seenContexts.get(this)
+        if (alreadyCloned !== null) {
+            return alreadyCloned as PackageObjectOverviewContext
+        }
+        
         val copy = new PackageObjectOverviewContext
         copy.collapsedPackageObjectContexts = new LinkedList
         collapsedPackageObjectContexts.forEach [
-            val newPackageObjectContext = deepCopy as PackageObjectContext
+            val newPackageObjectContext = deepCopy(seenContexts) as PackageObjectContext
             newPackageObjectContext.parentVisualizationContext = copy
             copy.collapsedPackageObjectContexts.add(newPackageObjectContext)
         ]
         copy.detailedPackageObjectContexts = new LinkedList
         detailedPackageObjectContexts.forEach [
-            val newPackageObjectContext = deepCopy as PackageObjectContext
+            val newPackageObjectContext = deepCopy(seenContexts) as PackageObjectContext
             newPackageObjectContext.parentVisualizationContext = copy
             copy.detailedPackageObjectContexts.add(newPackageObjectContext)
         ]
@@ -105,6 +111,7 @@ class PackageObjectOverviewContext implements IOverviewVisualizationContext<Pack
         
         copy.expanded = isExpanded
         
+        seenContexts.put(this, copy)
         return copy
     }
     

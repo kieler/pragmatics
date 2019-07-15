@@ -1,6 +1,7 @@
 package de.scheidtbachmann.osgimodel.visualization.context
 
 import de.scheidtbachmann.osgimodel.Bundle
+import java.util.Map
 import org.eclipse.xtend.lib.annotations.Accessors
 
 /**
@@ -72,10 +73,15 @@ class BundleContext implements IVisualizationContext<Bundle> {
         serviceComponentOverviewContext = new ServiceComponentOverviewContext(bundle.serviceComponents, this)
     }
     
-    override deepCopy() {
+    override deepCopy(Map<IVisualizationContext<?>, IVisualizationContext<?>> seenContexts) {
+        val alreadyCloned = seenContexts.get(this)
+        if (alreadyCloned !== null) {
+            return alreadyCloned as BundleContext
+        }
+        
         val clone = new BundleContext
         if (serviceComponentOverviewContext !== null) {
-            clone.serviceComponentOverviewContext = serviceComponentOverviewContext.deepCopy
+            clone.serviceComponentOverviewContext = serviceComponentOverviewContext.deepCopy(seenContexts)
                 as ServiceComponentOverviewContext
             clone.serviceComponentOverviewContext.parentVisualizationContext = clone
         }
@@ -85,6 +91,7 @@ class BundleContext implements IVisualizationContext<Bundle> {
         clone.bundle = bundle
         clone.parent = null
         
+        seenContexts.put(this, clone)
         return clone
     }
     

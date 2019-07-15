@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList
 import de.scheidtbachmann.osgimodel.BundleCategory
 import java.util.LinkedList
 import java.util.List
+import java.util.Map
 
 /**
  * Context for the OSGi synthesis that contains information about {@link BundleCategory} overviews.
@@ -86,17 +87,22 @@ class BundleCategoryOverviewContext implements IOverviewVisualizationContext<Bun
         this.expanded = newExpanded
     }
     
-    override deepCopy() {
+    override deepCopy(Map<IVisualizationContext<?>, IVisualizationContext<?>> seenContexts) {
+        val alreadyCloned = seenContexts.get(this)
+        if (alreadyCloned !== null) {
+            return alreadyCloned as BundleCategoryOverviewContext
+        }
+        
         val copy = new BundleCategoryOverviewContext
         copy.collapsedBundleCategoryContexts = new LinkedList
         collapsedBundleCategoryContexts.forEach [
-            val newBundleCategoryContext = deepCopy as BundleCategoryContext
+            val newBundleCategoryContext = deepCopy(seenContexts) as BundleCategoryContext
             newBundleCategoryContext.parentVisualizationContext = copy
             copy.collapsedBundleCategoryContexts.add(newBundleCategoryContext)
         ]
         copy.detailedBundleCategoryContexts = new LinkedList
         detailedBundleCategoryContexts.forEach [
-            val newBundleCategoryContext = deepCopy as BundleCategoryContext
+            val newBundleCategoryContext = deepCopy(seenContexts) as BundleCategoryContext
             newBundleCategoryContext.parentVisualizationContext = copy
             copy.detailedBundleCategoryContexts.add(newBundleCategoryContext)
         ]
@@ -105,6 +111,7 @@ class BundleCategoryOverviewContext implements IOverviewVisualizationContext<Bun
         
         copy.expanded = isExpanded
         
+        seenContexts.put(this, copy)
         return copy
     }
     

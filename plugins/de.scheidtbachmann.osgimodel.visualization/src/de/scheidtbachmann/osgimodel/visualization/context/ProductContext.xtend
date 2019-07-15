@@ -1,6 +1,7 @@
 package de.scheidtbachmann.osgimodel.visualization.context
 
 import de.scheidtbachmann.osgimodel.Product
+import java.util.Map
 import org.eclipse.xtend.lib.annotations.Accessors
 
 /**
@@ -53,14 +54,20 @@ class ProductContext implements IVisualizationContext<Product> {
         bundleOverviewContext = new BundleOverviewContext(product.features.flatMap[bundles].toSet.toList, this)
     }
     
-    override deepCopy() {
+    override deepCopy(Map<IVisualizationContext<?>, IVisualizationContext<?>> seenContexts) {
+        val alreadyCloned = seenContexts.get(this)
+        if (alreadyCloned !== null) {
+            return alreadyCloned as ProductContext
+        }
+        
         val copy = new ProductContext
         if (bundleOverviewContext !== null) {
-            copy.bundleOverviewContext = bundleOverviewContext.deepCopy as BundleOverviewContext
+            copy.bundleOverviewContext = bundleOverviewContext.deepCopy(seenContexts) as BundleOverviewContext
             copy.bundleOverviewContext.parentVisualizationContext = copy
         }
         copy.product = product
         
+        seenContexts.put(this, copy)
         return copy
     }
     

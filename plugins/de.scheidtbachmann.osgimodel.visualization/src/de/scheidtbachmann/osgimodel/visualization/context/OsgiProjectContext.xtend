@@ -2,6 +2,7 @@ package de.scheidtbachmann.osgimodel.visualization.context
 
 import de.scheidtbachmann.osgimodel.OsgiProject
 import java.util.List
+import java.util.Map
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtend.lib.annotations.Accessors
 
@@ -94,25 +95,33 @@ class OsgiProjectContext implements IVisualizationContext<OsgiProject> {
         bundleCategoryOverviewContext = new BundleCategoryOverviewContext(project.bundleCategories, this)
     }
     
-    override deepCopy() {
+   override deepCopy(Map<IVisualizationContext<?>, IVisualizationContext<?>> seenContexts) {
+        val alreadyCloned = seenContexts.get(this)
+        if (alreadyCloned !== null) {
+            return alreadyCloned as OsgiProjectContext
+        }
+        
         val copy = new OsgiProjectContext
-        copy.bundleOverviewContext = bundleOverviewContext.deepCopy as BundleOverviewContext
+        copy.bundleOverviewContext = bundleOverviewContext.deepCopy(seenContexts) as BundleOverviewContext
         copy.bundleOverviewContext.parentVisualizationContext = copy
-        copy.productOverviewContext = productOverviewContext.deepCopy as ProductOverviewContext
+        copy.productOverviewContext = productOverviewContext.deepCopy(seenContexts) as ProductOverviewContext
         copy.productOverviewContext.parentVisualizationContext = copy
-        copy.serviceInterfaceOverviewContext = serviceInterfaceOverviewContext.deepCopy
+        copy.serviceInterfaceOverviewContext = serviceInterfaceOverviewContext.deepCopy(seenContexts)
             as ServiceInterfaceOverviewContext
         copy.serviceInterfaceOverviewContext.parentVisualizationContext = copy
-        copy.featureOverviewContext = featureOverviewContext.deepCopy as FeatureOverviewContext
+        copy.featureOverviewContext = featureOverviewContext.deepCopy(seenContexts) as FeatureOverviewContext
         copy.featureOverviewContext.parentVisualizationContext = copy
-        copy.importedPackageOverviewContext = importedPackageOverviewContext.deepCopy as PackageObjectOverviewContext
+        copy.importedPackageOverviewContext = importedPackageOverviewContext.deepCopy(seenContexts)
+            as PackageObjectOverviewContext
         copy.importedPackageOverviewContext.parentVisualizationContext = copy
-        copy.bundleCategoryOverviewContext = bundleCategoryOverviewContext.deepCopy as BundleCategoryOverviewContext
+        copy.bundleCategoryOverviewContext = bundleCategoryOverviewContext.deepCopy(seenContexts)
+            as BundleCategoryOverviewContext
         copy.bundleCategoryOverviewContext.parentVisualizationContext = copy
         
         
         copy.project = project
         
+        seenContexts.put(this, copy)
         return copy
     }
     

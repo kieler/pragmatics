@@ -1,6 +1,7 @@
 package de.scheidtbachmann.osgimodel.visualization.context
 
 import de.scheidtbachmann.osgimodel.ServiceComponent
+import java.util.Map
 
 /**
  * Context for the OSGi synthesis that contains information about {@link ServiceComponent}s.
@@ -46,11 +47,17 @@ class ServiceComponentContext implements IVisualizationContext<ServiceComponent>
         // Nothing to do yet.
     }
     
-    override deepCopy() {
+    override deepCopy(Map<IVisualizationContext<?>, IVisualizationContext<?>> seenContexts) {
+        val alreadyCloned = seenContexts.get(this)
+        if (alreadyCloned !== null) {
+            return alreadyCloned as ServiceComponentContext
+        }
+        
         val copy = new ServiceComponentContext
         copy.serviceComponent = serviceComponent
         copy.parent = null
         
+        seenContexts.put(this, copy)
         return copy
     }
     

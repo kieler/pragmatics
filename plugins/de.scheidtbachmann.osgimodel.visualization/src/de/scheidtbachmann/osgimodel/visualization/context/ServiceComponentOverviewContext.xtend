@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList
 import de.scheidtbachmann.osgimodel.ServiceComponent
 import java.util.LinkedList
 import java.util.List
+import java.util.Map
 
 /**
  * Context for the OSGi synthesis that contains information about {@link ServiceComponent} overviews.
@@ -86,17 +87,22 @@ class ServiceComponentOverviewContext implements IOverviewVisualizationContext<S
         this.expanded = newExpanded
     }
     
-    override deepCopy() {
+    override deepCopy(Map<IVisualizationContext<?>, IVisualizationContext<?>> seenContexts) {
+        val alreadyCloned = seenContexts.get(this)
+        if (alreadyCloned !== null) {
+            return alreadyCloned as ServiceComponentOverviewContext
+        }
+        
         val copy = new ServiceComponentOverviewContext
         copy.collapsedServiceComponentContexts = new LinkedList
         collapsedServiceComponentContexts.forEach [
-            val newServiceComponentContext = deepCopy as ServiceComponentContext
+            val newServiceComponentContext = deepCopy(seenContexts) as ServiceComponentContext
             newServiceComponentContext.parentVisualizationContext = copy
             copy.collapsedServiceComponentContexts.add(newServiceComponentContext)
         ]
         copy.detailedServiceComponentContexts = new LinkedList
         detailedServiceComponentContexts.forEach [
-            val newServiceComponentContext = deepCopy as ServiceComponentContext
+            val newServiceComponentContext = deepCopy(seenContexts) as ServiceComponentContext
             newServiceComponentContext.parentVisualizationContext = copy
             copy.detailedServiceComponentContexts.add(newServiceComponentContext)
         ]
@@ -105,6 +111,7 @@ class ServiceComponentOverviewContext implements IOverviewVisualizationContext<S
         
         copy.expanded = isExpanded
         
+        seenContexts.put(this, copy)
         return copy
     }
     
