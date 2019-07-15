@@ -115,7 +115,6 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
             associateWith(serviceInterfaceOverviewContext)
             configureOverviewLayout
             setLayoutOption(LayeredMetaDataProvider::SPACING_NODE_NODE_BETWEEN_LAYERS, 30.0)
-            setLayoutOption(CoreOptions::HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN)
             addInvisibleContainerRendering
             
             // All service interfaces.
@@ -135,6 +134,7 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
                     ]
                 }
                 case IN_BUNDLES: {
+                    setLayoutOption(CoreOptions::HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN)
                     // All bundles containing the service components.
                     val filteredBundleContexts = serviceInterfaceOverviewContext.referencedBundleContexts
                     children += filteredBundleContexts.flatMap [

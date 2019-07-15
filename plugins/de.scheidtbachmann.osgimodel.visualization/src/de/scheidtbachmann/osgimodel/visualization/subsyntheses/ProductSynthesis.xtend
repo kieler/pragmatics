@@ -10,6 +10,7 @@ import de.scheidtbachmann.osgimodel.OsgiProject
 import de.scheidtbachmann.osgimodel.Product
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 import de.scheidtbachmann.osgimodel.visualization.context.ProductContext
+import de.scheidtbachmann.osgimodel.visualization.context.ProductOverviewContext
 import java.util.EnumSet
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.SizeConstraint
@@ -34,7 +35,8 @@ class ProductSynthesis extends AbstractSubSynthesis<ProductContext, KNode> {
             pc.createNode() => [
                 associateWith(pc)
                 data += createKIdentifier => [ it.id = pc.hashCode.toString ]
-                val rendering = addProductRendering(product, usedContext)
+                val rendering = addProductRendering(product,
+                    pc.parentVisualizationContext instanceof ProductOverviewContext, usedContext)
 //                val renderingSize = estimateSize(rendering, new Bounds(0,0))
                 setLayoutOption(CoreOptions::NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.MINIMUM_SIZE))
 //                setLayoutOption(CoreOptions::NODE_SIZE_MINIMUM, new KVector(renderingSize.x, renderingSize.y))

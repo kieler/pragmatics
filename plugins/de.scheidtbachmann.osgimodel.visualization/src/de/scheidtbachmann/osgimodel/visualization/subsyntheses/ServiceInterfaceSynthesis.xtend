@@ -11,6 +11,7 @@ import de.scheidtbachmann.osgimodel.OsgiProject
 import de.scheidtbachmann.osgimodel.ServiceInterface
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceContext
+import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceOverviewContext
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.PortSide
 
@@ -32,7 +33,8 @@ class ServiceInterfaceSynthesis extends AbstractSubSynthesis<ServiceInterfaceCon
             sic.createNode() => [
                 associateWith(sic)
                 data += createKIdentifier => [ it.id = sic.hashCode.toString ]
-                addServiceInterfaceRendering(serviceInterface, usedContext)
+                addServiceInterfaceRendering(serviceInterface,
+                    sic.parentVisualizationContext instanceof ServiceInterfaceOverviewContext, usedContext)
                 
                 // The ports that show the connection to the service components this service interface with actions to
                 // add them to the view.

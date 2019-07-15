@@ -1,5 +1,6 @@
 package de.scheidtbachmann.osgimodel.visualization.actions
 
+import de.scheidtbachmann.osgimodel.visualization.context.BundleContext
 import de.scheidtbachmann.osgimodel.visualization.context.ContextUtils
 import de.scheidtbachmann.osgimodel.visualization.context.IOverviewVisualizationContext
 import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
@@ -33,11 +34,14 @@ class ContextRemoveAction extends AbstractVisualizationContextChangingAction {
             && ovc instanceof ServiceInterfaceOverviewContext) {
             (ovc as ServiceInterfaceOverviewContext).implementingServiceComponentContexts
                 .remove(modelVisualizationContext)
-            ContextUtils.removeEdges(ovc, modelVisualizationContext)
+        } else if (modelVisualizationContext instanceof BundleContext
+            && ovc instanceof ServiceInterfaceOverviewContext) {
+            (ovc as ServiceInterfaceOverviewContext).referencedBundleContexts.remove(modelVisualizationContext)
         } else {
             throw new IllegalArgumentException("ContextRemoveAction does not support removing "
                 + modelVisualizationContext.class + " from " + ovc.class + " yet.")
         }
+        ContextUtils.removeEdges(ovc, modelVisualizationContext)
         return null
     }
     

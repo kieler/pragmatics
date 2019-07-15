@@ -173,6 +173,34 @@ class OsgiStyles {
     }
     
     /**
+     * Adds a button in a grid placement rendering that causes the {@link ContextCollapseAction} to be called.
+     * 
+     * @param container The parent rendering this button should be added to.
+     */
+    def KRectangle addCollapseButton(KContainerRendering container) {
+        return container.addButton("-", ContextCollapseExpandAction::ID) => [
+            setGridPlacementData => [
+                flexibleWidth = false
+            ]
+            lineWidth = 0
+        ]
+    }
+    
+    /**
+     * Adds a button in a grid placement rendering that causes the {@link ContextRemoveAction} to be called.
+     * 
+     * @param container The parent rendering this button should be added to.
+     */
+    def KRectangle addRemoveButton(KContainerRendering container) {
+        return container.addButton("x", ContextRemoveAction::ID) => [
+            setGridPlacementData => [
+                flexibleWidth = false
+            ]
+            lineWidth = 0 
+        ]
+    }
+    
+    /**
      * Highlight the port that all elements that should be connected to this port are in displayed.
      * @param port The port that should be highlighted.
      */
@@ -248,7 +276,7 @@ class OsgiStyles {
      * 
      * @return The entire rendering for a product.
      */
-    def KRoundedRectangle addProductRendering(KNode node, Product p, ViewContext context) {
+    def KRoundedRectangle addProductRendering(KNode node, Product p, boolean inOverview, ViewContext context) {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             setBackgroundGradient("#FFEAE0".color, "#FFD3BF".color, 90)
             setGridPlacement(1)
@@ -264,12 +292,11 @@ class OsgiStyles {
                         flexibleWidth = false
                     ]
                 ]
-                addButton("-", ContextCollapseExpandAction::ID) => [
-                    setGridPlacementData => [
-                        flexibleWidth = false
-                    ]
-                    lineWidth = 0
-                ]
+                if (inOverview) {
+                    addCollapseButton
+                } else {
+                    addRemoveButton
+                }
             ]
             addHorizontalSeperatorLine(1, 0)
             addRectangle => [
@@ -282,7 +309,7 @@ class OsgiStyles {
             ]
             addHorizontalSeperatorLine(1, 0)
             addChildArea
-            addDoubleClickAction(ContextCollapseExpandAction::ID)
+//            addDoubleClickAction(ContextCollapseExpandAction::ID)
             setShadow("black".color, 4, 4)
         ]
     }
@@ -328,7 +355,7 @@ class OsgiStyles {
      * 
      * @return The entire rendering for a bundle.
      */
-    def KRoundedRectangle addBundleRendering(KNode node, Bundle b, ViewContext context) {
+    def KRoundedRectangle addBundleRendering(KNode node, Bundle b, boolean inOverview, ViewContext context) {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             setBackgroundGradient("#E0F7FF".color, "#BFEFFF".color, 90)
             setGridPlacement(1)
@@ -344,12 +371,11 @@ class OsgiStyles {
                         flexibleWidth = false
                     ]
                 ]
-                addButton("-", ContextCollapseExpandAction::ID) => [
-                    setGridPlacementData => [
-                        flexibleWidth = false
-                    ]
-                    lineWidth = 0
-                ]
+                if (inOverview) {
+                    addCollapseButton
+                } else {
+                    addRemoveButton
+                }
             ]
             addHorizontalSeperatorLine(1, 0)
             addRectangle => [
@@ -362,7 +388,7 @@ class OsgiStyles {
             ]
             addHorizontalSeperatorLine(1, 0)
             addChildArea
-            addDoubleClickAction(ContextCollapseExpandAction::ID)
+//            addDoubleClickAction(ContextCollapseExpandAction::ID)
             setShadow("black".color, 4, 4)
         ]
     }
@@ -484,7 +510,8 @@ class OsgiStyles {
      * 
      * @return The entire rendering for a service interface.
      */
-    def KRoundedRectangle addServiceInterfaceRendering(KNode node, ServiceInterface si, ViewContext context) {
+    def KRoundedRectangle addServiceInterfaceRendering(KNode node, ServiceInterface si, boolean inOverview,
+        ViewContext context) {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             setBackgroundGradient("#FFE0E0".color, "#FFC2C2".color, 90)
             setGridPlacement(1)
@@ -500,12 +527,11 @@ class OsgiStyles {
                         flexibleWidth = false
                     ]
                 ]
-                addButton("-", ContextCollapseExpandAction::ID) => [
-                    setGridPlacementData => [
-                        flexibleWidth = false
-                    ]
-                    lineWidth = 0
-                ]
+                if (inOverview) {
+                    addCollapseButton
+                } else {
+                    addRemoveButton
+                }
             ]
             addHorizontalSeperatorLine(1, 0)
             addRectangle => [
@@ -514,7 +540,7 @@ class OsgiStyles {
             ]
             addHorizontalSeperatorLine(1, 0)
             addChildArea
-            addDoubleClickAction(ContextCollapseExpandAction::ID)
+//            addDoubleClickAction(ContextCollapseExpandAction::ID)
             setShadow("black".color, 4, 4)
         ]
     }
@@ -572,7 +598,8 @@ class OsgiStyles {
      * 
      * @return The entire rendering for a service component.
      */
-    def KRoundedRectangle addServiceComponentRendering(KNode node, ServiceComponent sc, ViewContext context) {
+    def KRoundedRectangle addServiceComponentRendering(KNode node, ServiceComponent sc, boolean inOverview,
+        ViewContext context) {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             setBackgroundGradient("#FFE0F5".color, "#FFC2EB".color, 90)
             setGridPlacement(1)
@@ -588,12 +615,11 @@ class OsgiStyles {
                         flexibleWidth = false
                     ]
                 ]
-                addButton("x", ContextRemoveAction::ID) => [
-                    setGridPlacementData => [
-                        flexibleWidth = false
-                    ]
-                    lineWidth = 0
-                ]
+                if (inOverview) {
+                    addCollapseButton
+                } else {
+                    addRemoveButton
+                }
             ]
             addHorizontalSeperatorLine(1, 0)
             addRectangle => [

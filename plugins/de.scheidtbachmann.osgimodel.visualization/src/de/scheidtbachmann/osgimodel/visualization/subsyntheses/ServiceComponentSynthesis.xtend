@@ -10,6 +10,7 @@ import de.scheidtbachmann.osgimodel.OsgiProject
 import de.scheidtbachmann.osgimodel.ServiceComponent
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceComponentContext
+import de.scheidtbachmann.osgimodel.visualization.context.ServiceComponentOverviewContext
 
 /**
  * Sub-synthesis of {@link OsgiProject}s that handles expanded {@link ServiceComponent} views.
@@ -28,7 +29,8 @@ class ServiceComponentSynthesis extends AbstractSubSynthesis<ServiceComponentCon
             sc.createNode() => [
                 associateWith(sc)
                 data += createKIdentifier => [ it.id = sc.hashCode.toString ]
-                addServiceComponentRendering(serviceComponent, usedContext)
+                addServiceComponentRendering(serviceComponent,
+                    sc.parentVisualizationContext instanceof ServiceComponentOverviewContext, usedContext)
             ]
         ]
     }
