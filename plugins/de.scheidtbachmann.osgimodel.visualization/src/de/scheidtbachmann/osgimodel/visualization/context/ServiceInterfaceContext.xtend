@@ -1,6 +1,7 @@
 package de.scheidtbachmann.osgimodel.visualization.context
 
 import de.scheidtbachmann.osgimodel.ServiceInterface
+import de.scheidtbachmann.osgimodel.visualization.OsgiSynthesisProperties
 import java.util.Map
 import org.eclipse.xtend.lib.annotations.Accessors
 
@@ -23,9 +24,17 @@ class ServiceInterfaceContext implements IVisualizationContext<ServiceInterface>
     
     /**
      * Indicates whether all service components implementing this service interface are shown and connected to this.
+     * This is for the {@link OsgiSynthesisProperties$ServiceComponentVisualizationMode#PLAIN} variant.
      */
     @Accessors
-    boolean allImplementingComponentsShown
+    boolean allImplementingComponentsShownPlain
+    
+    /**
+     * Indicates whether all service components implementing this service interface are shown and connected to this.
+     * This is for the {@link OsgiSynthesisProperties$ServiceComponentVisualizationMode#IN_BUNDLES} variant.
+     */
+    @Accessors
+    boolean allImplementingComponentsShownInBundles
     
     private new() {}
     
@@ -61,7 +70,8 @@ class ServiceInterfaceContext implements IVisualizationContext<ServiceInterface>
         }
         
         val copy = new ServiceInterfaceContext
-        copy.allImplementingComponentsShown = allImplementingComponentsShown
+        copy.allImplementingComponentsShownPlain = allImplementingComponentsShownPlain
+        copy.allImplementingComponentsShownInBundles = allImplementingComponentsShownInBundles
         copy.serviceInterface = serviceInterface
         copy.parent = null
         

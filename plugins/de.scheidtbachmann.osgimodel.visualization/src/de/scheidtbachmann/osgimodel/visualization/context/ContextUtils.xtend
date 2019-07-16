@@ -135,22 +135,33 @@ class ContextUtils {
     
     def dispatch static void removeEdges(ServiceInterfaceOverviewContext overviewContext,
         ServiceInterfaceContext context) {
-        val implementedInterfaceEdges = overviewContext.implementedInterfaceEdges.clone
-        implementedInterfaceEdges.forEach [
+        // PLAIN variant:
+        val implementedInterfaceEdgesPlain = overviewContext.implementedInterfaceEdgesPlain.clone
+        implementedInterfaceEdgesPlain.forEach [
             if (value === context) {
-                overviewContext.implementedInterfaceEdges.remove(it)
-                value.allImplementingComponentsShown = false
+                overviewContext.implementedInterfaceEdgesPlain.remove(it)
+                value.allImplementingComponentsShownPlain = false
+            }
+        ]
+        
+        // IN_BUNDLES variant:
+        val implementedInterfaceEdgesInBundles = overviewContext.implementedInterfaceEdgesInBundles.clone
+        implementedInterfaceEdgesInBundles.forEach [
+            if (value === context) {
+                overviewContext.implementedInterfaceEdgesInBundles.remove(it)
+                value.allImplementingComponentsShownInBundles = false
             }
         ]
     }
     
     def dispatch static void removeEdges(ServiceInterfaceOverviewContext overviewContext,
         ServiceComponentContext context) {
-        val implementedInterfaceEdges = overviewContext.implementedInterfaceEdges.clone
+        // This is only called in the PLAIN variant, as SCs are not shown in the IN_BUNDLES variant.
+        val implementedInterfaceEdges = overviewContext.implementedInterfaceEdgesPlain.clone
         implementedInterfaceEdges.forEach [
             if (key === context) {
-                overviewContext.implementedInterfaceEdges.remove(it)
-                value.allImplementingComponentsShown = false
+                overviewContext.implementedInterfaceEdgesPlain.remove(it)
+                value.allImplementingComponentsShownPlain = false
             }
         ]
     }
@@ -165,11 +176,13 @@ class ContextUtils {
             if (potentialServiceInterfaceOverviewContext instanceof ServiceInterfaceOverviewContext) {
                 // We are in the correct hierarchy, this overviewContext may contain edges to this SC context.
                 val ppOverviewContext = potentialServiceInterfaceOverviewContext as ServiceInterfaceOverviewContext
-                val implementedInderfaceEdges = ppOverviewContext.implementedInterfaceEdges.clone
+                // This is only called in the IN_BUNDLES variant, as these edges in relation to SC overview contexts
+                // are not shown in the PLAIN variant.
+                val implementedInderfaceEdges = ppOverviewContext.implementedInterfaceEdgesInBundles.clone
                 implementedInderfaceEdges.forEach [
                     if (key === context) {
-                        ppOverviewContext.implementedInterfaceEdges.remove(it)
-                        value.allImplementingComponentsShown = false
+                        ppOverviewContext.implementedInterfaceEdgesInBundles.remove(it)
+                        value.allImplementingComponentsShownInBundles = false
                     }
                 ]
             }
@@ -177,11 +190,13 @@ class ContextUtils {
     }
     
     def dispatch static void removeEdges(ServiceInterfaceOverviewContext overviewContext, BundleContext context) {
-        val implementedInterfaceEdges = overviewContext.implementedInterfaceEdges.clone
+        // This is only called in the IN_BUNDLES variant, as these edges in relation to SC overview contexts are not
+        // shown in the PLAIN variant.
+        val implementedInterfaceEdges = overviewContext.implementedInterfaceEdgesInBundles.clone
         implementedInterfaceEdges.forEach [
             if (context.serviceComponentOverviewContext.detailedElements.contains(key)) {
-                overviewContext.implementedInterfaceEdges.remove(it)
-                value.allImplementingComponentsShown = false
+                overviewContext.implementedInterfaceEdgesInBundles.remove(it)
+                value.allImplementingComponentsShownInBundles = false
             }
         ]
     }
@@ -313,17 +328,17 @@ class ContextUtils {
                 "parent context!")
         }
         // Only if this edge does not exist yet, add it to the list of implementing service component edges.
-        if (!parentContext.implementedInterfaceEdges.exists [
+        if (!parentContext.implementedInterfaceEdgesPlain.exists [
             key === serviceComponentContext && value === serviceInterfaceContext
         ]) {
-            parentContext.implementedInterfaceEdges += serviceComponentContext -> serviceInterfaceContext
+            parentContext.implementedInterfaceEdgesPlain += serviceComponentContext -> serviceInterfaceContext
             // Check if all components are connected and mark that in the context.
             if (serviceInterfaceContext.modelElement.serviceComponent.forall [ implementingComponent |
-                parentContext.implementedInterfaceEdges.exists [
+                parentContext.implementedInterfaceEdgesPlain.exists [
                     key.modelElement === implementingComponent && value == serviceInterfaceContext
                 ]
             ]) {
-                serviceInterfaceContext.allImplementingComponentsShown = true
+                serviceInterfaceContext.allImplementingComponentsShownPlain = true
             }
             // TODO: do the same check as above also for the service interfaces.
         }
@@ -349,17 +364,17 @@ class ContextUtils {
                 + "context hierarchy!")
         }
         // Only if this edge does not exist yet, add it to the list of implementing service component edges.
-        if (!parentContext.implementedInterfaceEdges.exists [
+        if (!parentContext.implementedInterfaceEdgesInBundles.exists [
             key === serviceComponentContext && value === serviceInterfaceContext
         ]) {
-            parentContext.implementedInterfaceEdges += serviceComponentContext -> serviceInterfaceContext // TODO: This should also be an own inBundles variant
+            parentContext.implementedInterfaceEdgesInBundles += serviceComponentContext -> serviceInterfaceContext
             // Check if all components are connected and mark that in the context.
             if (serviceInterfaceContext.modelElement.serviceComponent.forall [ implementingComponent |
-                parentContext.implementedInterfaceEdges.exists [
+                parentContext.implementedInterfaceEdgesInBundles.exists [
                     key.modelElement === implementingComponent && value == serviceInterfaceContext
                 ]
             ]) {
-                serviceInterfaceContext.allImplementingComponentsShown = true // TODO: this is now doubled with the other edge. Plain/in_bundles specific boolean?
+                serviceInterfaceContext.allImplementingComponentsShownInBundles = true
             }
             // TODO: do the same check as above also for the service interfaces.
         }

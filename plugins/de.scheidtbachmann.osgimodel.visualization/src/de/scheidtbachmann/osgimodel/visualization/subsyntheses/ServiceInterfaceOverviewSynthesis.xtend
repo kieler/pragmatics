@@ -16,6 +16,7 @@ import de.scheidtbachmann.osgimodel.visualization.context.BundleContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceComponentContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceOverviewContext
+import java.util.List
 import org.eclipse.elk.alg.layered.options.LayeredMetaDataProvider
 import org.eclipse.elk.core.math.ElkPadding
 import org.eclipse.elk.core.options.CoreOptions
@@ -124,6 +125,7 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
                 return serviceInterfaceSynthesis.transform(it as ServiceInterfaceContext)
             ]
             
+            var List<Pair<ServiceComponentContext, ServiceInterfaceContext>>  implementedInterfaceEdges
             switch (usedContext.getProperty(OsgiSynthesisProperties.CURRENT_SERVICE_COMPONENT_VISUALIZATION_MODE)) {
                 case PLAIN: {
                     // All service components.
@@ -132,6 +134,7 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
                     children += filteredImplementingServiceComponentContexts.flatMap [
                         return serviceComponentSynthesis.transform(it as ServiceComponentContext)
                     ]
+                    implementedInterfaceEdges = serviceInterfaceOverviewContext.implementedInterfaceEdgesPlain
                 }
                 case IN_BUNDLES: {
                     setLayoutOption(CoreOptions::HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN)
@@ -140,11 +143,12 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
                     children += filteredBundleContexts.flatMap [
                         return bundleSynthesis.transform(it as BundleContext)
                     ]
+                    implementedInterfaceEdges = serviceInterfaceOverviewContext.implementedInterfaceEdgesInBundles
                 }
             }
             
             // Add all implementing service component edges.
-            serviceInterfaceOverviewContext.implementedInterfaceEdges.forEach [
+            implementedInterfaceEdges.forEach [
                 // Connects the service component and -interface via an arrow in UML style,
                 // so [component] ---implements---|> [interface]
                 val component = key

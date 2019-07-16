@@ -10,6 +10,7 @@ import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
 import de.scheidtbachmann.osgimodel.OsgiProject
 import de.scheidtbachmann.osgimodel.ServiceInterface
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
+import de.scheidtbachmann.osgimodel.visualization.OsgiSynthesisProperties
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceOverviewContext
 import org.eclipse.elk.core.options.CoreOptions
@@ -46,7 +47,18 @@ class ServiceInterfaceSynthesis extends AbstractSubSynthesis<ServiceInterfaceCon
                         data += createKIdentifier => [ it.id = "implementingServiceComponents" ]
                         // Implementing components are always shown and expanded to the east with the drawing direction.
                         addLayoutParam(CoreOptions::PORT_SIDE, PortSide::EAST)
-                        addImplementingServiceComponentsPortRendering(components.size, sic.allImplementingComponentsShown)
+                        
+                        val boolean allImplementingComponentsShown = switch (usedContext.getProperty(
+                            OsgiSynthesisProperties.CURRENT_SERVICE_COMPONENT_VISUALIZATION_MODE)) {
+                            case PLAIN: {
+                                sic.allImplementingComponentsShownPlain
+                            }
+                            case IN_BUNDLES: {
+                                sic.allImplementingComponentsShownInBundles
+                            }
+                        }
+                        
+                        addImplementingServiceComponentsPortRendering(components.size, allImplementingComponentsShown)
                         width = 12
                         height = 12
                     ]
