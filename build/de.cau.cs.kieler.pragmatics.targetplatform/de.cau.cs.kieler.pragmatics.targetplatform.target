@@ -32,6 +32,7 @@
     <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
       <unit id="com.google.inject" version="0.0.0"/>
       <unit id="javax.xml.bind" version="0.0.0"/>
+      <unit id="com.google.guava.source" version="21.0.0.v20170206-1425"/>
       <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository"/>
     </location>
     <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
