@@ -2,6 +2,7 @@ package de.scheidtbachmann.osgimodel.visualization.context
 
 import de.scheidtbachmann.osgimodel.ServiceComponent
 import java.util.Map
+import org.eclipse.xtend.lib.annotations.Accessors
 
 /**
  * Context for the OSGi synthesis that contains information about {@link ServiceComponent}s.
@@ -19,6 +20,20 @@ class ServiceComponentContext implements IVisualizationContext<ServiceComponent>
      * The parent visualization context.
      */
     IOverviewVisualizationContext<?> parent
+    
+    /**
+     * Indicates whether all service interfaces implemented by this service component are shown and connected to this.
+     * This is for the {@link OsgiSynthesisProperties$ServiceComponentVisualizationMode#PLAIN} variant.
+     */
+    @Accessors
+    boolean allImplementedInterfacesShownPlain
+    
+    /**
+     * Indicates whether all service interfaces implemented by this service component are shown and connected to this.
+     * This is for the {@link OsgiSynthesisProperties$ServiceComponentVisualizationMode#IN_BUNDLES} variant.
+     */
+    @Accessors
+    boolean allImplementedInterfacesShownInBundles
     
     private new() {}
     
@@ -54,6 +69,8 @@ class ServiceComponentContext implements IVisualizationContext<ServiceComponent>
         }
         
         val copy = new ServiceComponentContext
+        copy.allImplementedInterfacesShownPlain = allImplementedInterfacesShownPlain
+        copy.allImplementedInterfacesShownInBundles = allImplementedInterfacesShownInBundles
         copy.serviceComponent = serviceComponent
         copy.parent = null
         

@@ -28,6 +28,7 @@ import de.scheidtbachmann.osgimodel.visualization.actions.ContextCollapseExpandA
 import de.scheidtbachmann.osgimodel.visualization.actions.ContextRemoveAction
 import de.scheidtbachmann.osgimodel.visualization.actions.FocusAction
 import de.scheidtbachmann.osgimodel.visualization.actions.OverviewContextCollapseExpandAction
+import de.scheidtbachmann.osgimodel.visualization.actions.RevealImplementedServiceInterfacesAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealImplementingServiceComponentsAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealRequiredBundlesAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedByBundlesAction
@@ -639,6 +640,21 @@ class OsgiStyles {
         edge.addPolyline => [
             addInheritanceTriangleArrowDecorator
             lineStyle = LineStyle.DASH
+        ]
+    }
+    
+    /**
+     * The rendering of a port that connects a service component with the service interfaces it implements. Issues the
+     * {@link RevealImplementedServiceInterfaceAction} if clicked.
+     */
+    def KRectangle addImplementedServiceInterfacesPortRendering(KPort port, int numImplementedInterfaces,
+        boolean allShown) {
+        return port.addRectangle => [
+            background = if (allShown) "white".color else "black".color
+            val tooltipText = "Show service interfaces implemented by this component (" + numImplementedInterfaces 
+                + " total)."
+            tooltip = tooltipText
+            addSingleClickAction(RevealImplementedServiceInterfacesAction::ID)
         ]
     }
     

@@ -7,6 +7,7 @@ import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
 import de.scheidtbachmann.osgimodel.BasicOsgiObject
 import de.scheidtbachmann.osgimodel.PackageObject
+import de.scheidtbachmann.osgimodel.ServiceComponent
 import de.scheidtbachmann.osgimodel.ServiceInterface
 import de.scheidtbachmann.osgimodel.visualization.context.IOverviewVisualizationContext
 import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
@@ -72,11 +73,11 @@ final class SynthesisUtils {
     }
     
     /**
-     * Filters the list of given bundles by the filter options of the diagram options and the overview context they are
-     * shown in.
+     * Filters the list of given basic osgi objects by the filter options of the diagram options and the overview
+     * context they are shown in.
      * 
      * @param elements The unfiltered list of all elements.
-     * @param moc The element overview context showing which of the given elements are relevant
+     * @param moc The element overview context showing which of the given elements are relevant.
      * @param usedContext The ViewContext used to display the diagram these elements are shown in.
      * @return An Iterable of the elements filtered by the diagram options.
      */
@@ -91,6 +92,20 @@ final class SynthesisUtils {
         } else {
             return elementsInContext
         }
+    }
+    
+    /**
+     * Filters the list of given service components by the overview context they are shown in.
+     * 
+     * @param components The unfiltered list of all components.
+     * @param oc The overview context showing which of the given contexts are relevant.
+     * @return An Iterable of the components filtered by the contained context.
+     */
+    def static Iterable<ServiceComponent> filteredServiceComponents(List<ServiceComponent> components,
+        IOverviewVisualizationContext<ServiceComponent> oc) {
+        return components.filter [
+            oc.modelElement.contains(it)
+        ]
     }
     
     /**

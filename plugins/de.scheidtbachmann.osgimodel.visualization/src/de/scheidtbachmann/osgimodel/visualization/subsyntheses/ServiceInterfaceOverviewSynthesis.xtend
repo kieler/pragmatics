@@ -125,6 +125,7 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
                 return serviceInterfaceSynthesis.transform(it as ServiceInterfaceContext)
             ]
             
+            // Add all implementing service component edges.
             var List<Pair<ServiceComponentContext, ServiceInterfaceContext>>  implementedInterfaceEdges
             switch (usedContext.getProperty(OsgiSynthesisProperties.CURRENT_SERVICE_COMPONENT_VISUALIZATION_MODE)) {
                 case PLAIN: {
@@ -147,7 +148,6 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
                 }
             }
             
-            // Add all implementing service component edges.
             implementedInterfaceEdges.forEach [
                 // Connects the service component and -interface via an arrow in UML style,
                 // so [component] ---implements---|> [interface]
@@ -155,12 +155,16 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
                 val interface = value
                 val componentNode = component.node
                 val interfaceNode = interface.node
+                val componentPort = componentNode.ports.findFirst [
+                    data.filter(KIdentifier).head?.id === "implementedServiceInterfaces"
+                ]
                 val interfacePort = interfaceNode.ports.findFirst [
                     data.filter(KIdentifier).head?.id === "implementingServiceComponents"
                 ]
                 
                 val edge = createEdge(component, interface) => [
                     addImplementingComponentEdgeRendering
+                    sourcePort = componentPort
                     targetPort = interfacePort
                     source = componentNode
                     target = interfaceNode

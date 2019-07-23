@@ -39,7 +39,8 @@ abstract class AbstractVisualizationContextChangingAction implements IAction {
         val modelVisualizationContext = SynthesisUtils.getDomainElement(context) as IVisualizationContext<? extends EObject>
         if (!ContextUtils.isChildContextOrEqual(currentVisualizationContext, modelVisualizationContext)) {
             throw new IllegalStateException("This action is performed on an element that is not currently in the " +
-                "currently displayed visualization context:" + this.class)
+                "currently displayed visualization context:" + this.class
+                + "\nSomething during the clone process by the undo action probably went wrong.")
         }
         
         // Change the visualization.

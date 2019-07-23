@@ -27,6 +27,7 @@ class ProductSynthesis extends AbstractSubSynthesis<ProductContext, KNode> {
     @Inject extension KNodeExtensions
     @Inject extension OsgiStyles
     @Inject BundleOverviewSynthesis bundleOverviewSynthesis
+    @Inject ServiceComponentOverviewSynthesis serviceComponentOverviewSynthesis
     extension KGraphFactory = KGraphFactory.eINSTANCE
     
     override transform(ProductContext pc) {
@@ -35,17 +36,18 @@ class ProductSynthesis extends AbstractSubSynthesis<ProductContext, KNode> {
             pc.createNode() => [
                 associateWith(pc)
                 data += createKIdentifier => [ it.id = pc.hashCode.toString ]
-                val rendering = addProductRendering(product,
+                addProductRendering(product,
                     pc.parentVisualizationContext instanceof ProductOverviewContext, usedContext)
-//                val renderingSize = estimateSize(rendering, new Bounds(0,0))
                 setLayoutOption(CoreOptions::NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.MINIMUM_SIZE))
-//                setLayoutOption(CoreOptions::NODE_SIZE_MINIMUM, new KVector(renderingSize.x, renderingSize.y))
-//                setLayoutOption(CoreOptions::EXPAND_NODES, true);
                 
                 // Show a bundle overview of all bundles within this product.
                 val overviewBundleNodes = bundleOverviewSynthesis.transform(pc.bundleOverviewContext)
                 children += overviewBundleNodes
-//                children += createNode
+                
+                // Show a service component overview of all service components defined by bundles of this product.
+                val overviewServiceComponentNodes = serviceComponentOverviewSynthesis.transform(
+                    pc.serviceComponentOverviewContext)
+                children += overviewServiceComponentNodes
             ]
         ]
     }

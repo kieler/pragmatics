@@ -92,8 +92,9 @@ class BundleSynthesis extends AbstractSubSynthesis<BundleContext, KNode> {
                 }
                 
                 // Show a service component overview of all service components provided by this bundle.
-                // Only show this, if the option for it says so.
-                if (usedContext.getOptionValue(OsgiOptions.BUNDLE_SHOW_SERVICE_COMPONENTS) === true) {
+                // Only show this, if the option for it says so and if the context is available.
+                if (usedContext.getOptionValue(OsgiOptions.BUNDLE_SHOW_SERVICE_COMPONENTS) === true
+                    && bc.serviceComponentOverviewContext !== null) {
                     setLayoutOption(CoreOptions::NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.MINIMUM_SIZE))
                     val componentOverviewNodes = serviceComponentOverviewSynthesis.transform(
                         bc.serviceComponentOverviewContext)

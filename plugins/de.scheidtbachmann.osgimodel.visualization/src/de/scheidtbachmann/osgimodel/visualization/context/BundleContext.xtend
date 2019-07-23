@@ -70,7 +70,10 @@ class BundleContext implements IVisualizationContext<Bundle> {
     }
     
     override initializeChildVisualizationContexts() {
-        serviceComponentOverviewContext = new ServiceComponentOverviewContext(bundle.serviceComponents, this)
+        // The service components in bundles should only be shown if there are any.
+        if (!bundle.serviceComponents.empty) {
+            serviceComponentOverviewContext = new ServiceComponentOverviewContext(bundle.serviceComponents, this, false)
+        }
     }
     
     override deepCopy(Map<IVisualizationContext<?>, IVisualizationContext<?>> seenContexts) {

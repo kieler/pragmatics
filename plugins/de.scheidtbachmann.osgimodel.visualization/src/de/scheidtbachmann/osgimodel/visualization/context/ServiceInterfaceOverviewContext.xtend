@@ -20,7 +20,8 @@ import org.eclipse.xtend.lib.annotations.Accessors
  * 
  * @author nre
  */
-class ServiceInterfaceOverviewContext implements IOverviewVisualizationContext<ServiceInterface> {
+class ServiceInterfaceOverviewContext implements IOverviewVisualizationContext<ServiceInterface>,
+    IInterfaceComponentConnectionHolder {
     
     /**
      * All service interfaces that should be drawn in their detailed form.
@@ -162,12 +163,12 @@ class ServiceInterfaceOverviewContext implements IOverviewVisualizationContext<S
             copy.referencedBundleContexts.add(newBundleContext)
         ]
         copy.implementedInterfaceEdgesPlain = new LinkedList
-        implementedInterfaceEdgesPlain.forEach[
+        implementedInterfaceEdgesPlain.forEach [
             copy.implementedInterfaceEdgesPlain.add(key.deepCopy(seenContexts) as ServiceComponentContext
                 -> value.deepCopy(seenContexts) as ServiceInterfaceContext)
         ]
-        copy.implementedInterfaceEdgesInBundles= new LinkedList
-        implementedInterfaceEdgesInBundles.forEach[
+        copy.implementedInterfaceEdgesInBundles = new LinkedList
+        implementedInterfaceEdgesInBundles.forEach [
             copy.implementedInterfaceEdgesInBundles.add(key.deepCopy(seenContexts) as ServiceComponentContext
                 -> value.deepCopy(seenContexts) as ServiceInterfaceContext)
         ]

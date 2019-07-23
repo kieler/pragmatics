@@ -2,17 +2,26 @@ package de.scheidtbachmann.osgimodel.visualization.subsyntheses
 
 import com.google.inject.Inject
 import de.cau.cs.kieler.klighd.kgraph.KGraphFactory
+import de.cau.cs.kieler.klighd.kgraph.KIdentifier
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.krendering.extensions.KEdgeExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
+import de.scheidtbachmann.osgimodel.visualization.OsgiSynthesisProperties
+import de.scheidtbachmann.osgimodel.visualization.OsgiSynthesisProperties.ServiceComponentVisualizationMode
+import de.scheidtbachmann.osgimodel.visualization.context.BundleContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceComponentContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceComponentOverviewContext
+import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceContext
+import java.util.EnumSet
+import java.util.List
 import org.eclipse.elk.core.math.ElkPadding
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.Direction
+import org.eclipse.elk.core.options.HierarchyHandling
+import org.eclipse.elk.core.options.SizeConstraint
 
 import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
 import static extension de.scheidtbachmann.osgimodel.visualization.SynthesisUtils.*
@@ -27,8 +36,10 @@ class ServiceComponentOverviewSynthesis extends AbstractSubSynthesis<ServiceComp
     @Inject extension KNodeExtensions
     @Inject extension KRenderingExtensions
     @Inject extension OsgiStyles
-    @Inject SimpleServiceComponentSynthesis simpleServiceComponentSynthesis
+    @Inject BundleSynthesis bundleSynthesis
     @Inject ServiceComponentSynthesis serviceComponentSynthesis
+    @Inject ServiceInterfaceSynthesis serviceInterfaceSynthesis
+    @Inject SimpleServiceComponentSynthesis simpleServiceComponentSynthesis
     
     extension KGraphFactory = KGraphFactory.eINSTANCE
     
@@ -44,6 +55,7 @@ class ServiceComponentOverviewSynthesis extends AbstractSubSynthesis<ServiceComp
                 }
                 setLayoutOption(it, CoreOptions::ALGORITHM, "org.eclipse.elk.layered")
                 setLayoutOption(it, CoreOptions::DIRECTION, Direction.DOWN)
+                setLayoutOption(CoreOptions::NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.MINIMUM_SIZE))
                 addOverviewRendering("ServiceComponents")
                 
                 // remove the padding of the invisible container.
@@ -82,12 +94,17 @@ class ServiceComponentOverviewSynthesis extends AbstractSubSynthesis<ServiceComp
             configureBoxLayout
             addInvisibleContainerRendering
             
-            filteredCollapsedServiceComponentContexts.sortBy [
-                // The string to sort by. Either the shortened ID or the name.
-                modelElement.name
-            ].forEach [ collapsedServiceComponentContext, index |
-                children += simpleServiceComponentSynthesis.transform(collapsedServiceComponentContext as ServiceComponentContext , -index)
-            ]
+            val currentVisualizationMode = usedContext.getProperty(OsgiSynthesisProperties.CURRENT_SERVICE_COMPONENT_VISUALIZATION_MODE)
+            // All service components.
+            if (!serviceComponentOverviewContext.allowInBundleConnections || currentVisualizationMode.equals(
+                ServiceComponentVisualizationMode.PLAIN)) {
+                filteredCollapsedServiceComponentContexts.sortBy [
+                    // The string to sort by. Either the shortened ID or the name.
+                    modelElement.name
+                ].forEach [ collapsedServiceComponentContext, index |
+                    children += simpleServiceComponentSynthesis.transform(collapsedServiceComponentContext as ServiceComponentContext , -index)
+                ]
+            }
         ]
     }
     
@@ -99,14 +116,65 @@ class ServiceComponentOverviewSynthesis extends AbstractSubSynthesis<ServiceComp
      */
     private def KNode transformDetailedServiceComponentsOverview(
         ServiceComponentOverviewContext serviceComponentOverviewContext) {
-        val filteredDetailedServiceComponentContexts = serviceComponentOverviewContext.detailedElements
         createNode => [
             associateWith(serviceComponentOverviewContext)
             configureOverviewLayout
             addInvisibleContainerRendering
             
-            children += filteredDetailedServiceComponentContexts.flatMap [
-                return serviceComponentSynthesis.transform(it as ServiceComponentContext)
+            val currentVisualizationMode = usedContext.getProperty(OsgiSynthesisProperties.CURRENT_SERVICE_COMPONENT_VISUALIZATION_MODE)
+            // All service components.
+            if (!serviceComponentOverviewContext.allowInBundleConnections || currentVisualizationMode.equals(
+                ServiceComponentVisualizationMode.PLAIN)) {
+                val filteredDetailedServiceComponentContexts = serviceComponentOverviewContext.detailedElements
+                children += filteredDetailedServiceComponentContexts.flatMap [
+                    return serviceComponentSynthesis.transform(it as ServiceComponentContext)
+                ]
+            }
+            
+            // All service interfaces.
+            val filteredImplementedServiceInterfaceContexts = serviceComponentOverviewContext
+                .implementedServiceInterfaceContexts
+            children += filteredImplementedServiceInterfaceContexts.flatMap [
+                return serviceInterfaceSynthesis.transform(it as ServiceInterfaceContext)
+            ]
+            
+            // Add all implementing service component edges.
+            var List<Pair<ServiceComponentContext, ServiceInterfaceContext>>  implementedInterfaceEdges
+            if (serviceComponentOverviewContext.allowInBundleConnections && currentVisualizationMode.equals(
+                ServiceComponentVisualizationMode.IN_BUNDLES)) {
+                setLayoutOption(CoreOptions::HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN)
+                // All bundles cotaining the service components.
+                val filteredBundleContexts = serviceComponentOverviewContext.referencedBundleContexts
+                children += filteredBundleContexts.flatMap [
+                    return bundleSynthesis.transform(it as BundleContext)
+                ]
+                implementedInterfaceEdges = serviceComponentOverviewContext.implementedInterfaceEdgesInBundles
+            } else {
+                implementedInterfaceEdges = serviceComponentOverviewContext.implementedInterfaceEdgesPlain
+            }
+            
+            implementedInterfaceEdges.forEach [
+                // Connects the service component and -interface via an arrow in UML style,
+                // so [component] ---implements--|> [interface]
+                val component = key
+                val interface = value
+                val componentNode = component.node
+                val interfaceNode = interface.node
+                val componentPort = componentNode.ports.findFirst [
+                    data.filter(KIdentifier).head?.id === "implementedServiceInterfaces"
+                ]
+                val interfacePort = interfaceNode.ports.findFirst [
+                    data.filter(KIdentifier).head?.id === "implementingServiceComponents"
+                ]
+                
+                val edge = createEdge(component, interface) => [
+                    addImplementingComponentEdgeRendering
+                    sourcePort = componentPort
+                    targetPort = interfacePort
+                    source = componentNode
+                    target = interfaceNode
+                ]
+                componentNode.outgoingEdges += edge
             ]
         ]
     }

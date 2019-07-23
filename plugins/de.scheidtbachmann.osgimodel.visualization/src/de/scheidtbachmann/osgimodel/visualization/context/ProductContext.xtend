@@ -27,6 +27,12 @@ class ProductContext implements IVisualizationContext<Product> {
     @Accessors
     BundleOverviewContext bundleOverviewContext
     
+    /**
+     * The context for the service component overview shown in detailed products.
+     */
+    @Accessors
+    ServiceComponentOverviewContext serviceComponentOverviewContext
+    
     private new() {}
     
     new(Product product, IOverviewVisualizationContext<Product> parent) {
@@ -35,7 +41,7 @@ class ProductContext implements IVisualizationContext<Product> {
     }
     
     override getChildContexts() {
-        return #[bundleOverviewContext]
+        return #[bundleOverviewContext, serviceComponentOverviewContext]
     }
     
     override getModelElement() {
@@ -51,7 +57,11 @@ class ProductContext implements IVisualizationContext<Product> {
     }
     
     override initializeChildVisualizationContexts() {
-        bundleOverviewContext = new BundleOverviewContext(product.features.flatMap[bundles].toSet.toList, this)
+        // Any bundle could be referenced in more than one feature, so make sure they are included only once.
+        val allBundles = product.features.flatMap [ bundles ].toSet.toList
+        bundleOverviewContext = new BundleOverviewContext(allBundles, this)
+        val allServiceComponents = allBundles.flatMap [ serviceComponents ].toList
+        serviceComponentOverviewContext = new ServiceComponentOverviewContext(allServiceComponents, this, true)
     }
     
     override deepCopy(Map<IVisualizationContext<?>, IVisualizationContext<?>> seenContexts) {
@@ -64,6 +74,11 @@ class ProductContext implements IVisualizationContext<Product> {
         if (bundleOverviewContext !== null) {
             copy.bundleOverviewContext = bundleOverviewContext.deepCopy(seenContexts) as BundleOverviewContext
             copy.bundleOverviewContext.parentVisualizationContext = copy
+        }
+        if (serviceComponentOverviewContext !== null) {
+            copy.serviceComponentOverviewContext = serviceComponentOverviewContext.deepCopy(seenContexts)
+                as ServiceComponentOverviewContext
+            copy.serviceComponentOverviewContext.parentVisualizationContext = copy
         }
         copy.product = product
         

@@ -20,7 +20,7 @@ class ServiceInterfaceContext implements IVisualizationContext<ServiceInterface>
     /**
      * The parent visualization context.
      */
-    IOverviewVisualizationContext<ServiceInterface> parent
+    IOverviewVisualizationContext<?> parent
     
     /**
      * Indicates whether all service components implementing this service interface are shown and connected to this.
@@ -38,7 +38,7 @@ class ServiceInterfaceContext implements IVisualizationContext<ServiceInterface>
     
     private new() {}
     
-    new(ServiceInterface serviceInterface, IOverviewVisualizationContext<ServiceInterface> parent) {
+    new(ServiceInterface serviceInterface, IOverviewVisualizationContext<?> parent) {
         this.parent = parent
         this.serviceInterface = serviceInterface
     }
@@ -51,7 +51,7 @@ class ServiceInterfaceContext implements IVisualizationContext<ServiceInterface>
        return serviceInterface
     }
     
-    override IOverviewVisualizationContext<ServiceInterface> getParentVisualizationContext() {
+    override IOverviewVisualizationContext<?> getParentVisualizationContext() {
         return parent
     }
     

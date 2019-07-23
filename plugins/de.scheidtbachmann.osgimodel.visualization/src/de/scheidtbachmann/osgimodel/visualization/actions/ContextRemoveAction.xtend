@@ -2,9 +2,12 @@ package de.scheidtbachmann.osgimodel.visualization.actions
 
 import de.scheidtbachmann.osgimodel.visualization.context.BundleContext
 import de.scheidtbachmann.osgimodel.visualization.context.ContextUtils
+import de.scheidtbachmann.osgimodel.visualization.context.IInterfaceComponentConnectionHolder
 import de.scheidtbachmann.osgimodel.visualization.context.IOverviewVisualizationContext
 import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceComponentContext
+import de.scheidtbachmann.osgimodel.visualization.context.ServiceComponentOverviewContext
+import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceOverviewContext
 import org.eclipse.emf.ecore.EObject
 
@@ -29,19 +32,26 @@ class ContextRemoveAction extends AbstractVisualizationContextChangingAction {
         }
         val ovc = overviewVisContext as IOverviewVisualizationContext<M>
         
-        // Service component in a service interface context:
         if (modelVisualizationContext instanceof ServiceComponentContext
             && ovc instanceof ServiceInterfaceOverviewContext) {
             (ovc as ServiceInterfaceOverviewContext).implementingServiceComponentContexts
                 .remove(modelVisualizationContext)
+            
         } else if (modelVisualizationContext instanceof BundleContext
-            && ovc instanceof ServiceInterfaceOverviewContext) {
-            (ovc as ServiceInterfaceOverviewContext).referencedBundleContexts.remove(modelVisualizationContext)
+            && ovc instanceof IInterfaceComponentConnectionHolder) {
+            (ovc as IInterfaceComponentConnectionHolder).referencedBundleContexts.remove(modelVisualizationContext)
+            
+        } else if (modelVisualizationContext instanceof ServiceInterfaceContext
+            && ovc instanceof ServiceComponentOverviewContext) {
+            (ovc as ServiceComponentOverviewContext).implementedServiceInterfaceContexts
+                .remove(modelVisualizationContext)
+            
         } else {
             throw new IllegalArgumentException("ContextRemoveAction does not support removing "
                 + modelVisualizationContext.class + " from " + ovc.class + " yet.")
         }
         ContextUtils.removeEdges(ovc, modelVisualizationContext)
+        
         return null
     }
     
