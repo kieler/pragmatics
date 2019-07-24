@@ -38,12 +38,14 @@ class Product extends BasicOsgiObject
 @GenModel(labelFeature="uniqueId")
 class Feature extends BasicOsgiObject
 {
+    boolean isExternal
     refers Bundle[0..*] bundles opposite features
 }
 
 @GenModel(labelFeature="uniqueId")
 class Bundle extends BasicOsgiObject
 {
+    boolean isExternal
     refers Feature[] features opposite bundles
     String vendor
     contains ServiceComponent[0..*] serviceComponents opposite bundle
@@ -80,7 +82,8 @@ class ServiceInterface
     refers ServiceComponent[] serviceComponent opposite serviceInterfaces
     String name
     String about
-    refers Reference referencedBy opposite serviceInterface
+    refers Bundle implementedIn
+    refers Reference[] referencedBy opposite serviceInterface
 }
 
 class BundleCategory

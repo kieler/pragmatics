@@ -46,9 +46,11 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference osgimodel.ecore#//Product/features"/>
     </genClasses>
     <genClasses ecoreClass="osgimodel.ecore#//Feature" labelFeature="#//osgimodel/BasicOsgiObject/uniqueId">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute osgimodel.ecore#//Feature/isExternal"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference osgimodel.ecore#//Feature/bundles"/>
     </genClasses>
     <genClasses ecoreClass="osgimodel.ecore#//Bundle" labelFeature="#//osgimodel/BasicOsgiObject/uniqueId">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute osgimodel.ecore#//Bundle/isExternal"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference osgimodel.ecore#//Bundle/features"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute osgimodel.ecore#//Bundle/vendor"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference osgimodel.ecore#//Bundle/serviceComponents"/>
@@ -79,6 +81,7 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference osgimodel.ecore#//ServiceInterface/serviceComponent"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute osgimodel.ecore#//ServiceInterface/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute osgimodel.ecore#//ServiceInterface/about"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference osgimodel.ecore#//ServiceInterface/implementedIn"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference osgimodel.ecore#//ServiceInterface/referencedBy"/>
     </genClasses>
     <genClasses ecoreClass="osgimodel.ecore#//BundleCategory">

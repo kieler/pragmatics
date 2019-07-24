@@ -13,6 +13,7 @@ import org.eclipse.emf.common.util.EList;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link de.scheidtbachmann.osgimodel.Bundle#isIsExternal <em>Is External</em>}</li>
  *   <li>{@link de.scheidtbachmann.osgimodel.Bundle#getFeatures <em>Features</em>}</li>
  *   <li>{@link de.scheidtbachmann.osgimodel.Bundle#getVendor <em>Vendor</em>}</li>
  *   <li>{@link de.scheidtbachmann.osgimodel.Bundle#getServiceComponents <em>Service Components</em>}</li>
@@ -30,6 +31,28 @@ import org.eclipse.emf.common.util.EList;
  * @generated
  */
 public interface Bundle extends BasicOsgiObject {
+	/**
+	 * Returns the value of the '<em><b>Is External</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Is External</em>' attribute.
+	 * @see #setIsExternal(boolean)
+	 * @see de.scheidtbachmann.osgimodel.OsgimodelPackage#getBundle_IsExternal()
+	 * @model unique="false"
+	 * @generated
+	 */
+	boolean isIsExternal();
+
+	/**
+	 * Sets the value of the '{@link de.scheidtbachmann.osgimodel.Bundle#isIsExternal <em>Is External</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Is External</em>' attribute.
+	 * @see #isIsExternal()
+	 * @generated
+	 */
+	void setIsExternal(boolean value);
+
 	/**
 	 * Returns the value of the '<em><b>Features</b></em>' reference list.
 	 * The list contents are of type {@link de.scheidtbachmann.osgimodel.Feature}.

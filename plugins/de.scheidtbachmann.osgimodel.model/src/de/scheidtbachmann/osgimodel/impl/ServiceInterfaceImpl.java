@@ -2,6 +2,7 @@
  */
 package de.scheidtbachmann.osgimodel.impl;
 
+import de.scheidtbachmann.osgimodel.Bundle;
 import de.scheidtbachmann.osgimodel.OsgimodelPackage;
 import de.scheidtbachmann.osgimodel.Reference;
 import de.scheidtbachmann.osgimodel.ServiceComponent;
@@ -34,6 +35,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link de.scheidtbachmann.osgimodel.impl.ServiceInterfaceImpl#getServiceComponent <em>Service Component</em>}</li>
  *   <li>{@link de.scheidtbachmann.osgimodel.impl.ServiceInterfaceImpl#getName <em>Name</em>}</li>
  *   <li>{@link de.scheidtbachmann.osgimodel.impl.ServiceInterfaceImpl#getAbout <em>About</em>}</li>
+ *   <li>{@link de.scheidtbachmann.osgimodel.impl.ServiceInterfaceImpl#getImplementedIn <em>Implemented In</em>}</li>
  *   <li>{@link de.scheidtbachmann.osgimodel.impl.ServiceInterfaceImpl#getReferencedBy <em>Referenced By</em>}</li>
  * </ul>
  *
@@ -91,14 +93,24 @@ public class ServiceInterfaceImpl extends MinimalEObjectImpl.Container implement
 	protected String about = ABOUT_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getReferencedBy() <em>Referenced By</em>}' reference.
+	 * The cached value of the '{@link #getImplementedIn() <em>Implemented In</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getImplementedIn()
+	 * @generated
+	 * @ordered
+	 */
+	protected Bundle implementedIn;
+
+	/**
+	 * The cached value of the '{@link #getReferencedBy() <em>Referenced By</em>}' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getReferencedBy()
 	 * @generated
 	 * @ordered
 	 */
-	protected Reference referencedBy;
+	protected EList<Reference> referencedBy;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -184,16 +196,16 @@ public class ServiceInterfaceImpl extends MinimalEObjectImpl.Container implement
 	 * @generated
 	 */
 	@Override
-	public Reference getReferencedBy() {
-		if (referencedBy != null && referencedBy.eIsProxy()) {
-			InternalEObject oldReferencedBy = (InternalEObject)referencedBy;
-			referencedBy = (Reference)eResolveProxy(oldReferencedBy);
-			if (referencedBy != oldReferencedBy) {
+	public Bundle getImplementedIn() {
+		if (implementedIn != null && implementedIn.eIsProxy()) {
+			InternalEObject oldImplementedIn = (InternalEObject)implementedIn;
+			implementedIn = (Bundle)eResolveProxy(oldImplementedIn);
+			if (implementedIn != oldImplementedIn) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, OsgimodelPackage.SERVICE_INTERFACE__REFERENCED_BY, oldReferencedBy, referencedBy));
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, OsgimodelPackage.SERVICE_INTERFACE__IMPLEMENTED_IN, oldImplementedIn, implementedIn));
 			}
 		}
-		return referencedBy;
+		return implementedIn;
 	}
 
 	/**
@@ -201,23 +213,8 @@ public class ServiceInterfaceImpl extends MinimalEObjectImpl.Container implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Reference basicGetReferencedBy() {
-		return referencedBy;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public NotificationChain basicSetReferencedBy(Reference newReferencedBy, NotificationChain msgs) {
-		Reference oldReferencedBy = referencedBy;
-		referencedBy = newReferencedBy;
-		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, OsgimodelPackage.SERVICE_INTERFACE__REFERENCED_BY, oldReferencedBy, newReferencedBy);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
-		}
-		return msgs;
+	public Bundle basicGetImplementedIn() {
+		return implementedIn;
 	}
 
 	/**
@@ -226,18 +223,24 @@ public class ServiceInterfaceImpl extends MinimalEObjectImpl.Container implement
 	 * @generated
 	 */
 	@Override
-	public void setReferencedBy(Reference newReferencedBy) {
-		if (newReferencedBy != referencedBy) {
-			NotificationChain msgs = null;
-			if (referencedBy != null)
-				msgs = ((InternalEObject)referencedBy).eInverseRemove(this, OsgimodelPackage.REFERENCE__SERVICE_INTERFACE, Reference.class, msgs);
-			if (newReferencedBy != null)
-				msgs = ((InternalEObject)newReferencedBy).eInverseAdd(this, OsgimodelPackage.REFERENCE__SERVICE_INTERFACE, Reference.class, msgs);
-			msgs = basicSetReferencedBy(newReferencedBy, msgs);
-			if (msgs != null) msgs.dispatch();
+	public void setImplementedIn(Bundle newImplementedIn) {
+		Bundle oldImplementedIn = implementedIn;
+		implementedIn = newImplementedIn;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OsgimodelPackage.SERVICE_INTERFACE__IMPLEMENTED_IN, oldImplementedIn, implementedIn));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EList<Reference> getReferencedBy() {
+		if (referencedBy == null) {
+			referencedBy = new EObjectWithInverseResolvingEList<Reference>(Reference.class, this, OsgimodelPackage.SERVICE_INTERFACE__REFERENCED_BY, OsgimodelPackage.REFERENCE__SERVICE_INTERFACE);
 		}
-		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, OsgimodelPackage.SERVICE_INTERFACE__REFERENCED_BY, newReferencedBy, newReferencedBy));
+		return referencedBy;
 	}
 
 	/**
@@ -252,9 +255,7 @@ public class ServiceInterfaceImpl extends MinimalEObjectImpl.Container implement
 			case OsgimodelPackage.SERVICE_INTERFACE__SERVICE_COMPONENT:
 				return ((InternalEList<InternalEObject>)(InternalEList<?>)getServiceComponent()).basicAdd(otherEnd, msgs);
 			case OsgimodelPackage.SERVICE_INTERFACE__REFERENCED_BY:
-				if (referencedBy != null)
-					msgs = ((InternalEObject)referencedBy).eInverseRemove(this, OsgimodelPackage.REFERENCE__SERVICE_INTERFACE, Reference.class, msgs);
-				return basicSetReferencedBy((Reference)otherEnd, msgs);
+				return ((InternalEList<InternalEObject>)(InternalEList<?>)getReferencedBy()).basicAdd(otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
@@ -270,7 +271,7 @@ public class ServiceInterfaceImpl extends MinimalEObjectImpl.Container implement
 			case OsgimodelPackage.SERVICE_INTERFACE__SERVICE_COMPONENT:
 				return ((InternalEList<?>)getServiceComponent()).basicRemove(otherEnd, msgs);
 			case OsgimodelPackage.SERVICE_INTERFACE__REFERENCED_BY:
-				return basicSetReferencedBy(null, msgs);
+				return ((InternalEList<?>)getReferencedBy()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -289,9 +290,11 @@ public class ServiceInterfaceImpl extends MinimalEObjectImpl.Container implement
 				return getName();
 			case OsgimodelPackage.SERVICE_INTERFACE__ABOUT:
 				return getAbout();
+			case OsgimodelPackage.SERVICE_INTERFACE__IMPLEMENTED_IN:
+				if (resolve) return getImplementedIn();
+				return basicGetImplementedIn();
 			case OsgimodelPackage.SERVICE_INTERFACE__REFERENCED_BY:
-				if (resolve) return getReferencedBy();
-				return basicGetReferencedBy();
+				return getReferencedBy();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -315,8 +318,12 @@ public class ServiceInterfaceImpl extends MinimalEObjectImpl.Container implement
 			case OsgimodelPackage.SERVICE_INTERFACE__ABOUT:
 				setAbout((String)newValue);
 				return;
+			case OsgimodelPackage.SERVICE_INTERFACE__IMPLEMENTED_IN:
+				setImplementedIn((Bundle)newValue);
+				return;
 			case OsgimodelPackage.SERVICE_INTERFACE__REFERENCED_BY:
-				setReferencedBy((Reference)newValue);
+				getReferencedBy().clear();
+				getReferencedBy().addAll((Collection<? extends Reference>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -339,8 +346,11 @@ public class ServiceInterfaceImpl extends MinimalEObjectImpl.Container implement
 			case OsgimodelPackage.SERVICE_INTERFACE__ABOUT:
 				setAbout(ABOUT_EDEFAULT);
 				return;
+			case OsgimodelPackage.SERVICE_INTERFACE__IMPLEMENTED_IN:
+				setImplementedIn((Bundle)null);
+				return;
 			case OsgimodelPackage.SERVICE_INTERFACE__REFERENCED_BY:
-				setReferencedBy((Reference)null);
+				getReferencedBy().clear();
 				return;
 		}
 		super.eUnset(featureID);
@@ -360,8 +370,10 @@ public class ServiceInterfaceImpl extends MinimalEObjectImpl.Container implement
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 			case OsgimodelPackage.SERVICE_INTERFACE__ABOUT:
 				return ABOUT_EDEFAULT == null ? about != null : !ABOUT_EDEFAULT.equals(about);
+			case OsgimodelPackage.SERVICE_INTERFACE__IMPLEMENTED_IN:
+				return implementedIn != null;
 			case OsgimodelPackage.SERVICE_INTERFACE__REFERENCED_BY:
-				return referencedBy != null;
+				return referencedBy != null && !referencedBy.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

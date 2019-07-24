@@ -67,6 +67,7 @@ public class ServiceComponentItemProvider
 			addPathPropertyDescriptor(object);
 			addAboutPropertyDescriptor(object);
 			addImplementationClassPropertyDescriptor(object);
+			addBundlePropertyDescriptor(object);
 			addServiceInterfacesPropertyDescriptor(object);
 			addJavaDocPathPropertyDescriptor(object);
 		}
@@ -157,6 +158,28 @@ public class ServiceComponentItemProvider
 				 false,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Bundle feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addBundlePropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_ServiceComponent_bundle_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_ServiceComponent_bundle_feature", "_UI_ServiceComponent_type"),
+				 OsgimodelPackage.Literals.SERVICE_COMPONENT__BUNDLE,
+				 true,
+				 false,
+				 true,
+				 null,
 				 null,
 				 null));
 	}

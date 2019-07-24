@@ -36,6 +36,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link de.scheidtbachmann.osgimodel.impl.BundleImpl#isIsExternal <em>Is External</em>}</li>
  *   <li>{@link de.scheidtbachmann.osgimodel.impl.BundleImpl#getFeatures <em>Features</em>}</li>
  *   <li>{@link de.scheidtbachmann.osgimodel.impl.BundleImpl#getVendor <em>Vendor</em>}</li>
  *   <li>{@link de.scheidtbachmann.osgimodel.impl.BundleImpl#getServiceComponents <em>Service Components</em>}</li>
@@ -51,6 +52,26 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * @generated
  */
 public class BundleImpl extends BasicOsgiObjectImpl implements Bundle {
+	/**
+	 * The default value of the '{@link #isIsExternal() <em>Is External</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isIsExternal()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean IS_EXTERNAL_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isIsExternal() <em>Is External</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isIsExternal()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean isExternal = IS_EXTERNAL_EDEFAULT;
+
 	/**
 	 * The cached value of the '{@link #getFeatures() <em>Features</em>}' reference list.
 	 * <!-- begin-user-doc -->
@@ -178,6 +199,29 @@ public class BundleImpl extends BasicOsgiObjectImpl implements Bundle {
 	@Override
 	protected EClass eStaticClass() {
 		return OsgimodelPackage.Literals.BUNDLE;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public boolean isIsExternal() {
+		return isExternal;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setIsExternal(boolean newIsExternal) {
+		boolean oldIsExternal = isExternal;
+		isExternal = newIsExternal;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OsgimodelPackage.BUNDLE__IS_EXTERNAL, oldIsExternal, isExternal));
 	}
 
 	/**
@@ -383,6 +427,8 @@ public class BundleImpl extends BasicOsgiObjectImpl implements Bundle {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
+			case OsgimodelPackage.BUNDLE__IS_EXTERNAL:
+				return isIsExternal();
 			case OsgimodelPackage.BUNDLE__FEATURES:
 				return getFeatures();
 			case OsgimodelPackage.BUNDLE__VENDOR:
@@ -416,6 +462,9 @@ public class BundleImpl extends BasicOsgiObjectImpl implements Bundle {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
+			case OsgimodelPackage.BUNDLE__IS_EXTERNAL:
+				setIsExternal((Boolean)newValue);
+				return;
 			case OsgimodelPackage.BUNDLE__FEATURES:
 				getFeatures().clear();
 				getFeatures().addAll((Collection<? extends Feature>)newValue);
@@ -467,6 +516,9 @@ public class BundleImpl extends BasicOsgiObjectImpl implements Bundle {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
+			case OsgimodelPackage.BUNDLE__IS_EXTERNAL:
+				setIsExternal(IS_EXTERNAL_EDEFAULT);
+				return;
 			case OsgimodelPackage.BUNDLE__FEATURES:
 				getFeatures().clear();
 				return;
@@ -509,6 +561,8 @@ public class BundleImpl extends BasicOsgiObjectImpl implements Bundle {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
+			case OsgimodelPackage.BUNDLE__IS_EXTERNAL:
+				return isExternal != IS_EXTERNAL_EDEFAULT;
 			case OsgimodelPackage.BUNDLE__FEATURES:
 				return features != null && !features.isEmpty();
 			case OsgimodelPackage.BUNDLE__VENDOR:
@@ -543,7 +597,9 @@ public class BundleImpl extends BasicOsgiObjectImpl implements Bundle {
 		if (eIsProxy()) return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
-		result.append(" (vendor: ");
+		result.append(" (isExternal: ");
+		result.append(isExternal);
+		result.append(", vendor: ");
 		result.append(vendor);
 		result.append(')');
 		return result.toString();

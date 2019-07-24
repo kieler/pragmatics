@@ -359,13 +359,22 @@ public interface OsgimodelPackage extends EPackage {
 	int FEATURE__ABOUT = BASIC_OSGI_OBJECT__ABOUT;
 
 	/**
+	 * The feature id for the '<em><b>Is External</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int FEATURE__IS_EXTERNAL = BASIC_OSGI_OBJECT_FEATURE_COUNT + 0;
+
+	/**
 	 * The feature id for the '<em><b>Bundles</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE__BUNDLES = BASIC_OSGI_OBJECT_FEATURE_COUNT + 0;
+	int FEATURE__BUNDLES = BASIC_OSGI_OBJECT_FEATURE_COUNT + 1;
 
 	/**
 	 * The number of structural features of the '<em>Feature</em>' class.
@@ -374,7 +383,7 @@ public interface OsgimodelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_FEATURE_COUNT = BASIC_OSGI_OBJECT_FEATURE_COUNT + 1;
+	int FEATURE_FEATURE_COUNT = BASIC_OSGI_OBJECT_FEATURE_COUNT + 2;
 
 	/**
 	 * The number of operations of the '<em>Feature</em>' class.
@@ -432,13 +441,22 @@ public interface OsgimodelPackage extends EPackage {
 	int BUNDLE__ABOUT = BASIC_OSGI_OBJECT__ABOUT;
 
 	/**
+	 * The feature id for the '<em><b>Is External</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BUNDLE__IS_EXTERNAL = BASIC_OSGI_OBJECT_FEATURE_COUNT + 0;
+
+	/**
 	 * The feature id for the '<em><b>Features</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int BUNDLE__FEATURES = BASIC_OSGI_OBJECT_FEATURE_COUNT + 0;
+	int BUNDLE__FEATURES = BASIC_OSGI_OBJECT_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Vendor</b></em>' attribute.
@@ -447,7 +465,7 @@ public interface OsgimodelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int BUNDLE__VENDOR = BASIC_OSGI_OBJECT_FEATURE_COUNT + 1;
+	int BUNDLE__VENDOR = BASIC_OSGI_OBJECT_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Service Components</b></em>' containment reference list.
@@ -456,7 +474,7 @@ public interface OsgimodelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int BUNDLE__SERVICE_COMPONENTS = BASIC_OSGI_OBJECT_FEATURE_COUNT + 2;
+	int BUNDLE__SERVICE_COMPONENTS = BASIC_OSGI_OBJECT_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Required Bundles</b></em>' reference list.
@@ -465,7 +483,7 @@ public interface OsgimodelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int BUNDLE__REQUIRED_BUNDLES = BASIC_OSGI_OBJECT_FEATURE_COUNT + 3;
+	int BUNDLE__REQUIRED_BUNDLES = BASIC_OSGI_OBJECT_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Used By Bundle</b></em>' reference list.
@@ -474,7 +492,7 @@ public interface OsgimodelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int BUNDLE__USED_BY_BUNDLE = BASIC_OSGI_OBJECT_FEATURE_COUNT + 4;
+	int BUNDLE__USED_BY_BUNDLE = BASIC_OSGI_OBJECT_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Imported Packages</b></em>' reference list.
@@ -483,7 +501,7 @@ public interface OsgimodelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int BUNDLE__IMPORTED_PACKAGES = BASIC_OSGI_OBJECT_FEATURE_COUNT + 5;
+	int BUNDLE__IMPORTED_PACKAGES = BASIC_OSGI_OBJECT_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Exported Packages</b></em>' containment reference list.
@@ -492,7 +510,7 @@ public interface OsgimodelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int BUNDLE__EXPORTED_PACKAGES = BASIC_OSGI_OBJECT_FEATURE_COUNT + 6;
+	int BUNDLE__EXPORTED_PACKAGES = BASIC_OSGI_OBJECT_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>More Data</b></em>' containment reference list.
@@ -501,7 +519,7 @@ public interface OsgimodelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int BUNDLE__MORE_DATA = BASIC_OSGI_OBJECT_FEATURE_COUNT + 7;
+	int BUNDLE__MORE_DATA = BASIC_OSGI_OBJECT_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Eclipse Injections</b></em>' containment reference list.
@@ -510,7 +528,7 @@ public interface OsgimodelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int BUNDLE__ECLIPSE_INJECTIONS = BASIC_OSGI_OBJECT_FEATURE_COUNT + 8;
+	int BUNDLE__ECLIPSE_INJECTIONS = BASIC_OSGI_OBJECT_FEATURE_COUNT + 9;
 
 	/**
 	 * The feature id for the '<em><b>Bundle Category</b></em>' reference list.
@@ -519,7 +537,7 @@ public interface OsgimodelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int BUNDLE__BUNDLE_CATEGORY = BASIC_OSGI_OBJECT_FEATURE_COUNT + 9;
+	int BUNDLE__BUNDLE_CATEGORY = BASIC_OSGI_OBJECT_FEATURE_COUNT + 10;
 
 	/**
 	 * The number of structural features of the '<em>Bundle</em>' class.
@@ -528,7 +546,7 @@ public interface OsgimodelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int BUNDLE_FEATURE_COUNT = BASIC_OSGI_OBJECT_FEATURE_COUNT + 10;
+	int BUNDLE_FEATURE_COUNT = BASIC_OSGI_OBJECT_FEATURE_COUNT + 11;
 
 	/**
 	 * The number of operations of the '<em>Bundle</em>' class.
@@ -732,13 +750,22 @@ public interface OsgimodelPackage extends EPackage {
 	int SERVICE_INTERFACE__ABOUT = 2;
 
 	/**
-	 * The feature id for the '<em><b>Referenced By</b></em>' reference.
+	 * The feature id for the '<em><b>Implemented In</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SERVICE_INTERFACE__REFERENCED_BY = 3;
+	int SERVICE_INTERFACE__IMPLEMENTED_IN = 3;
+
+	/**
+	 * The feature id for the '<em><b>Referenced By</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SERVICE_INTERFACE__REFERENCED_BY = 4;
 
 	/**
 	 * The number of structural features of the '<em>Service Interface</em>' class.
@@ -747,7 +774,7 @@ public interface OsgimodelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SERVICE_INTERFACE_FEATURE_COUNT = 4;
+	int SERVICE_INTERFACE_FEATURE_COUNT = 5;
 
 	/**
 	 * The number of operations of the '<em>Service Interface</em>' class.
@@ -1185,6 +1212,17 @@ public interface OsgimodelPackage extends EPackage {
 	EClass getFeature();
 
 	/**
+	 * Returns the meta object for the attribute '{@link de.scheidtbachmann.osgimodel.Feature#isIsExternal <em>Is External</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Is External</em>'.
+	 * @see de.scheidtbachmann.osgimodel.Feature#isIsExternal()
+	 * @see #getFeature()
+	 * @generated
+	 */
+	EAttribute getFeature_IsExternal();
+
+	/**
 	 * Returns the meta object for the reference list '{@link de.scheidtbachmann.osgimodel.Feature#getBundles <em>Bundles</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1204,6 +1242,17 @@ public interface OsgimodelPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getBundle();
+
+	/**
+	 * Returns the meta object for the attribute '{@link de.scheidtbachmann.osgimodel.Bundle#isIsExternal <em>Is External</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Is External</em>'.
+	 * @see de.scheidtbachmann.osgimodel.Bundle#isIsExternal()
+	 * @see #getBundle()
+	 * @generated
+	 */
+	EAttribute getBundle_IsExternal();
 
 	/**
 	 * Returns the meta object for the reference list '{@link de.scheidtbachmann.osgimodel.Bundle#getFeatures <em>Features</em>}'.
@@ -1500,10 +1549,21 @@ public interface OsgimodelPackage extends EPackage {
 	EAttribute getServiceInterface_About();
 
 	/**
-	 * Returns the meta object for the reference '{@link de.scheidtbachmann.osgimodel.ServiceInterface#getReferencedBy <em>Referenced By</em>}'.
+	 * Returns the meta object for the reference '{@link de.scheidtbachmann.osgimodel.ServiceInterface#getImplementedIn <em>Implemented In</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Referenced By</em>'.
+	 * @return the meta object for the reference '<em>Implemented In</em>'.
+	 * @see de.scheidtbachmann.osgimodel.ServiceInterface#getImplementedIn()
+	 * @see #getServiceInterface()
+	 * @generated
+	 */
+	EReference getServiceInterface_ImplementedIn();
+
+	/**
+	 * Returns the meta object for the reference list '{@link de.scheidtbachmann.osgimodel.ServiceInterface#getReferencedBy <em>Referenced By</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Referenced By</em>'.
 	 * @see de.scheidtbachmann.osgimodel.ServiceInterface#getReferencedBy()
 	 * @see #getServiceInterface()
 	 * @generated
@@ -1866,6 +1926,14 @@ public interface OsgimodelPackage extends EPackage {
 		EClass FEATURE = eINSTANCE.getFeature();
 
 		/**
+		 * The meta object literal for the '<em><b>Is External</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute FEATURE__IS_EXTERNAL = eINSTANCE.getFeature_IsExternal();
+
+		/**
 		 * The meta object literal for the '<em><b>Bundles</b></em>' reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1882,6 +1950,14 @@ public interface OsgimodelPackage extends EPackage {
 		 * @generated
 		 */
 		EClass BUNDLE = eINSTANCE.getBundle();
+
+		/**
+		 * The meta object literal for the '<em><b>Is External</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute BUNDLE__IS_EXTERNAL = eINSTANCE.getBundle_IsExternal();
 
 		/**
 		 * The meta object literal for the '<em><b>Features</b></em>' reference list feature.
@@ -2106,7 +2182,15 @@ public interface OsgimodelPackage extends EPackage {
 		EAttribute SERVICE_INTERFACE__ABOUT = eINSTANCE.getServiceInterface_About();
 
 		/**
-		 * The meta object literal for the '<em><b>Referenced By</b></em>' reference feature.
+		 * The meta object literal for the '<em><b>Implemented In</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference SERVICE_INTERFACE__IMPLEMENTED_IN = eINSTANCE.getServiceInterface_ImplementedIn();
+
+		/**
+		 * The meta object literal for the '<em><b>Referenced By</b></em>' reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated

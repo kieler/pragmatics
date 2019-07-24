@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link de.scheidtbachmann.osgimodel.ServiceInterface#getServiceComponent <em>Service Component</em>}</li>
  *   <li>{@link de.scheidtbachmann.osgimodel.ServiceInterface#getName <em>Name</em>}</li>
  *   <li>{@link de.scheidtbachmann.osgimodel.ServiceInterface#getAbout <em>About</em>}</li>
+ *   <li>{@link de.scheidtbachmann.osgimodel.ServiceInterface#getImplementedIn <em>Implemented In</em>}</li>
  *   <li>{@link de.scheidtbachmann.osgimodel.ServiceInterface#getReferencedBy <em>Referenced By</em>}</li>
  * </ul>
  *
@@ -85,27 +86,39 @@ public interface ServiceInterface extends EObject {
 	void setAbout(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Referenced By</b></em>' reference.
+	 * Returns the value of the '<em><b>Implemented In</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Implemented In</em>' reference.
+	 * @see #setImplementedIn(Bundle)
+	 * @see de.scheidtbachmann.osgimodel.OsgimodelPackage#getServiceInterface_ImplementedIn()
+	 * @model
+	 * @generated
+	 */
+	Bundle getImplementedIn();
+
+	/**
+	 * Sets the value of the '{@link de.scheidtbachmann.osgimodel.ServiceInterface#getImplementedIn <em>Implemented In</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Implemented In</em>' reference.
+	 * @see #getImplementedIn()
+	 * @generated
+	 */
+	void setImplementedIn(Bundle value);
+
+	/**
+	 * Returns the value of the '<em><b>Referenced By</b></em>' reference list.
+	 * The list contents are of type {@link de.scheidtbachmann.osgimodel.Reference}.
 	 * It is bidirectional and its opposite is '{@link de.scheidtbachmann.osgimodel.Reference#getServiceInterface <em>Service Interface</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Referenced By</em>' reference.
-	 * @see #setReferencedBy(Reference)
+	 * @return the value of the '<em>Referenced By</em>' reference list.
 	 * @see de.scheidtbachmann.osgimodel.OsgimodelPackage#getServiceInterface_ReferencedBy()
 	 * @see de.scheidtbachmann.osgimodel.Reference#getServiceInterface
 	 * @model opposite="serviceInterface"
 	 * @generated
 	 */
-	Reference getReferencedBy();
-
-	/**
-	 * Sets the value of the '{@link de.scheidtbachmann.osgimodel.ServiceInterface#getReferencedBy <em>Referenced By</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Referenced By</em>' reference.
-	 * @see #getReferencedBy()
-	 * @generated
-	 */
-	void setReferencedBy(Reference value);
+	EList<Reference> getReferencedBy();
 
 } // ServiceInterface

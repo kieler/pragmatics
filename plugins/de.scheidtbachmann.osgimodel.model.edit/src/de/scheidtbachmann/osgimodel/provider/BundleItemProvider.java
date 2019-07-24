@@ -48,6 +48,7 @@ public class BundleItemProvider extends BasicOsgiObjectItemProvider {
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
+			addIsExternalPropertyDescriptor(object);
 			addFeaturesPropertyDescriptor(object);
 			addVendorPropertyDescriptor(object);
 			addRequiredBundlesPropertyDescriptor(object);
@@ -56,6 +57,28 @@ public class BundleItemProvider extends BasicOsgiObjectItemProvider {
 			addBundleCategoryPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
+	}
+
+	/**
+	 * This adds a property descriptor for the Is External feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addIsExternalPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Bundle_isExternal_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Bundle_isExternal_feature", "_UI_Bundle_type"),
+				 OsgimodelPackage.Literals.BUNDLE__IS_EXTERNAL,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
+				 null,
+				 null));
 	}
 
 	/**
@@ -261,6 +284,7 @@ public class BundleItemProvider extends BasicOsgiObjectItemProvider {
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(Bundle.class)) {
+			case OsgimodelPackage.BUNDLE__IS_EXTERNAL:
 			case OsgimodelPackage.BUNDLE__VENDOR:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;

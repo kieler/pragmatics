@@ -63,6 +63,7 @@ public class ServiceInterfaceItemProvider
 			addServiceComponentPropertyDescriptor(object);
 			addNamePropertyDescriptor(object);
 			addAboutPropertyDescriptor(object);
+			addImplementedInPropertyDescriptor(object);
 			addReferencedByPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
@@ -130,6 +131,28 @@ public class ServiceInterfaceItemProvider
 				 false,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Implemented In feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addImplementedInPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_ServiceInterface_implementedIn_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_ServiceInterface_implementedIn_feature", "_UI_ServiceInterface_type"),
+				 OsgimodelPackage.Literals.SERVICE_INTERFACE__IMPLEMENTED_IN,
+				 true,
+				 false,
+				 true,
+				 null,
 				 null,
 				 null));
 	}
