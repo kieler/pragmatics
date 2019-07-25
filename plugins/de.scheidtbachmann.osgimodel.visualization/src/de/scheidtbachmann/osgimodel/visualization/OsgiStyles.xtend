@@ -19,6 +19,7 @@ import de.cau.cs.kieler.klighd.krendering.extensions.KLabelExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.scheidtbachmann.osgimodel.Bundle
+import de.scheidtbachmann.osgimodel.Feature
 import de.scheidtbachmann.osgimodel.PackageObject
 import de.scheidtbachmann.osgimodel.Product
 import de.scheidtbachmann.osgimodel.ServiceComponent
@@ -302,6 +303,85 @@ class OsgiStyles {
             addRectangle => [
                 invisible = true
                 addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(p.about, context))
+            ]
+            addHorizontalSeperatorLine(1, 0)
+            addChildArea
+//            addDoubleClickAction(ContextCollapseExpandAction::ID)
+            setShadow(SHADOW_COLOR.color, 4, 4)
+        ]
+    }
+    
+    // ------------------------------------- Feature renderings -------------------------------------
+    
+    /**
+     * Adds a simple rendering for a {@link Feature} to the given node that can be expanded to call the
+     * {link ReferencedSynthesisExpandAction} to dynamically call the bundle synthesis for the given feature.
+     */
+    def addFeatureInOverviewRendering(KNode node, Feature f, String label) {
+        node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
+            setGridPlacement(3)
+            addRectangle => [
+                invisible = true
+                addSimpleLabel(label)
+            ]
+            addVerticalLine(RIGHT, 0, 1) => [
+                setGridPlacementData => [
+                    flexibleWidth = false
+                ]
+            ]
+            addButton("+", ContextCollapseExpandAction::ID) => [
+                setGridPlacementData => [
+                    flexibleWidth = false
+                ]
+                lineWidth = 0
+            ]
+            setBackgroundGradient(FEATURE_COLOR_1.color, FEATURE_COLOR_2.color, 90)
+            addDoubleClickAction(ContextCollapseExpandAction::ID)
+            setShadow(SHADOW_COLOR.color, 4, 4)
+            tooltip = f.uniqueId
+        ]
+    }
+    
+    /**
+     * Adds a rendering for a {@link Feature} to the given node.
+     * Contains the name of the feature and text for the ID and description of this feature.
+     * 
+     * @param node The KNode this rendering should be attached to.
+     * @param f The feature this rendering represents.
+     * @param context The view context used in the synthesis.
+     * 
+     * @return The entire rendering for a feature.
+     */
+    def KRoundedRectangle addFeatureRendering(KNode node, Feature f, boolean inOverview, ViewContext context) {
+        node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
+            setBackgroundGradient(FEATURE_COLOR_1.color, FEATURE_COLOR_2.color, 90)
+            setGridPlacement(1)
+            addRectangle => [
+                setGridPlacement(3)
+                invisible = true
+                addRectangle => [
+                    invisible = true
+                    addSimpleLabel(f.descriptiveName)
+                ]
+                addVerticalLine(RIGHT, 0, 1) => [
+                    setGridPlacementData => [
+                        flexibleWidth = false
+                    ]
+                ]
+                if (inOverview) {
+                    addCollapseButton
+                } else {
+                    addRemoveButton
+                }
+            ]
+            addHorizontalSeperatorLine(1, 0)
+            addRectangle => [
+                invisible = true
+                addSimpleLabel("ID: " + SynthesisUtils.getId(f.uniqueId, context))
+            ]
+            addRectangle => [
+                invisible = true
+                addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(f.about, context))
             ]
             addHorizontalSeperatorLine(1, 0)
             addChildArea

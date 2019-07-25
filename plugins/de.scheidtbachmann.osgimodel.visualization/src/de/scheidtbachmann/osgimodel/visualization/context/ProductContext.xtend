@@ -22,6 +22,12 @@ class ProductContext implements IVisualizationContext<Product> {
     IOverviewVisualizationContext<Product> parent
     
     /**
+     * The context for the feature overview shown in detailed products.
+     */
+    @Accessors
+    FeatureOverviewContext featureOverviewContext
+    
+    /**
      * The context for the bundle overview shown in detailed products.
      */
     @Accessors
@@ -41,7 +47,7 @@ class ProductContext implements IVisualizationContext<Product> {
     }
     
     override getChildContexts() {
-        return #[bundleOverviewContext, serviceComponentOverviewContext]
+        return #[featureOverviewContext, bundleOverviewContext, serviceComponentOverviewContext]
     }
     
     override getModelElement() {
@@ -57,6 +63,8 @@ class ProductContext implements IVisualizationContext<Product> {
     }
     
     override initializeChildVisualizationContexts() {
+        val allFeatures = product.features
+        featureOverviewContext = new FeatureOverviewContext(allFeatures, this)
         // Any bundle could be referenced in more than one feature, so make sure they are included only once.
         val allBundles = product.features.flatMap [ bundles ].toSet.toList
         bundleOverviewContext = new BundleOverviewContext(allBundles, this)
@@ -71,6 +79,10 @@ class ProductContext implements IVisualizationContext<Product> {
         }
         
         val copy = new ProductContext
+        if (featureOverviewContext !== null) {
+            copy.featureOverviewContext = featureOverviewContext.deepCopy(seenContexts) as FeatureOverviewContext
+            copy.featureOverviewContext.parentVisualizationContext = copy
+        }
         if (bundleOverviewContext !== null) {
             copy.bundleOverviewContext = bundleOverviewContext.deepCopy(seenContexts) as BundleOverviewContext
             copy.bundleOverviewContext.parentVisualizationContext = copy

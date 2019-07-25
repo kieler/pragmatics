@@ -2,6 +2,7 @@ package de.scheidtbachmann.osgimodel.visualization.context
 
 import de.scheidtbachmann.osgimodel.Feature
 import java.util.Map
+import org.eclipse.xtend.lib.annotations.Accessors
 
 /**
  * Context for the OSGi synthesis that contains information about {@link Feature}s.
@@ -20,6 +21,12 @@ class FeatureContext implements IVisualizationContext<Feature> {
      */
     IOverviewVisualizationContext<Feature> parent
     
+    /**
+     * The context for the bundle overview shown in detailed features.
+     */
+    @Accessors
+    BundleOverviewContext bundleOverviewContext
+    
     private new() {}
     
     new(Feature feature, IOverviewVisualizationContext<Feature> parent) {
@@ -28,7 +35,7 @@ class FeatureContext implements IVisualizationContext<Feature> {
     }
     
     override getChildContexts() {
-        return #[]
+        return #[bundleOverviewContext]
     }
     
     override getModelElement() {
@@ -44,7 +51,10 @@ class FeatureContext implements IVisualizationContext<Feature> {
     }
     
     override initializeChildVisualizationContexts() {
-        // Nothing to do yet.
+        // The bundles in features should only be shown if there are any.
+        if (!feature.bundles.empty) {
+            bundleOverviewContext = new BundleOverviewContext(feature.bundles, this)
+        }
     }
     
     override deepCopy(Map<IVisualizationContext<?>, IVisualizationContext<?>> seenContexts) {
@@ -54,6 +64,10 @@ class FeatureContext implements IVisualizationContext<Feature> {
         }
         
         val clone = new FeatureContext
+        if (bundleOverviewContext !== null) {
+            clone.bundleOverviewContext = bundleOverviewContext.deepCopy(seenContexts) as BundleOverviewContext
+            clone.bundleOverviewContext.parentVisualizationContext = clone
+        }
         clone.feature = feature
         clone.parent = null
         

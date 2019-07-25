@@ -45,7 +45,7 @@ class SimpleFeatureSynthesis extends AbstractSubSynthesis<FeatureContext, KNode>
                     }
                 } ?: ""
                 setLayoutOption(CoreOptions::PRIORITY, priority)
-                addGenericRendering(label) // TODO: add a feature specific rendering.
+                addFeatureInOverviewRendering(feature, label)
             ]
         ]
     }

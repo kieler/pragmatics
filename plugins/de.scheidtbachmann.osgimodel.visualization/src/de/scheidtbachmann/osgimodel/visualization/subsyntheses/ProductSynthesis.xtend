@@ -26,6 +26,7 @@ import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
 class ProductSynthesis extends AbstractSubSynthesis<ProductContext, KNode> {
     @Inject extension KNodeExtensions
     @Inject extension OsgiStyles
+    @Inject FeatureOverviewSynthesis featureOverviewSynthesis
     @Inject BundleOverviewSynthesis bundleOverviewSynthesis
     @Inject ServiceComponentOverviewSynthesis serviceComponentOverviewSynthesis
     extension KGraphFactory = KGraphFactory.eINSTANCE
@@ -39,6 +40,10 @@ class ProductSynthesis extends AbstractSubSynthesis<ProductContext, KNode> {
                 addProductRendering(product,
                     pc.parentVisualizationContext instanceof ProductOverviewContext, usedContext)
                 setLayoutOption(CoreOptions::NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.MINIMUM_SIZE))
+                
+                // Show a feature overview of all features within this product.
+                val overviewFeatureNodes = featureOverviewSynthesis.transform(pc.featureOverviewContext)
+                children += overviewFeatureNodes
                 
                 // Show a bundle overview of all bundles within this product.
                 val overviewBundleNodes = bundleOverviewSynthesis.transform(pc.bundleOverviewContext)

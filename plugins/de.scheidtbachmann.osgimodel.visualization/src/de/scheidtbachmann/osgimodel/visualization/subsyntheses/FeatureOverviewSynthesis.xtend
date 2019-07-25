@@ -32,6 +32,7 @@ class FeatureOverviewSynthesis extends AbstractSubSynthesis<FeatureOverviewConte
     @Inject extension KRenderingExtensions
     @Inject extension OsgiStyles
     @Inject SimpleFeatureSynthesis simpleFeatureSynthesis
+    @Inject FeatureSynthesis featureSynthesis
     
     extension KGraphFactory = KGraphFactory.eINSTANCE
     
@@ -116,7 +117,7 @@ class FeatureOverviewSynthesis extends AbstractSubSynthesis<FeatureOverviewConte
             addInvisibleContainerRendering
             
             children += filteredDetailedFeatureContexts.flatMap [
-                return simpleFeatureSynthesis.transform(it as FeatureContext) // TODO: make a specific synthesis for expanded features!
+                return featureSynthesis.transform(it as FeatureContext)
             ]
         ]
     }
