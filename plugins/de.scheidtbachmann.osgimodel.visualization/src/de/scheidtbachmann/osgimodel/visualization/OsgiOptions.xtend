@@ -26,9 +26,9 @@ class OsgiOptions {
     public static final SynthesisOption SHORTEN_BY = SynthesisOption.createTextOption(
         "Shorten IDs by")
     
-    /** Option for filtering an overview by only elements starting with the id in the option. */
+    /** Option for filtering an overview by only elements matching the regular expression in the option. */
     public static final SynthesisOption FILTER_BY = SynthesisOption.createTextOption(
-        "Filter by IDs starting with")
+        "Filter by IDs with (Java regex)")
         
     /** Option for limiting the length of descriptive texts. */
     public static final SynthesisOption DESCRIPTION_LENGTH = SynthesisOption.createRangeOption(

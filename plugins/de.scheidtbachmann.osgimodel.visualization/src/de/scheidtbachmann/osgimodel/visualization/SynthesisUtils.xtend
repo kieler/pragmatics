@@ -86,9 +86,9 @@ final class SynthesisUtils {
         val elementsInContext = elements.filter [
             moc.modelElement.contains(it)
         ]
-        val prefix = usedContext.getOptionValue(FILTER_BY) as String
-        if (prefix !== "") {
-            return elementsInContext.filter[ it.uniqueId.startsWith(prefix) ]
+        val regex = usedContext.getOptionValue(FILTER_BY) as String
+        if (!regex.empty) {
+            return elementsInContext.filter[ it.uniqueId.matches(regex) ]
         } else {
             return elementsInContext
         }
@@ -118,9 +118,9 @@ final class SynthesisUtils {
     def static <M extends BasicOsgiObject> Iterable<? extends IVisualizationContext<M>>
     filteredBasicOsgiObjectContexts(List<? extends IVisualizationContext<M>> visualizationContexts,
         ViewContext usedContext) {
-        val prefix = usedContext.getOptionValue(FILTER_BY) as String
-        if (prefix !== "") {
-            return visualizationContexts.filter[ it.modelElement.uniqueId.startsWith(prefix) ]
+        val regex = usedContext.getOptionValue(FILTER_BY) as String
+        if (!regex.empty) {
+            return visualizationContexts.filter[ it.modelElement.uniqueId.matches(regex) ]
         } else {
             return visualizationContexts
         }
@@ -134,9 +134,9 @@ final class SynthesisUtils {
      */
     def static Iterable<? extends IVisualizationContext<ServiceInterface>> filteredServiceInterfaceContexts(
         List<? extends IVisualizationContext<ServiceInterface>> visualizationContexts, ViewContext usedContext) {
-        val prefix = usedContext.getOptionValue(FILTER_BY) as String
-        if (prefix !== "") {
-            return visualizationContexts.filter[ it.modelElement.name.startsWith(prefix) ]
+        val regex = usedContext.getOptionValue(FILTER_BY) as String
+        if (!regex.empty) {
+            return visualizationContexts.filter[ it.modelElement.name.matches(regex) ]
         } else {
             return visualizationContexts
         }
@@ -150,9 +150,9 @@ final class SynthesisUtils {
      */
     def static Iterable<? extends IVisualizationContext<PackageObject>> filteredPackageObjectContexts(
         List<? extends IVisualizationContext<PackageObject>> visualizationContexts, ViewContext usedContext) {
-        val prefix = usedContext.getOptionValue(FILTER_BY) as String
-        if (prefix !== "") {
-            return visualizationContexts.filter[ it.modelElement.uniqueId.startsWith(prefix) ]
+        val regex = usedContext.getOptionValue(FILTER_BY) as String
+        if (!regex.empty) {
+            return visualizationContexts.filter[ it.modelElement.uniqueId.matches(regex) ]
         } else {
             return visualizationContexts
         }
