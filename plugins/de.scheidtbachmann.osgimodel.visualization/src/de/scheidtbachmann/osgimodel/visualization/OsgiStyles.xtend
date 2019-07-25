@@ -8,7 +8,6 @@ import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.kgraph.KPort
 import de.cau.cs.kieler.klighd.krendering.KContainerRendering
 import de.cau.cs.kieler.klighd.krendering.KRectangle
-import de.cau.cs.kieler.klighd.krendering.KRendering
 import de.cau.cs.kieler.klighd.krendering.KRoundedRectangle
 import de.cau.cs.kieler.klighd.krendering.KText
 import de.cau.cs.kieler.klighd.krendering.LineStyle
@@ -52,8 +51,26 @@ class OsgiStyles {
     @Inject extension KPolylineExtensions
     @Inject extension KRenderingExtensions
     
+    // The colors used for the background of all visualized elements.
+    public static final String BUNDLE_COLOR_1 = "#E0F7FF" // HSV 195 12 100
+    public static final String BUNDLE_COLOR_2 = "#C2F0FF" // HSV 195 24 100
+    public static final String FEATURE_COLOR_1 = "#E0FFE9" // HSV 137 12 100
+    public static final String FEATURE_COLOR_2 = "#C2FFD3" // HSV 137 24 100
+    public static final String PRODUCT_COLOR_1 = "#FFEAE0" // HSV 19 12 100
+    public static final String PRODUCT_COLOR_2 = "#FFD5C2" // HSV 19 24 100
+    public static final String SERVICE_COMPONENT_COLOR_1 = "#FFE0F5" // HSV 319 12 100
+    public static final String SERVICE_COMPONENT_COLOR_2 = "#FFC2EC" // HSV 319 24 100
+    public static final String SERVICE_INTERFACE_COLOR_1 = "#FFE0E0" // HSV 0 12 100
+    public static final String SERVICE_INTERFACE_COLOR_2 = "#FFC2C2" // HSV 0 24 100
+    
+    // Port colors.
+    public static final String ALL_SHOWN_COLOR = "white"
+    public static final String NOT_ALL_SHOWN_COLOR = "black"
+    
+    public static final String SHADOW_COLOR = "black"
+    
     /** The roundness of visualized rounded rectangles. */
-    val ROUNDNESS = 4
+    static final int ROUNDNESS = 4
     
     // ------------------------------------- Generic renderings -------------------------------------
     
@@ -62,7 +79,7 @@ class OsgiStyles {
      */
     def KRoundedRectangle addGenericRendering(KNode node, String name) {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
-            setShadow("black".color, 4, 4)
+            setShadow(SHADOW_COLOR.color, 4, 4)
             addSimpleLabel(name)
             // Styles of the surrounding rectangle
         ]
@@ -109,7 +126,7 @@ class OsgiStyles {
             ]
             addHorizontalSeperatorLine(1, 0)
             addChildArea
-            setShadow("black".color, 4, 4)
+            setShadow(SHADOW_COLOR.color, 4, 4)
         ]
         
         // Collapsed
@@ -147,7 +164,7 @@ class OsgiStyles {
                     lineWidth = 0
                 ]
             ]
-            setShadow("black".color, 4, 4)
+            setShadow(SHADOW_COLOR.color, 4, 4)
         ]
     }
     
@@ -202,28 +219,6 @@ class OsgiStyles {
     }
     
     /**
-     * Highlight the port that all elements that should be connected to this port are in displayed.
-     * @param port The port that should be highlighted.
-     */
-    def void highlightAllShown(KPort port) {
-        port.data.filter(KRendering).forEach [
-            background = "white".color
-            selectionBackground = "white".color
-        ]
-    }
-    
-    /**
-     * Remove the highlighting color that showed that all elements that should be connected to this port were displayed.
-     * @param port The port that should get its original look.
-     */
-    def void unHighlightAllShown(KPort port) {
-        port.data.filter(KRendering).forEach [
-            background = "black".color
-            selectionBackground = "black".color
-        ]
-    }
-    
-    /**
      * Adds a simple text label to any rendering with some surrounding space for better readability.
      */
     def KText addSimpleLabel(KContainerRendering rendering, String text) {
@@ -260,9 +255,9 @@ class OsgiStyles {
                 ]
                 lineWidth = 0
             ]
-            setBackgroundGradient("#FFEAE0".color, "FFD3BF".color, 90)
+            setBackgroundGradient(PRODUCT_COLOR_1.color, PRODUCT_COLOR_2.color, 90)
             addDoubleClickAction(ContextCollapseExpandAction::ID)
-            setShadow("black".color, 4, 4)
+            setShadow(SHADOW_COLOR.color, 4, 4)
             tooltip = p.uniqueId
         ]
     }
@@ -279,7 +274,7 @@ class OsgiStyles {
      */
     def KRoundedRectangle addProductRendering(KNode node, Product p, boolean inOverview, ViewContext context) {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
-            setBackgroundGradient("#FFEAE0".color, "#FFD3BF".color, 90)
+            setBackgroundGradient(PRODUCT_COLOR_1.color, PRODUCT_COLOR_2.color, 90)
             setGridPlacement(1)
             addRectangle => [
                 setGridPlacement(3)
@@ -311,7 +306,7 @@ class OsgiStyles {
             addHorizontalSeperatorLine(1, 0)
             addChildArea
 //            addDoubleClickAction(ContextCollapseExpandAction::ID)
-            setShadow("black".color, 4, 4)
+            setShadow(SHADOW_COLOR.color, 4, 4)
         ]
     }
     
@@ -339,9 +334,9 @@ class OsgiStyles {
                 ]
                 lineWidth = 0
             ]
-            setBackgroundGradient("#E0F7FF".color, "#BFEFFF".color, 90)
+            setBackgroundGradient(BUNDLE_COLOR_1.color, BUNDLE_COLOR_2.color, 90)
             addDoubleClickAction(ContextCollapseExpandAction::ID)
-            setShadow("black".color, 4, 4)
+            setShadow(SHADOW_COLOR.color, 4, 4)
             tooltip = b.uniqueId
         ]
     }
@@ -358,7 +353,7 @@ class OsgiStyles {
      */
     def KRoundedRectangle addBundleRendering(KNode node, Bundle b, boolean inOverview, ViewContext context) {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
-            setBackgroundGradient("#E0F7FF".color, "#BFEFFF".color, 90)
+            setBackgroundGradient(BUNDLE_COLOR_1.color, BUNDLE_COLOR_2.color, 90)
             setGridPlacement(1)
             addRectangle => [
                 setGridPlacement(3)
@@ -390,7 +385,7 @@ class OsgiStyles {
             addHorizontalSeperatorLine(1, 0)
             addChildArea
 //            addDoubleClickAction(ContextCollapseExpandAction::ID)
-            setShadow("black".color, 4, 4)
+            setShadow(SHADOW_COLOR.color, 4, 4)
         ]
     }
     
@@ -400,7 +395,7 @@ class OsgiStyles {
      */
     def KRectangle addUsedByBundlesPortRendering(KPort port, int numUsedByBundles, boolean allShown) {
         return port.addRectangle => [
-            background = if (allShown) "white".color else "black".color
+            background = if (allShown) ALL_SHOWN_COLOR.color else NOT_ALL_SHOWN_COLOR.color
             val tooltipText = "Show bundles that require this bundle (" + numUsedByBundles + " total)."
             tooltip = tooltipText
             addSingleClickAction(RevealUsedByBundlesAction::ID)
@@ -413,7 +408,7 @@ class OsgiStyles {
      */
     def KRectangle addRequiredBundlesPortRendering(KPort port, int numReqBundles, boolean allShown) {
         return port.addRectangle => [
-            background = if (allShown) "white".color else "black".color
+            background = if (allShown) ALL_SHOWN_COLOR.color else NOT_ALL_SHOWN_COLOR.color
             val tooltipText = "Show required bundles (" + numReqBundles + " total)."
             tooltip = tooltipText
             addSingleClickAction(RevealRequiredBundlesAction::ID)
@@ -440,7 +435,7 @@ class OsgiStyles {
      */
     def addUsedPackagesPortRendering(KPort port, boolean allShown) {
         port.addEllipse => [
-            background = if (allShown) "white".color else "black".color
+            background = if (allShown) ALL_SHOWN_COLOR.color else NOT_ALL_SHOWN_COLOR.color
             val tooltipText = "Show the used packages."
             tooltip = tooltipText
             addSingleClickAction(RevealUsedPackagesAction::ID)
@@ -495,9 +490,9 @@ class OsgiStyles {
                 ]
                 lineWidth = 0
             ]
-            setBackgroundGradient("#FFE0E0".color, "FFBFBF".color, 90)
+            setBackgroundGradient(SERVICE_INTERFACE_COLOR_1.color, SERVICE_INTERFACE_COLOR_2.color, 90)
             addDoubleClickAction(ContextCollapseExpandAction::ID)
-            setShadow("black".color, 4, 4)
+            setShadow(SHADOW_COLOR.color, 4, 4)
             tooltip = s.name
         ]
     }
@@ -514,7 +509,7 @@ class OsgiStyles {
     def KRoundedRectangle addServiceInterfaceRendering(KNode node, ServiceInterface si, boolean inOverview,
         ViewContext context) {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
-            setBackgroundGradient("#FFE0E0".color, "#FFC2C2".color, 90)
+            setBackgroundGradient(SERVICE_INTERFACE_COLOR_1.color, SERVICE_INTERFACE_COLOR_2.color, 90)
             setGridPlacement(1)
             addRectangle => [
                 setGridPlacement(3)
@@ -542,7 +537,7 @@ class OsgiStyles {
             addHorizontalSeperatorLine(1, 0)
             addChildArea
 //            addDoubleClickAction(ContextCollapseExpandAction::ID)
-            setShadow("black".color, 4, 4)
+            setShadow(SHADOW_COLOR.color, 4, 4)
         ]
     }
     
@@ -552,7 +547,7 @@ class OsgiStyles {
      */
     def KRectangle addImplementingServiceComponentsPortRendering(KPort port, int numImplementingComponents, boolean allShown) {
         return port.addRectangle => [
-            background = if (allShown) "white".color else "black".color
+            background = if (allShown) ALL_SHOWN_COLOR.color else NOT_ALL_SHOWN_COLOR.color
             val tooltipText = "Show service components implementing this interface (" + numImplementingComponents + " total)."
             tooltip = tooltipText
             addSingleClickAction(RevealImplementingServiceComponentsAction::ID)
@@ -583,9 +578,9 @@ class OsgiStyles {
                 ]
                 lineWidth = 0
             ]
-            setBackgroundGradient("#FFE0F5".color, "#FFC2EB".color, 90)
+            setBackgroundGradient(SERVICE_COMPONENT_COLOR_1.color, SERVICE_COMPONENT_COLOR_2.color, 90)
             addDoubleClickAction(ContextCollapseExpandAction::ID)
-            setShadow("black".color, 4, 4)
+            setShadow(SHADOW_COLOR.color, 4, 4)
             tooltip = s.name
         ]
     }
@@ -602,7 +597,7 @@ class OsgiStyles {
     def KRoundedRectangle addServiceComponentRendering(KNode node, ServiceComponent sc, boolean inOverview,
         ViewContext context) {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
-            setBackgroundGradient("#FFE0F5".color, "#FFC2EB".color, 90)
+            setBackgroundGradient(SERVICE_COMPONENT_COLOR_1.color, SERVICE_COMPONENT_COLOR_2.color, 90)
             setGridPlacement(1)
             addRectangle => [
                 setGridPlacement(3)
@@ -629,7 +624,7 @@ class OsgiStyles {
             ]
             addHorizontalSeperatorLine(1, 0)
             addChildArea
-            setShadow("black".color, 4, 4)
+            setShadow(SHADOW_COLOR.color, 4, 4)
         ]
     }
     
@@ -650,7 +645,7 @@ class OsgiStyles {
     def KRectangle addImplementedServiceInterfacesPortRendering(KPort port, int numImplementedInterfaces,
         boolean allShown) {
         return port.addRectangle => [
-            background = if (allShown) "white".color else "black".color
+            background = if (allShown) ALL_SHOWN_COLOR.color else NOT_ALL_SHOWN_COLOR.color
             val tooltipText = "Show service interfaces implemented by this component (" + numImplementedInterfaces 
                 + " total)."
             tooltip = tooltipText
