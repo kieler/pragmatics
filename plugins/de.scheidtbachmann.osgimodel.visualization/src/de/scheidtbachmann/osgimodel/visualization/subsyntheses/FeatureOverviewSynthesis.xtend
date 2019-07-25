@@ -12,9 +12,11 @@ import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
 import de.scheidtbachmann.osgimodel.visualization.context.FeatureContext
 import de.scheidtbachmann.osgimodel.visualization.context.FeatureOverviewContext
+import java.util.EnumSet
 import org.eclipse.elk.core.math.ElkPadding
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.Direction
+import org.eclipse.elk.core.options.SizeConstraint
 
 import static de.scheidtbachmann.osgimodel.visualization.OsgiOptions.*
 
@@ -48,6 +50,7 @@ class FeatureOverviewSynthesis extends AbstractSubSynthesis<FeatureOverviewConte
                 }
                 setLayoutOption(it, CoreOptions::ALGORITHM, "org.eclipse.elk.layered")
                 setLayoutOption(it, CoreOptions::DIRECTION, Direction.DOWN)
+                setLayoutOption(CoreOptions::NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.MINIMUM_SIZE))
                 addOverviewRendering("Features")
                 
                 // remove the padding of the invisible container.

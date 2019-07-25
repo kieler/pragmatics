@@ -10,9 +10,11 @@ import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 import de.scheidtbachmann.osgimodel.visualization.context.BundleCategoryContext
 import de.scheidtbachmann.osgimodel.visualization.context.BundleCategoryOverviewContext
+import java.util.EnumSet
 import org.eclipse.elk.core.math.ElkPadding
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.Direction
+import org.eclipse.elk.core.options.SizeConstraint
 
 import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
 import static extension de.scheidtbachmann.osgimodel.visualization.SynthesisUtils.*
@@ -43,6 +45,7 @@ class BundleCategoryOverviewSynthesis extends AbstractSubSynthesis<BundleCategor
                 }
                 setLayoutOption(it, CoreOptions::ALGORITHM, "org.eclipse.elk.layered")
                 setLayoutOption(it, CoreOptions::DIRECTION, Direction.DOWN)
+                setLayoutOption(CoreOptions::NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.MINIMUM_SIZE))
                 addOverviewRendering("Bundle Categories")
                 
                 // remove the padding of the invisible container.

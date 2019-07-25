@@ -9,6 +9,9 @@ import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
 import de.scheidtbachmann.osgimodel.visualization.context.ProductContext
 import de.scheidtbachmann.osgimodel.visualization.context.ProductOverviewContext
+import java.util.EnumSet
+import org.eclipse.elk.core.options.CoreOptions
+import org.eclipse.elk.core.options.SizeConstraint
 
 import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
 import static extension de.scheidtbachmann.osgimodel.visualization.SynthesisUtils.*
@@ -36,6 +39,7 @@ class ProductOverviewSynthesis extends AbstractSubSynthesis<ProductOverviewConte
                     initiallyCollapse
                 }
                 configureBoxLayout
+                setLayoutOption(CoreOptions::NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.MINIMUM_SIZE))
                 addOverviewRendering("Products")
                 
                 val filteredCollapsedProducts = SynthesisUtils.filteredBasicOsgiObjectContexts(
