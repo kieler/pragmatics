@@ -528,8 +528,7 @@ class OsgiStyles {
      * Adds the rendering for an edge showing a bundle requirement.
      */
     def addInternalUsedPackagesBundleEdgeRendering(KEdge edge, List<PackageObject> packages, Product product, ViewContext context) {
-        val tooltipText = "Packages\n" + packages.map [ SynthesisUtils.getId(it.uniqueId, context) + "\n" ] 
-            + " for product " + SynthesisUtils.getId(product.uniqueId, context)
+        val tooltipText = "Packages\n" + packages.map [ it.uniqueId + "\n" ] + " for product " + product.uniqueId
         edge.addPolyline => [
             addHeadArrowDecorator => [
                 lineWidth = 1
