@@ -298,11 +298,15 @@ class OsgiStyles {
             addHorizontalSeperatorLine(1, 0)
             addRectangle => [
                 invisible = true
-                addSimpleLabel("ID: " + SynthesisUtils.getId(p.uniqueId, context))
+                addSimpleLabel("ID: " + SynthesisUtils.getId(p.uniqueId, context)) => [
+                    tooltip = p.uniqueId
+                ]
             ]
             addRectangle => [
                 invisible = true
-                addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(p.about, context))
+                addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(p.about, context)) => [
+                    tooltip = p.about
+                ]
             ]
             addHorizontalSeperatorLine(1, 0)
             addChildArea
@@ -377,11 +381,15 @@ class OsgiStyles {
             addHorizontalSeperatorLine(1, 0)
             addRectangle => [
                 invisible = true
-                addSimpleLabel("ID: " + SynthesisUtils.getId(f.uniqueId, context))
+                addSimpleLabel("ID: " + SynthesisUtils.getId(f.uniqueId, context)) => [
+                    tooltip = f.uniqueId
+                ]
             ]
             addRectangle => [
                 invisible = true
-                addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(f.about, context))
+                addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(f.about, context)) => [
+                    tooltip = f.about
+                ]
             ]
             addHorizontalSeperatorLine(1, 0)
             addChildArea
@@ -456,11 +464,15 @@ class OsgiStyles {
             addHorizontalSeperatorLine(1, 0)
             addRectangle => [
                 invisible = true
-                addSimpleLabel("ID: " + SynthesisUtils.getId(b.uniqueId, context))
+                addSimpleLabel("ID: " + SynthesisUtils.getId(b.uniqueId, context)) => [
+                    tooltip = b.uniqueId
+                ]
             ]
             addRectangle => [
                 invisible = true
-                addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(b.about, context))
+                addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(b.about, context)) => [
+                    tooltip = b.about
+                ]
             ]
             addHorizontalSeperatorLine(1, 0)
             addChildArea
@@ -595,7 +607,9 @@ class OsgiStyles {
                 invisible = true
                 addRectangle => [
                     invisible = true
-                    addSimpleLabel(si.name)
+                    addSimpleLabel(SynthesisUtils.getId(si.name, context)) => [
+                        tooltip = si.name
+                    ]
                 ]
                 addVerticalLine(RIGHT, 0, 1) => [
                     setGridPlacementData => [
@@ -611,7 +625,9 @@ class OsgiStyles {
             addHorizontalSeperatorLine(1, 0)
             addRectangle => [
                 invisible = true
-                addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(si.about, context))
+                addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(si.about, context)) => [
+                    tooltip = si.about
+                ]
             ]
             addHorizontalSeperatorLine(1, 0)
             addChildArea
@@ -683,7 +699,9 @@ class OsgiStyles {
                 invisible = true
                 addRectangle => [
                     invisible = true
-                    addSimpleLabel(sc.name)
+                    addSimpleLabel(SynthesisUtils.getId(sc.name, context)) => [
+                        tooltip = sc.name
+                    ]
                 ]
                 addVerticalLine(RIGHT, 0, 1) => [
                     setGridPlacementData => [
@@ -699,7 +717,9 @@ class OsgiStyles {
             addHorizontalSeperatorLine(1, 0)
             addRectangle => [
                 invisible = true
-                addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(sc.about, context))
+                addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(sc.about, context)) => [
+                    tooltip = sc.about
+                ]
             ]
             addHorizontalSeperatorLine(1, 0)
             addChildArea
