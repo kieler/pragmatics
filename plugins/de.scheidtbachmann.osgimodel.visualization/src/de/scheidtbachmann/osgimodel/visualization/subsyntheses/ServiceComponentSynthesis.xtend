@@ -3,7 +3,6 @@ package de.scheidtbachmann.osgimodel.visualization.subsyntheses
 import com.google.inject.Inject
 import de.cau.cs.kieler.klighd.kgraph.KGraphFactory
 import de.cau.cs.kieler.klighd.kgraph.KNode
-import de.cau.cs.kieler.klighd.krendering.ViewSynthesisShared
 import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KPortExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
@@ -22,7 +21,6 @@ import org.eclipse.elk.core.options.PortSide
  * 
  * @author nre
  */
-@ViewSynthesisShared
 class ServiceComponentSynthesis extends AbstractSubSynthesis<ServiceComponentContext, KNode> {
     @Inject extension KNodeExtensions
     @Inject extension KPortExtensions

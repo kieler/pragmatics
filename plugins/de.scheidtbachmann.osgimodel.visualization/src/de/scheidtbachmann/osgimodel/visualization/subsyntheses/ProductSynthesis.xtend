@@ -3,7 +3,6 @@ package de.scheidtbachmann.osgimodel.visualization.subsyntheses
 import com.google.inject.Inject
 import de.cau.cs.kieler.klighd.kgraph.KGraphFactory
 import de.cau.cs.kieler.klighd.kgraph.KNode
-import de.cau.cs.kieler.klighd.krendering.ViewSynthesisShared
 import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
 import de.scheidtbachmann.osgimodel.OsgiProject
@@ -22,7 +21,6 @@ import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
  * 
  * @author nre
  */
-@ViewSynthesisShared
 class ProductSynthesis extends AbstractSubSynthesis<ProductContext, KNode> {
     @Inject extension KNodeExtensions
     @Inject extension OsgiStyles
