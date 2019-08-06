@@ -11,6 +11,7 @@ import de.cau.cs.kieler.klighd.krendering.KRectangle
 import de.cau.cs.kieler.klighd.krendering.KRoundedRectangle
 import de.cau.cs.kieler.klighd.krendering.KText
 import de.cau.cs.kieler.klighd.krendering.LineStyle
+import de.cau.cs.kieler.klighd.krendering.ModifierState
 import de.cau.cs.kieler.klighd.krendering.ViewSynthesisShared
 import de.cau.cs.kieler.klighd.krendering.extensions.KColorExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KContainerRenderingExtensions
@@ -262,7 +263,8 @@ class OsgiStyles {
             ]
             setBackgroundGradient(PRODUCT_COLOR_1.color, PRODUCT_COLOR_2.color, 90)
             addDoubleClickAction(ContextCollapseExpandAction::ID)
-            addSingleClickAction(SelectRelatedAction::ID)
+            addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                ModifierState.NOT_PRESSED)
             setShadow(SHADOW_COLOR.color, 4, 4)
             tooltip = p.uniqueId
         ]
@@ -316,7 +318,8 @@ class OsgiStyles {
             addHorizontalSeperatorLine(1, 0)
             addChildArea
             setShadow(SHADOW_COLOR.color, 4, 4)
-            addSingleClickAction(SelectRelatedAction::ID)
+            addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                ModifierState.NOT_PRESSED)
         ]
     }
     
@@ -346,7 +349,8 @@ class OsgiStyles {
             ]
             setBackgroundGradient(FEATURE_COLOR_1.color, FEATURE_COLOR_2.color, 90)
             addDoubleClickAction(ContextCollapseExpandAction::ID)
-            addSingleClickAction(SelectRelatedAction::ID)
+            addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                ModifierState.NOT_PRESSED)
             setShadow(SHADOW_COLOR.color, 4, 4)
             tooltip = f.uniqueId
         ]
@@ -400,7 +404,8 @@ class OsgiStyles {
             addHorizontalSeperatorLine(1, 0)
             addChildArea
             setShadow(SHADOW_COLOR.color, 4, 4)
-            addSingleClickAction(SelectRelatedAction::ID)
+            addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                ModifierState.NOT_PRESSED)
         ]
     }
     
@@ -430,7 +435,8 @@ class OsgiStyles {
             ]
             setBackgroundGradient(BUNDLE_COLOR_1.color, BUNDLE_COLOR_2.color, 90)
             addDoubleClickAction(ContextCollapseExpandAction::ID)
-            addSingleClickAction(SelectRelatedAction::ID)
+            addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                ModifierState.NOT_PRESSED)
             setShadow(SHADOW_COLOR.color, 4, 4)
             tooltip = b.uniqueId
         ]
@@ -484,7 +490,8 @@ class OsgiStyles {
             addHorizontalSeperatorLine(1, 0)
             addChildArea
             setShadow(SHADOW_COLOR.color, 4, 4)
-            addSingleClickAction(SelectRelatedAction::ID)
+            addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                ModifierState.NOT_PRESSED)
         ]
     }
     
@@ -527,12 +534,14 @@ class OsgiStyles {
                 selectionLineWidth = 1.5f
                 selectionForeground = SELECTION_EDGE_COLOR.color
                 selectionBackground = SELECTION_EDGE_COLOR.color
-            addSingleClickAction(SelectRelatedAction::ID)
+                addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                    ModifierState.NOT_PRESSED)
             ]
             lineStyle = LineStyle.DASH
             selectionLineWidth = 3
             selectionForeground = SELECTION_EDGE_COLOR.color
-            addSingleClickAction(SelectRelatedAction::ID)
+            addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                ModifierState.NOT_PRESSED)
         ]
     }
     
@@ -563,13 +572,15 @@ class OsgiStyles {
                 selectionLineWidth = 1.5f
                 selectionForeground = SELECTION_EDGE_COLOR.color
                 selectionBackground = SELECTION_EDGE_COLOR.color
-            addSingleClickAction(SelectRelatedAction::ID)
+                addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                    ModifierState.NOT_PRESSED)
             ]
             lineStyle = LineStyle.DASH
             tooltip = tooltipText
             selectionLineWidth = 1.5f
             selectionForeground = SELECTION_EDGE_COLOR.color
-            addSingleClickAction(SelectRelatedAction::ID)
+            addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                ModifierState.NOT_PRESSED)
         ]
         edge.createLabel => [
             configureCenterEdgeLabel(SynthesisUtils.getId(product.uniqueId, context)
@@ -604,7 +615,8 @@ class OsgiStyles {
             ]
             setBackgroundGradient(SERVICE_INTERFACE_COLOR_1.color, SERVICE_INTERFACE_COLOR_2.color, 90)
             addDoubleClickAction(ContextCollapseExpandAction::ID)
-            addSingleClickAction(SelectRelatedAction::ID)
+            addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                ModifierState.NOT_PRESSED)
             setShadow(SHADOW_COLOR.color, 4, 4)
             tooltip = s.name
         ]
@@ -654,7 +666,8 @@ class OsgiStyles {
             addHorizontalSeperatorLine(1, 0)
             addChildArea
             setShadow(SHADOW_COLOR.color, 4, 4)
-            addSingleClickAction(SelectRelatedAction::ID)
+            addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                ModifierState.NOT_PRESSED)
         ]
     }
     
@@ -697,7 +710,8 @@ class OsgiStyles {
             ]
             setBackgroundGradient(SERVICE_COMPONENT_COLOR_1.color, SERVICE_COMPONENT_COLOR_2.color, 90)
             addDoubleClickAction(ContextCollapseExpandAction::ID)
-            addSingleClickAction(SelectRelatedAction::ID)
+            addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                ModifierState.NOT_PRESSED)
             setShadow(SHADOW_COLOR.color, 4, 4)
             tooltip = s.name
         ]
@@ -747,7 +761,8 @@ class OsgiStyles {
             addHorizontalSeperatorLine(1, 0)
             addChildArea
             setShadow(SHADOW_COLOR.color, 4, 4)
-            addSingleClickAction(SelectRelatedAction::ID)
+            addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                ModifierState.NOT_PRESSED)
         ]
     }
     
@@ -760,12 +775,14 @@ class OsgiStyles {
                 selectionLineWidth = 1.5f
                 selectionForeground = SELECTION_EDGE_COLOR.color
                 selectionBackground = SELECTION_EDGE_COLOR.color
-                addSingleClickAction(SelectRelatedAction::ID)
+                addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                    ModifierState.NOT_PRESSED)
             ]
             lineStyle = LineStyle.DASH
             selectionLineWidth = 1.5f
             selectionForeground = SELECTION_EDGE_COLOR.color
-            addSingleClickAction(SelectRelatedAction::ID)
+            addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                ModifierState.NOT_PRESSED)
         ]
     }
     
