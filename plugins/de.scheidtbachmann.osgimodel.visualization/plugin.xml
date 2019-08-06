@@ -11,6 +11,10 @@
    <extension
          point="de.cau.cs.kieler.klighd.extensions">
       <action
+            class="de.scheidtbachmann.osgimodel.visualization.actions.SelectRelatedAction"
+            id="de.scheidtbachmann.osgimodel.visualization.actions.SelectRelatedAction">
+      </action>
+      <action
             class="de.scheidtbachmann.osgimodel.visualization.actions.FocusAction"
             id="de.scheidtbachmann.osgimodel.visualization.actions.FocusAction">
       </action>

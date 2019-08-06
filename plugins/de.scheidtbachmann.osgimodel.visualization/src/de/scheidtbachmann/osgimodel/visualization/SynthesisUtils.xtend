@@ -3,6 +3,7 @@ package de.scheidtbachmann.osgimodel.visualization
 import de.cau.cs.kieler.klighd.IAction.ActionContext
 import de.cau.cs.kieler.klighd.ViewContext
 import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties
+import de.cau.cs.kieler.klighd.kgraph.KGraphElement
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
 import de.scheidtbachmann.osgimodel.BasicOsgiObject
@@ -45,13 +46,16 @@ final class SynthesisUtils {
      * Uses a fallback mechanism to work around the SourceModelTrackingAdapter that seems bugged for this synthesis.
      * FIXME: find out why the usual way does not work all the time and remove the need for this method!
      */
-    def static Object getDomainElement(ActionContext context, KNode kNode) {
+    def static Object getDomainElement(ActionContext context, KGraphElement kElement) {
         // Default case, how it should work all the time.
-        var element = context.getDomainElement(kNode)
+        var Object element
+        if (kElement instanceof KNode) {
+            element = context.getDomainElement(kElement as KNode)
+        }
         
         // Fallback by using the KLighD internal property set during the synthesis.
         if (element === null) {
-            element = kNode.getProperty(KlighdInternalProperties.MODEL_ELEMEMT)
+            element = kElement.getProperty(KlighdInternalProperties.MODEL_ELEMEMT)
         }
         return element
     }

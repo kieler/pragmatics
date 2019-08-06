@@ -33,6 +33,7 @@ import de.scheidtbachmann.osgimodel.visualization.actions.RevealImplementingServ
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealRequiredBundlesAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedByBundlesAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedPackagesAction
+import de.scheidtbachmann.osgimodel.visualization.actions.SelectRelatedAction
 import java.util.List
 
 import static extension de.cau.cs.kieler.klighd.microlayout.PlacementUtil.*
@@ -69,6 +70,9 @@ class OsgiStyles {
     public static final String NOT_ALL_SHOWN_COLOR = "black"
     
     public static final String SHADOW_COLOR = "black"
+    
+    // Edge colors.
+    public static final String SELECTION_EDGE_COLOR = "blue"
     
     /** The roundness of visualized rounded rectangles. */
     static final int ROUNDNESS = 4
@@ -258,6 +262,7 @@ class OsgiStyles {
             ]
             setBackgroundGradient(PRODUCT_COLOR_1.color, PRODUCT_COLOR_2.color, 90)
             addDoubleClickAction(ContextCollapseExpandAction::ID)
+            addSingleClickAction(SelectRelatedAction::ID)
             setShadow(SHADOW_COLOR.color, 4, 4)
             tooltip = p.uniqueId
         ]
@@ -310,8 +315,8 @@ class OsgiStyles {
             ]
             addHorizontalSeperatorLine(1, 0)
             addChildArea
-//            addDoubleClickAction(ContextCollapseExpandAction::ID)
             setShadow(SHADOW_COLOR.color, 4, 4)
+            addSingleClickAction(SelectRelatedAction::ID)
         ]
     }
     
@@ -341,6 +346,7 @@ class OsgiStyles {
             ]
             setBackgroundGradient(FEATURE_COLOR_1.color, FEATURE_COLOR_2.color, 90)
             addDoubleClickAction(ContextCollapseExpandAction::ID)
+            addSingleClickAction(SelectRelatedAction::ID)
             setShadow(SHADOW_COLOR.color, 4, 4)
             tooltip = f.uniqueId
         ]
@@ -393,8 +399,8 @@ class OsgiStyles {
             ]
             addHorizontalSeperatorLine(1, 0)
             addChildArea
-//            addDoubleClickAction(ContextCollapseExpandAction::ID)
             setShadow(SHADOW_COLOR.color, 4, 4)
+            addSingleClickAction(SelectRelatedAction::ID)
         ]
     }
     
@@ -424,6 +430,7 @@ class OsgiStyles {
             ]
             setBackgroundGradient(BUNDLE_COLOR_1.color, BUNDLE_COLOR_2.color, 90)
             addDoubleClickAction(ContextCollapseExpandAction::ID)
+            addSingleClickAction(SelectRelatedAction::ID)
             setShadow(SHADOW_COLOR.color, 4, 4)
             tooltip = b.uniqueId
         ]
@@ -476,8 +483,8 @@ class OsgiStyles {
             ]
             addHorizontalSeperatorLine(1, 0)
             addChildArea
-//            addDoubleClickAction(ContextCollapseExpandAction::ID)
             setShadow(SHADOW_COLOR.color, 4, 4)
+            addSingleClickAction(SelectRelatedAction::ID)
         ]
     }
     
@@ -517,8 +524,15 @@ class OsgiStyles {
                 lineWidth = 1
                 background = "black".color
                 foreground = "black".color
+                selectionLineWidth = 1.5f
+                selectionForeground = SELECTION_EDGE_COLOR.color
+                selectionBackground = SELECTION_EDGE_COLOR.color
+            addSingleClickAction(SelectRelatedAction::ID)
             ]
             lineStyle = LineStyle.DASH
+            selectionLineWidth = 3
+            selectionForeground = SELECTION_EDGE_COLOR.color
+            addSingleClickAction(SelectRelatedAction::ID)
         ]
     }
     
@@ -546,9 +560,16 @@ class OsgiStyles {
                 lineWidth = 1
                 background = "black".color
                 foreground = "black".color
+                selectionLineWidth = 1.5f
+                selectionForeground = SELECTION_EDGE_COLOR.color
+                selectionBackground = SELECTION_EDGE_COLOR.color
+            addSingleClickAction(SelectRelatedAction::ID)
             ]
             lineStyle = LineStyle.DASH
             tooltip = tooltipText
+            selectionLineWidth = 1.5f
+            selectionForeground = SELECTION_EDGE_COLOR.color
+            addSingleClickAction(SelectRelatedAction::ID)
         ]
         edge.createLabel => [
             configureCenterEdgeLabel(SynthesisUtils.getId(product.uniqueId, context)
@@ -583,6 +604,7 @@ class OsgiStyles {
             ]
             setBackgroundGradient(SERVICE_INTERFACE_COLOR_1.color, SERVICE_INTERFACE_COLOR_2.color, 90)
             addDoubleClickAction(ContextCollapseExpandAction::ID)
+            addSingleClickAction(SelectRelatedAction::ID)
             setShadow(SHADOW_COLOR.color, 4, 4)
             tooltip = s.name
         ]
@@ -631,8 +653,8 @@ class OsgiStyles {
             ]
             addHorizontalSeperatorLine(1, 0)
             addChildArea
-//            addDoubleClickAction(ContextCollapseExpandAction::ID)
             setShadow(SHADOW_COLOR.color, 4, 4)
+            addSingleClickAction(SelectRelatedAction::ID)
         ]
     }
     
@@ -675,6 +697,7 @@ class OsgiStyles {
             ]
             setBackgroundGradient(SERVICE_COMPONENT_COLOR_1.color, SERVICE_COMPONENT_COLOR_2.color, 90)
             addDoubleClickAction(ContextCollapseExpandAction::ID)
+            addSingleClickAction(SelectRelatedAction::ID)
             setShadow(SHADOW_COLOR.color, 4, 4)
             tooltip = s.name
         ]
@@ -724,6 +747,7 @@ class OsgiStyles {
             addHorizontalSeperatorLine(1, 0)
             addChildArea
             setShadow(SHADOW_COLOR.color, 4, 4)
+            addSingleClickAction(SelectRelatedAction::ID)
         ]
     }
     
@@ -732,8 +756,16 @@ class OsgiStyles {
      */
     def addImplementingComponentEdgeRendering(KEdge edge) {
         edge.addPolyline => [
-            addInheritanceTriangleArrowDecorator
+            addInheritanceTriangleArrowDecorator => [
+                selectionLineWidth = 1.5f
+                selectionForeground = SELECTION_EDGE_COLOR.color
+                selectionBackground = SELECTION_EDGE_COLOR.color
+                addSingleClickAction(SelectRelatedAction::ID)
+            ]
             lineStyle = LineStyle.DASH
+            selectionLineWidth = 1.5f
+            selectionForeground = SELECTION_EDGE_COLOR.color
+            addSingleClickAction(SelectRelatedAction::ID)
         ]
     }
     
