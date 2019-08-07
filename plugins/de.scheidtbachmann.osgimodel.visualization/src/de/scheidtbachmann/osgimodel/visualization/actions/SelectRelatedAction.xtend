@@ -27,33 +27,36 @@ class SelectRelatedAction implements IAction {
         elementsToSelect.add(clickedElement)
         
         // If the element is an edge, also select all incident nodes.
-        if (clickedElement instanceof KEdge) {
-            elementsToSelect.add(clickedElement.source)
-            elementsToSelect.add(clickedElement.target)
-        } else if (clickedElement instanceof KNode) {
-            // If the element is a node, also select all incident edges and their nodes.
-            clickedElement.outgoingEdges.forEach [
-                elementsToSelect.add(it)
-                elementsToSelect.add(it.target)
-            ]
-            clickedElement.incomingEdges.forEach [
-                elementsToSelect.add(it)
-                elementsToSelect.add(it.source)
-            ]
-            
-            // Also select all nodes representing the same element.
-            var clickedModelElement = SynthesisUtils.getDomainElement(context, clickedElement)
-            if (clickedModelElement instanceof IVisualizationContext<?>) {
-                clickedModelElement = clickedModelElement.modelElement
+        switch clickedElement {
+            KEdge: {
+                elementsToSelect.add(clickedElement.source)
+                elementsToSelect.add(clickedElement.target)
             }
-            
-            var rootKNode = clickedElement
-            while (rootKNode.parent !== null) {
-                rootKNode = rootKNode.parent
+            KNode: {
+                // If the element is a node, also select all incident edges and their nodes.
+                clickedElement.outgoingEdges.forEach [
+                    elementsToSelect.add(it)
+                    elementsToSelect.add(it.target)
+                ]
+                clickedElement.incomingEdges.forEach [
+                    elementsToSelect.add(it)
+                    elementsToSelect.add(it.source)
+                ]
+                
+                // Also select all nodes representing the same element.
+                var clickedModelElement = SynthesisUtils.getDomainElement(context, clickedElement)
+                if (clickedModelElement instanceof IVisualizationContext<?>) {
+                    clickedModelElement = clickedModelElement.modelElement
+                }
+                
+                var rootKNode = clickedElement
+                while (rootKNode.parent !== null) {
+                    rootKNode = rootKNode.parent
+                }
+                val sameDomainElements = new ArrayList<KNode>
+                sameDomainElement(rootKNode, clickedModelElement, sameDomainElements, context)
+                elementsToSelect.addAll(sameDomainElements)
             }
-            val sameDomainElements = new ArrayList<KNode>
-            sameDomainElement(rootKNode, clickedModelElement, sameDomainElements, context)
-            elementsToSelect.addAll(sameDomainElements)
         }
         
         viewer.resetSelectionToDiagramElements(elementsToSelect)

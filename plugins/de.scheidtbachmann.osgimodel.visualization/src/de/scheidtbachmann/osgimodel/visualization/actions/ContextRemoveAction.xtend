@@ -32,23 +32,22 @@ class ContextRemoveAction extends AbstractVisualizationContextChangingAction {
         }
         val ovc = overviewVisContext as IOverviewVisualizationContext<M>
         
-        if (modelVisualizationContext instanceof ServiceComponentContext
-            && ovc instanceof ServiceInterfaceOverviewContext) {
-            (ovc as ServiceInterfaceOverviewContext).implementingServiceComponentContexts
-                .remove(modelVisualizationContext)
-            
-        } else if (modelVisualizationContext instanceof BundleContext
-            && ovc instanceof IInterfaceComponentConnectionHolder) {
-            (ovc as IInterfaceComponentConnectionHolder).referencedBundleContexts.remove(modelVisualizationContext)
-            
-        } else if (modelVisualizationContext instanceof ServiceInterfaceContext
-            && ovc instanceof ServiceComponentOverviewContext) {
-            (ovc as ServiceComponentOverviewContext).implementedServiceInterfaceContexts
-                .remove(modelVisualizationContext)
-            
-        } else {
-            throw new IllegalArgumentException("ContextRemoveAction does not support removing "
-                + modelVisualizationContext.class + " from " + ovc.class + " yet.")
+        switch modelVisualizationContext {
+            ServiceComponentContext case ovc instanceof ServiceInterfaceOverviewContext: {
+                (ovc as ServiceInterfaceOverviewContext).implementingServiceComponentContexts
+                    .remove(modelVisualizationContext)
+            }
+            BundleContext case ovc instanceof IInterfaceComponentConnectionHolder: {
+                (ovc as IInterfaceComponentConnectionHolder).referencedBundleContexts.remove(modelVisualizationContext)
+            }
+            ServiceInterfaceContext case ovc instanceof ServiceComponentOverviewContext: {
+                (ovc as ServiceComponentOverviewContext).implementedServiceInterfaceContexts
+                    .remove(modelVisualizationContext)
+            }
+            default: {
+                throw new IllegalArgumentException("ContextRemoveAction does not support removing "
+                    + modelVisualizationContext.class + " from " + ovc.class + " yet.")
+            }
         }
         ContextUtils.removeEdges(ovc, modelVisualizationContext)
         

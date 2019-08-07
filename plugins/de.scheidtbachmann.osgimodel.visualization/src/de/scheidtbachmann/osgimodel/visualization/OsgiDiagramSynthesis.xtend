@@ -6,7 +6,6 @@ import de.cau.cs.kieler.klighd.DisplayedActionData
 import de.cau.cs.kieler.klighd.kgraph.KGraphFactory
 import de.cau.cs.kieler.klighd.krendering.ViewSynthesisShared
 import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
-import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import de.scheidtbachmann.osgimodel.OsgiProject
 import de.scheidtbachmann.osgimodel.visualization.actions.RedoAction
@@ -32,8 +31,6 @@ import de.scheidtbachmann.osgimodel.visualization.subsyntheses.ServiceComponentO
 import de.scheidtbachmann.osgimodel.visualization.subsyntheses.ServiceInterfaceOverviewSynthesis
 import java.util.LinkedHashSet
 import org.eclipse.elk.alg.layered.options.LayeredOptions
-import org.eclipse.elk.core.math.ElkPadding
-import org.eclipse.elk.core.options.CoreOptions
 
 import static de.scheidtbachmann.osgimodel.visualization.OsgiOptions.*
 
@@ -45,7 +42,6 @@ import static de.scheidtbachmann.osgimodel.visualization.OsgiOptions.*
 @ViewSynthesisShared
 class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
     @Inject extension KNodeExtensions
-    @Inject extension KRenderingExtensions
     @Inject extension OsgiStyles
     
     @Inject BundleCategoryOverviewSynthesis bundleCategoryOverviewSynthesis
@@ -94,8 +90,6 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
         
         return options.toList
     }
-    // TODO: Maybe remember a map of all representations of every bundle, ... to calculate which nodes should be 
-    // rendered differently later (after synthesis hook) to highlight multiple uses. 
     
     override transform(OsgiProject model) {
         val modelNode = createNode.associateWith(model)
@@ -128,36 +122,28 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
             modelNode.children += createNode => [
                 associateWith(model)
                 data += createKIdentifier => [ it.id = visContext.hashCode.toString ]
-                addOverviewRendering("Overview")
+                addOverviewRendering("Overview", "The overview of all available views for this OSGi project.")
                 
-                children += createNode => [
-                    associateWith(model)
-                    addInvisibleContainerRendering
-                    
-                    val overviewProductNodes = productOverviewSynthesis.transform(visContext.productOverviewContext)
-                    children += overviewProductNodes
-                    
-                    val overviewFeatureNodes = featureOverviewSynthesis.transform(visContext.featureOverviewContext)
-                    children += overviewFeatureNodes
-                    
-                    val overviewBundleNodes = bundleOverviewSynthesis.transform(visContext.bundleOverviewContext)
-                    children += overviewBundleNodes
-                    
-                    val overviewServiceInterfaceNodes = serviceInterfaceOverviewSynthesis.transform(
-                        visContext.serviceInterfaceOverviewContext)
-                    children += overviewServiceInterfaceNodes
-                    
-                    val overviewImportedPackagesNodes = packageObjectOverviewSynthesis.transform(
-                        visContext.importedPackageOverviewContext)
-                    children += overviewImportedPackagesNodes
-                    
-                    val overviewBundleCategoryNodes = bundleCategoryOverviewSynthesis.transform(
-                        visContext.bundleCategoryOverviewContext)
-                    children += overviewBundleCategoryNodes
-                    
-                    // remove the padding of the invisible container.
-                    addLayoutParam(CoreOptions.PADDING, new ElkPadding(0, 0, 0, 0))
-                ]
+                val overviewProductNodes = productOverviewSynthesis.transform(visContext.productOverviewContext)
+                children += overviewProductNodes
+                
+                val overviewFeatureNodes = featureOverviewSynthesis.transform(visContext.featureOverviewContext)
+                children += overviewFeatureNodes
+                
+                val overviewBundleNodes = bundleOverviewSynthesis.transform(visContext.bundleOverviewContext)
+                children += overviewBundleNodes
+                
+                val overviewServiceInterfaceNodes = serviceInterfaceOverviewSynthesis.transform(
+                    visContext.serviceInterfaceOverviewContext)
+                children += overviewServiceInterfaceNodes
+                
+                val overviewImportedPackagesNodes = packageObjectOverviewSynthesis.transform(
+                    visContext.importedPackageOverviewContext)
+                children += overviewImportedPackagesNodes
+                
+                val overviewBundleCategoryNodes = bundleCategoryOverviewSynthesis.transform(
+                    visContext.bundleCategoryOverviewContext)
+                children += overviewBundleCategoryNodes
             ]
             
             return modelNode
@@ -174,25 +160,25 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
     
     private def transformSubModel(IVisualizationContext<?> context) {
         switch (context) {
-            case context instanceof BundleCategoryOverviewContext: {
+            BundleCategoryOverviewContext: {
                 return bundleCategoryOverviewSynthesis.transform(context as BundleCategoryOverviewContext)
             }
-            case context instanceof BundleOverviewContext: {
+            BundleOverviewContext: {
                 return bundleOverviewSynthesis.transform(context as BundleOverviewContext)
             }
-            case context instanceof FeatureOverviewContext: {
+            FeatureOverviewContext: {
                 return featureOverviewSynthesis.transform(context as FeatureOverviewContext)
             }
-            case context instanceof PackageObjectOverviewContext: {
+            PackageObjectOverviewContext: {
                 return packageObjectOverviewSynthesis.transform(context as PackageObjectOverviewContext)
             }
-            case context instanceof ProductOverviewContext: {
+            ProductOverviewContext: {
                 return productOverviewSynthesis.transform(context as ProductOverviewContext)
             }
-            case context instanceof ServiceInterfaceOverviewContext: {
+            ServiceInterfaceOverviewContext: {
                 return serviceInterfaceOverviewSynthesis.transform(context as ServiceInterfaceOverviewContext)
             }
-            case context instanceof ServiceComponentOverviewContext: {
+            ServiceComponentOverviewContext: {
                 return serviceComponentOverviewSynthesis.transform(context as ServiceComponentOverviewContext)
             }
             default: {

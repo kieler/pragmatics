@@ -365,10 +365,13 @@ class ContextUtils {
             throw new IllegalArgumentException("The interface and the component contexts both have to have the same " +
                 "parent context!")
         }
-        val implementedInterfaceEdgesPlain = if (parentContext instanceof ServiceComponentOverviewContext) {
-            parentContext.implementedInterfaceEdgesPlain
-        } else if (parentContext instanceof ServiceInterfaceOverviewContext) {
-            parentContext.implementedInterfaceEdgesPlain
+        val implementedInterfaceEdgesPlain = switch parentContext {
+            ServiceComponentOverviewContext: {
+                parentContext.implementedInterfaceEdgesPlain
+            }
+            ServiceInterfaceOverviewContext: {
+                parentContext.implementedInterfaceEdgesPlain
+            }
         }
         
         // Only if this edge does not exist yet, add it to the list of implementing service component edges.

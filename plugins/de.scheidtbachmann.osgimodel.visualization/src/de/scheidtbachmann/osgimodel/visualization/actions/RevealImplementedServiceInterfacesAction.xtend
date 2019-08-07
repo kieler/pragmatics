@@ -40,43 +40,45 @@ class RevealImplementedServiceInterfacesAction extends AbstractVisualizationCont
             as IOverviewVisualizationContext<?>
         
         // Handle this action differently, depending on in which overview context stack this is contained in.
-        if (overviewContext instanceof ServiceInterfaceOverviewContext) {
-            // Revealed component in an interface context in PLAIN view. Also update the corresponding IN_BUNDLES view.
-            revealInInterfaceOverview(serviceComponent, overviewContext as ServiceInterfaceOverviewContext)
-            
-        } else if (overviewContext instanceof ServiceComponentOverviewContext
-            && overviewContext.parentVisualizationContext instanceof BundleContext
-            && overviewContext.parentVisualizationContext.parentVisualizationContext
-                instanceof ServiceInterfaceOverviewContext) {
-            // Revealed component in an interface context in IN_BUNDLES view. Also update the corresponding PLAIN view.
-            revealInInterfaceOverview(serviceComponent,
-                overviewContext.parentVisualizationContext.parentVisualizationContext
-                as ServiceInterfaceOverviewContext)
-            
-        } else if (overviewContext instanceof ServiceComponentOverviewContext
-            && overviewContext.parentVisualizationContext instanceof BundleContext
-            && overviewContext.parentVisualizationContext.parentVisualizationContext instanceof BundleOverviewContext) {
-            // Component in an independent bundle context. Only available as a plain view.
-            revealInIndependentBundle(serviceComponentContext, overviewContext as ServiceComponentOverviewContext)
-            
-        } else if (overviewContext instanceof ServiceComponentOverviewContext
-            && overviewContext.parentVisualizationContext instanceof ProductContext) {
-            // Component defined inside a product in PLAIN view. Also update the corresponding IN_BUNDLES view.
-            revealInProduct(serviceComponent, overviewContext as ServiceComponentOverviewContext)
-            
-        } else if (overviewContext instanceof ServiceComponentOverviewContext
-            && overviewContext.parentVisualizationContext instanceof BundleContext
-            && overviewContext.parentVisualizationContext.parentVisualizationContext
-                instanceof ServiceComponentOverviewContext
-            && overviewContext.parentVisualizationContext.parentVisualizationContext.parentVisualizationContext
-                instanceof ProductContext) {
-            // Component defined inside a product in IN_BUNDLES view. Also update the corresponding PLAIN view.
-            revealInProduct(serviceComponent, overviewContext.parentVisualizationContext.parentVisualizationContext
-                as ServiceComponentOverviewContext)
-            
-        } else {
-            throw new IllegalStateException("Hierarchy of this service component is unknown and is not able to "
-                + "reveal its implemented service interfaces.")
+        val parent1 = overviewContext.parentVisualizationContext
+        val parent2 = parent1?.parentVisualizationContext
+        val parent3 = parent2?.parentVisualizationContext
+        switch overviewContext {
+            ServiceInterfaceOverviewContext: {
+                // Revealed component in an interface context in PLAIN view. Also update the corresponding IN_BUNDLES
+                // view.
+                revealInInterfaceOverview(serviceComponent, overviewContext)
+            }
+            ServiceComponentOverviewContext: {
+                switch parent1 {
+                    BundleContext: {
+                        switch parent2 {
+                            ServiceInterfaceOverviewContext: {
+                                // Revealed component in an interface context in IN_BUNDLES view. Also update the
+                                // corresponding PLAIN view.
+                                revealInInterfaceOverview(serviceComponent, parent2)
+                            }
+                            BundleOverviewContext: {
+                                // Component in an independent bundle context. Only available as a plain view.
+                                revealInIndependentBundle(serviceComponentContext, overviewContext)
+                            }
+                            ServiceComponentOverviewContext case parent3 instanceof ProductContext: {
+                                // Component defined inside a product in IN_BUNDLES view. Also update the corresponding
+                                // PLAIN view.
+                                revealInProduct(serviceComponent, parent2)
+                            }
+                            default: throwUnknown
+                        }
+                    }
+                    ProductContext: {
+                        // Component defined inside a product in PLAIN view. Also update the corresponding IN_BUNDLES
+                        // view.
+                        revealInProduct(serviceComponent, overviewContext)
+                    }
+                    default: throwUnknown
+                }
+            }
+            default: throwUnknown
         }
         
         return null
@@ -206,6 +208,11 @@ class RevealImplementedServiceInterfacesAction extends AbstractVisualizationCont
             ContextUtils.addImplementingServiceComponentEdgeInBundle(implementedServiceInterfaceContext,
                 serviceComponentContextInBundle)
         ]
+    }
+    
+    private static def throwUnknown() {
+        throw new IllegalStateException("Hierarchy of this service component is unknown and is not able to reveal its "
+            + "implemented service interfaces.")
     }
     
 }
