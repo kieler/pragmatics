@@ -181,4 +181,16 @@ class ServiceInterfaceOverviewContext implements IOverviewVisualizationContext<S
         return copy
     }
     
+    override overviewText() {
+        val parentContext = this.parentVisualizationContext
+        switch (parentContext) {
+            OsgiProjectContext: {
+                "All service interfaces used and defined in this project."
+            }
+            default: {
+                "No descriptive text for this service interface overview available yet."
+            }
+        }
+    }
+    
 }

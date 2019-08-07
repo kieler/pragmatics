@@ -47,7 +47,7 @@ class PackageObjectOverviewSynthesis extends AbstractSubSynthesis<PackageObjectO
                 setLayoutOption(it, CoreOptions::ALGORITHM, "org.eclipse.elk.layered")
                 setLayoutOption(it, CoreOptions::DIRECTION, Direction.DOWN)
                 setLayoutOption(CoreOptions::NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.MINIMUM_SIZE))
-                addOverviewRendering("Package Objects")
+                addOverviewRendering("Package Objects", packageObjectOverviewContext.overviewText)
                 
                 // remove the padding of the invisible container.
                 addLayoutParam(CoreOptions.PADDING, new ElkPadding(0, 0, 0, 0))
@@ -86,6 +86,7 @@ class PackageObjectOverviewSynthesis extends AbstractSubSynthesis<PackageObjectO
             associateWith(packageObjectOverviewContext)
             configureBoxLayout
             addInvisibleContainerRendering
+            tooltip = packageObjectOverviewContext.overviewText
             
             filteredCollapsedPackageObjectContexts.sortBy [
                 modelElement.uniqueId
@@ -110,6 +111,7 @@ class PackageObjectOverviewSynthesis extends AbstractSubSynthesis<PackageObjectO
             associateWith(packageObjectOverviewContext)
             configureOverviewLayout
             addInvisibleContainerRendering
+            tooltip = packageObjectOverviewContext.overviewText
             
             children += filteredDetailedPackageObjectContexts.flatMap [
                 return simplePackageObjectSynthesis.transform(it as PackageObjectContext) // TODO: make a specific synthesis for expanded package objects!

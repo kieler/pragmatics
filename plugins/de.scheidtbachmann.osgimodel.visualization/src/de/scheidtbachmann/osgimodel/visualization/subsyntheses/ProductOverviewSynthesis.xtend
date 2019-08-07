@@ -40,7 +40,7 @@ class ProductOverviewSynthesis extends AbstractSubSynthesis<ProductOverviewConte
                 }
                 configureBoxLayout
                 setLayoutOption(CoreOptions::NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.MINIMUM_SIZE))
-                addOverviewRendering("Products")
+                addOverviewRendering("Products", productOverviewContext.overviewText)
                 
                 val filteredCollapsedProducts = SynthesisUtils.filteredBasicOsgiObjectContexts(
                     productOverviewContext.collapsedElements, usedContext)
@@ -56,4 +56,5 @@ class ProductOverviewSynthesis extends AbstractSubSynthesis<ProductOverviewConte
             ]
         ]
     }
+    
 }

@@ -213,4 +213,19 @@ class ServiceComponentOverviewContext implements IOverviewVisualizationContext<S
         return copy
     }
     
+    override overviewText() {
+        val parentContext = this.parentVisualizationContext
+        switch (parentContext) {
+            ProductContext: {
+                "All service components contained in the product " + parentContext.modelElement.uniqueId + "."
+            }
+            BundleContext: {
+                "All service components provided by the bundle " + parentContext.modelElement.uniqueId + "."
+            }
+            default: {
+                "No descriptive text for this service component overview available yet."
+            }
+        }
+    }
+    
 }

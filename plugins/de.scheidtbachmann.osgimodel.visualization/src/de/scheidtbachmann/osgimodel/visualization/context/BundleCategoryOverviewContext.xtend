@@ -115,4 +115,15 @@ class BundleCategoryOverviewContext implements IOverviewVisualizationContext<Bun
         return copy
     }
     
+    override overviewText() {
+        switch (this.parentVisualizationContext) {
+            OsgiProjectContext: {
+                "All bundle categories in this project."
+            }
+            default: {
+                "No descriptive text for this bundle category overview available yet."
+            }
+        }
+    }
+    
 }

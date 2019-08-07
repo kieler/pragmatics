@@ -114,4 +114,16 @@ class ProductOverviewContext implements IOverviewVisualizationContext<Product> {
         return copy
     }
     
+    override overviewText() {
+        val parentContext = this.parentVisualizationContext
+        switch (parentContext) {
+            OsgiProjectContext: {
+                "All products contained in this project."
+            }
+            default: {
+                "No descriptive text for this product overview available yet."
+            }
+        }
+    }
+    
 }

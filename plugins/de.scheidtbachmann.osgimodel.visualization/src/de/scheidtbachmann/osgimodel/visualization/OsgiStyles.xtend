@@ -94,7 +94,7 @@ class OsgiStyles {
     /**
      * Adds a rendering allowing a container rendering for any context with the given text as its headline.
      */
-    def void addOverviewRendering(KNode node, String text) {
+    def void addOverviewRendering(KNode node, String headlineText, String tooltipText) {
         // Expanded
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             setAsExpandedView
@@ -105,7 +105,7 @@ class OsgiStyles {
                 invisible = true
                 addRectangle => [
                     invisible = true
-                    addSimpleLabel(text)
+                    addSimpleLabel(headlineText)
                 ]
                 addVerticalLine(RIGHT, 0, 1) => [
                     setGridPlacementData => [
@@ -133,6 +133,7 @@ class OsgiStyles {
             addHorizontalSeperatorLine(1, 0)
             addChildArea
             setShadow(SHADOW_COLOR.color, 4, 4)
+            tooltip = tooltipText
         ]
         
         // Collapsed
@@ -145,7 +146,7 @@ class OsgiStyles {
                 invisible = true
                 addRectangle => [
                     invisible = true
-                    addSimpleLabel(text)
+                    addSimpleLabel(headlineText)
                 ]
                 addVerticalLine(RIGHT, 0, 1) => [
                     setGridPlacementData => [
@@ -171,6 +172,7 @@ class OsgiStyles {
                 ]
             ]
             setShadow(SHADOW_COLOR.color, 4, 4)
+            tooltip = tooltipText
         ]
     }
     

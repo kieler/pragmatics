@@ -35,4 +35,9 @@ interface IOverviewVisualizationContext<M extends EObject> extends IVisualizatio
     
     override List<? extends IVisualizationContext<M>> getChildContexts()
     
+    /**
+     * A descriptive text about what is contained in this overview visualization.
+     */
+    def String overviewText()
+    
 }

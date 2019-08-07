@@ -46,7 +46,7 @@ class BundleCategoryOverviewSynthesis extends AbstractSubSynthesis<BundleCategor
                 setLayoutOption(it, CoreOptions::ALGORITHM, "org.eclipse.elk.layered")
                 setLayoutOption(it, CoreOptions::DIRECTION, Direction.DOWN)
                 setLayoutOption(CoreOptions::NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.MINIMUM_SIZE))
-                addOverviewRendering("Bundle Categories")
+                addOverviewRendering("Bundle Categories", bundleCategoryOverviewContext.overviewText)
                 
                 // remove the padding of the invisible container.
                 addLayoutParam(CoreOptions.PADDING, new ElkPadding(0, 0, 0, 0))
@@ -84,6 +84,7 @@ class BundleCategoryOverviewSynthesis extends AbstractSubSynthesis<BundleCategor
             associateWith(bundleCategoryOverviewContext)
             configureBoxLayout
             addInvisibleContainerRendering
+            tooltip = bundleCategoryOverviewContext.overviewText
             
             filteredCollapsedBundleCategoryContexts.sortBy [
                 modelElement.categoryName
@@ -107,6 +108,7 @@ class BundleCategoryOverviewSynthesis extends AbstractSubSynthesis<BundleCategor
             associateWith(bundleCategoryOverviewContext)
             configureOverviewLayout
             addInvisibleContainerRendering
+            tooltip = bundleCategoryOverviewContext.overviewText
             
             children += filteredDetailedBundleCategoryContexts.flatMap [
                 return simpleBundleCategorySynthesis.transform(it as BundleCategoryContext) // TODO: make a specific synthesis for expanded bundle categories!

@@ -143,4 +143,22 @@ class BundleOverviewContext implements IOverviewVisualizationContext<Bundle> {
         return copy
     }
     
+    override overviewText() {
+        val parentContext = this.parentVisualizationContext
+        switch (parentContext) {
+            OsgiProjectContext: {
+                "All bundles contained in or referenced in this project."
+            }
+            FeatureContext: {
+                "All bundles contained in the feature " + parentContext.modelElement.uniqueId + "."
+            }
+            ProductContext: {
+                "All bundles contained in the product " + parentContext.modelElement.uniqueId + "."
+            }
+            default: {
+                "No descriptive text for this bundle overview available yet."
+            }
+        }
+    }
+    
 }

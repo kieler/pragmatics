@@ -51,7 +51,7 @@ class FeatureOverviewSynthesis extends AbstractSubSynthesis<FeatureOverviewConte
                 setLayoutOption(it, CoreOptions::ALGORITHM, "org.eclipse.elk.layered")
                 setLayoutOption(it, CoreOptions::DIRECTION, Direction.DOWN)
                 setLayoutOption(CoreOptions::NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.MINIMUM_SIZE))
-                addOverviewRendering("Features")
+                addOverviewRendering("Features", featureOverviewContext.overviewText)
                 
                 // remove the padding of the invisible container.
                 addLayoutParam(CoreOptions.PADDING, new ElkPadding(0, 0, 0, 0))
@@ -88,6 +88,7 @@ class FeatureOverviewSynthesis extends AbstractSubSynthesis<FeatureOverviewConte
             associateWith(featureOverviewContext)
             configureBoxLayout
             addInvisibleContainerRendering
+            tooltip = featureOverviewContext.overviewText
             
             filteredCollapsedFeatureContexts.sortBy [
                 // The string to sort by. Either the shortened ID or the name.
@@ -118,6 +119,7 @@ class FeatureOverviewSynthesis extends AbstractSubSynthesis<FeatureOverviewConte
             associateWith(featureOverviewContext)
             configureOverviewLayout
             addInvisibleContainerRendering
+            tooltip = featureOverviewContext.overviewText
             
             children += filteredDetailedFeatureContexts.flatMap [
                 return featureSynthesis.transform(it as FeatureContext)

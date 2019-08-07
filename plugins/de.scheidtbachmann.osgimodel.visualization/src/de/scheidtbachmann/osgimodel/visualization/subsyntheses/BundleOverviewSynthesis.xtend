@@ -52,7 +52,7 @@ class BundleOverviewSynthesis extends AbstractSubSynthesis<BundleOverviewContext
                 setLayoutOption(it, CoreOptions::ALGORITHM, "org.eclipse.elk.layered")
                 setLayoutOption(it, CoreOptions::DIRECTION, Direction.DOWN)
                 setLayoutOption(CoreOptions::NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.MINIMUM_SIZE))
-                addOverviewRendering("Bundles")
+                addOverviewRendering("Bundles", bundleOverviewContext.overviewText)
                 
                 // remove the padding of the invisible container.
                 addLayoutParam(CoreOptions.PADDING, new ElkPadding(0, 0, 0, 0))
@@ -89,6 +89,7 @@ class BundleOverviewSynthesis extends AbstractSubSynthesis<BundleOverviewContext
             associateWith(bundleOverviewContext)
             configureBoxLayout
             addInvisibleContainerRendering
+            tooltip = bundleOverviewContext.overviewText
             
             filteredCollapsedBundleContexts.sortBy [
                 // The string to sort by. Either the shortened ID or the name.
@@ -119,6 +120,7 @@ class BundleOverviewSynthesis extends AbstractSubSynthesis<BundleOverviewContext
             associateWith(bundleOverviewContext)
             configureOverviewLayout
             addInvisibleContainerRendering
+            tooltip = bundleOverviewContext.overviewText
             
             children += filteredDetailedBundleContexts.flatMap [
                 return bundleSynthesis.transform(it as BundleContext)

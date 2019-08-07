@@ -58,7 +58,7 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
                 DiagramSyntheses.setLayoutOption(it, CoreOptions::ALGORITHM, "org.eclipse.elk.layered")
                 DiagramSyntheses.setLayoutOption(it, CoreOptions::DIRECTION, Direction.DOWN)
                 setLayoutOption(CoreOptions::NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.MINIMUM_SIZE))
-                addOverviewRendering("Service Interfaces")
+                addOverviewRendering("Service Interfaces", serviceInterfaceOverviewContext.overviewText)
                 
                 // remove the padding of the invisible container.
                 addLayoutParam(CoreOptions.PADDING, new ElkPadding(0, 0, 0, 0))
@@ -97,6 +97,7 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
             associateWith(serviceInterfaceOverviewContext)
             configureBoxLayout
             addInvisibleContainerRendering
+            tooltip = serviceInterfaceOverviewContext.overviewText
             
             filteredCollapsedServiceInterfaceContexts.sortBy [
                 SynthesisUtils.getId(modelElement.name, usedContext)
@@ -120,6 +121,7 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
             configureOverviewLayout
             setLayoutOption(LayeredMetaDataProvider::SPACING_NODE_NODE_BETWEEN_LAYERS, 30.0)
             addInvisibleContainerRendering
+            tooltip = serviceInterfaceOverviewContext.overviewText
             
             // All service interfaces.
             val filteredDetailedServiceInterfaceContexts = SynthesisUtils.filteredServiceInterfaceContexts(

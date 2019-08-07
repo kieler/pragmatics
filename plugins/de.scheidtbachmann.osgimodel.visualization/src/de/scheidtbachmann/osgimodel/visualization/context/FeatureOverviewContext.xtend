@@ -115,4 +115,19 @@ class FeatureOverviewContext implements IOverviewVisualizationContext<Feature> {
         return copy
     }
     
+    override overviewText() {
+        val parentContext = this.parentVisualizationContext
+        switch (parentContext) {
+            OsgiProjectContext: {
+                "All features contained in this project."
+            }
+            ProductContext: {
+                "All features contained in the product " + parentContext.modelElement.uniqueId + "."
+            }
+            default: {
+                "No descriptive text for this feature overview available yet."
+            }
+        }
+    }
+    
 }

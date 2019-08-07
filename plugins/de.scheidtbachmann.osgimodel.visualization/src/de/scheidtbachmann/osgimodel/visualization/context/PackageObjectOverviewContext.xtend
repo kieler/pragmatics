@@ -115,4 +115,16 @@ class PackageObjectOverviewContext implements IOverviewVisualizationContext<Pack
         return copy
     }
     
+    override overviewText() {
+        val parentContext = this.parentVisualizationContext
+        switch (parentContext) {
+            OsgiProjectContext: {
+                "All package objects contained in or referenced in this project."
+            }
+            default: {
+                "No descriptive text for this package object overview available yet."
+            }
+        }
+    }
+    
 }
