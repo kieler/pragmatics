@@ -48,6 +48,7 @@ interface IVisualizationContext<M> {
      * @param seenContexts A map of all already seen and cloned contexts. If this map contains a context that should be
      * cloned as a key, the value is the already cloned context for that. If the map does not contain that, a new clone
      * should be created and added to the map.
+     * After this method, all copied contexts have to be contained within this map.
      */
     def IVisualizationContext<M> deepCopy(Map<IVisualizationContext<?>, IVisualizationContext<?>> seenContexts)
 }

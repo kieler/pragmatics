@@ -27,7 +27,16 @@ abstract class AbstractVisualizationContextChangingAction implements IAction {
         val currentVisualizationContext = visualizationContexts.get(index)
         
         // Make a deep-copy of the current context and store it as the action that can be undone next.
-        val copiedVisualizationContext = currentVisualizationContext.deepCopy(new HashMap)
+        // To copy the current context, copy from the parent root context ...
+        var rootVisualizationContext = currentVisualizationContext
+        while (rootVisualizationContext.parentVisualizationContext !== null) {
+            rootVisualizationContext = rootVisualizationContext.parentVisualizationContext
+        }
+        val copiedContexts = new HashMap
+        rootVisualizationContext.deepCopy(copiedContexts)
+        
+        // ... and take the copied reference from that.
+        val copiedVisualizationContext = copiedContexts.get(currentVisualizationContext)
         // Remove this visualization context and all after that, a redo after an action is not possible anymore.
         while (visualizationContexts.size > index) {
             visualizationContexts.remove(index)
