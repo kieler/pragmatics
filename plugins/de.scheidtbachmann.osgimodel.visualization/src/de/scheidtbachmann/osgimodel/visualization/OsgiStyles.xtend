@@ -538,6 +538,7 @@ class OsgiStyles {
                 selectionBackground = SELECTION_EDGE_COLOR.color
                 addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                     ModifierState.NOT_PRESSED)
+                suppressSelectablility
             ]
             lineStyle = LineStyle.DASH
             selectionLineWidth = 3
@@ -576,6 +577,7 @@ class OsgiStyles {
                 selectionBackground = SELECTION_EDGE_COLOR.color
                 addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                     ModifierState.NOT_PRESSED)
+                suppressSelectablility
             ]
             lineStyle = LineStyle.DASH
             tooltip = tooltipText
@@ -779,6 +781,7 @@ class OsgiStyles {
                 selectionBackground = SELECTION_EDGE_COLOR.color
                 addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                     ModifierState.NOT_PRESSED)
+                suppressSelectablility
             ]
             lineStyle = LineStyle.DASH
             selectionLineWidth = 1.5f
