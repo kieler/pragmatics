@@ -55,12 +55,14 @@ class OsgiStyles {
     @Inject extension KRenderingExtensions
     
     // The colors used for the background of all visualized elements.
-    public static final String BUNDLE_COLOR_1 = "#E0F7FF" // HSV 195 12 100
-    public static final String BUNDLE_COLOR_2 = "#C2F0FF" // HSV 195 24 100
-    public static final String FEATURE_COLOR_1 = "#E0FFE9" // HSV 137 12 100
-    public static final String FEATURE_COLOR_2 = "#C2FFD3" // HSV 137 24 100
-    public static final String PRODUCT_COLOR_1 = "#FFEAE0" // HSV 19 12 100
-    public static final String PRODUCT_COLOR_2 = "#FFD5C2" // HSV 19 24 100
+    public static final String BUNDLE_COLOR_1            = "#E0F7FF" // HSV 195 12 100
+    public static final String BUNDLE_COLOR_2            = "#C2F0FF" // HSV 195 24 100
+    public static final String EXTERNAL_BUNDLE_COLOR_1   = "#F7FDFF" // HSV 195 3 100
+    public static final String EXTERNAL_BUNDLE_COLOR_2   = "#F0FBFF" // HSV 195 6 100
+    public static final String FEATURE_COLOR_1           = "#E0FFE9" // HSV 137 12 100
+    public static final String FEATURE_COLOR_2           = "#C2FFD3" // HSV 137 24 100
+    public static final String PRODUCT_COLOR_1           = "#FFEAE0" // HSV 19 12 100
+    public static final String PRODUCT_COLOR_2           = "#FFD5C2" // HSV 19 24 100
     public static final String SERVICE_COMPONENT_COLOR_1 = "#FFE0F5" // HSV 319 12 100
     public static final String SERVICE_COMPONENT_COLOR_2 = "#FFC2EC" // HSV 319 24 100
     public static final String SERVICE_INTERFACE_COLOR_1 = "#FFE0E0" // HSV 0 12 100
@@ -435,7 +437,11 @@ class OsgiStyles {
                 ]
                 lineWidth = 0
             ]
-            setBackgroundGradient(BUNDLE_COLOR_1.color, BUNDLE_COLOR_2.color, 90)
+            if (b.isIsExternal) {
+                setBackgroundGradient(EXTERNAL_BUNDLE_COLOR_1.color, EXTERNAL_BUNDLE_COLOR_2.color, 90)
+            } else {
+                setBackgroundGradient(BUNDLE_COLOR_1.color, BUNDLE_COLOR_2.color, 90)
+            }
             addDoubleClickAction(ContextCollapseExpandAction::ID)
             addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                 ModifierState.NOT_PRESSED)
@@ -456,14 +462,25 @@ class OsgiStyles {
      */
     def KRoundedRectangle addBundleRendering(KNode node, Bundle b, boolean inOverview, ViewContext context) {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
-            setBackgroundGradient(BUNDLE_COLOR_1.color, BUNDLE_COLOR_2.color, 90)
+            if (b.isIsExternal) {
+                setBackgroundGradient(EXTERNAL_BUNDLE_COLOR_1.color, EXTERNAL_BUNDLE_COLOR_2.color, 90)
+            } else {
+                setBackgroundGradient(BUNDLE_COLOR_1.color, BUNDLE_COLOR_2.color, 90)
+            }
             setGridPlacement(1)
             addRectangle => [
                 setGridPlacement(3)
                 invisible = true
                 addRectangle => [
                     invisible = true
-                    addSimpleLabel(b.descriptiveName)
+                    var String name = ""
+                    if (b.isIsExternal) {
+                        name += "(External) "
+                    }
+                    if (b.descriptiveName !== null) {
+                        name += b.descriptiveName
+                    }
+                    addSimpleLabel(name)
                 ]
                 addVerticalLine(RIGHT, 0, 1) => [
                     setGridPlacementData => [
