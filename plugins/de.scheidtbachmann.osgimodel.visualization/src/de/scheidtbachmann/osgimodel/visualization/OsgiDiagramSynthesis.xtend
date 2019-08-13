@@ -30,6 +30,8 @@ import de.scheidtbachmann.osgimodel.visualization.subsyntheses.ProductOverviewSy
 import de.scheidtbachmann.osgimodel.visualization.subsyntheses.ServiceComponentOverviewSynthesis
 import de.scheidtbachmann.osgimodel.visualization.subsyntheses.ServiceInterfaceOverviewSynthesis
 import java.util.LinkedHashSet
+import org.eclipse.elk.alg.layered.options.CrossingMinimizationStrategy
+import org.eclipse.elk.alg.layered.options.LayeredMetaDataProvider
 import org.eclipse.elk.alg.layered.options.LayeredOptions
 
 import static de.scheidtbachmann.osgimodel.visualization.OsgiOptions.*
@@ -76,7 +78,9 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
     
     override getDisplayedLayoutOptions() {
         return ImmutableList::of(
-            specifyLayoutOption(LayeredOptions::HIGH_DEGREE_NODES_TREATMENT, #[true, false])
+            specifyLayoutOption(LayeredOptions::HIGH_DEGREE_NODES_TREATMENT, #[true, false]),
+            specifyLayoutOption(LayeredMetaDataProvider::CROSSING_MINIMIZATION_STRATEGY,
+                #[CrossingMinimizationStrategy.INTERACTIVE, CrossingMinimizationStrategy.LAYER_SWEEP])
         )
     }
        

@@ -51,8 +51,8 @@ class BundleOverviewSynthesis extends AbstractSubSynthesis<BundleOverviewContext
                 } else {
                     initiallyCollapse
                 }
-                setLayoutOption(it, CoreOptions::ALGORITHM, "org.eclipse.elk.layered")
-                setLayoutOption(it, CoreOptions::DIRECTION, Direction.DOWN)
+                setLayoutOption(CoreOptions::ALGORITHM, "org.eclipse.elk.layered")
+                setLayoutOption(CoreOptions::DIRECTION, Direction.DOWN)
                 setLayoutOption(CoreOptions::NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.MINIMUM_SIZE))
                 addOverviewRendering("Bundles", bundleOverviewContext.overviewText)
                 
