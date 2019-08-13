@@ -61,6 +61,8 @@ class OsgiStyles {
     public static final String EXTERNAL_BUNDLE_COLOR_2   = "#F0FBFF" // HSV 195 6 100
     public static final String FEATURE_COLOR_1           = "#E0FFE9" // HSV 137 12 100
     public static final String FEATURE_COLOR_2           = "#C2FFD3" // HSV 137 24 100
+    public static final String PACKAGE_OBJECT_COLOR_1    = "#E7E0FF" // HSV 253 12 100
+    public static final String PACKAGE_OBJECT_COLOR_2    = "#CFC2FF" // HSV 253 24 100
     public static final String PRODUCT_COLOR_1           = "#FFEAE0" // HSV 19 12 100
     public static final String PRODUCT_COLOR_2           = "#FFD5C2" // HSV 19 24 100
     public static final String SERVICE_COMPONENT_COLOR_1 = "#FFE0F5" // HSV 319 12 100
@@ -580,9 +582,55 @@ class OsgiStyles {
     // ------------------------------------- Package renderings -------------------------------------
     
     /**
-     * Adds the rendering for an edge showing a bundle requirement.
+     * Adds a rendering for a {@link PackageObject} to the given node.
+     * 
+     * @param node The KNode this rendering should be attached to.
+     * @param po The package object this rendering represents.
+     * @param context The view context used in the synthesis.
+     * 
+     * @return The entire rendering for a package object.
      */
-    def addInternalUsedPackagesBundleEdgeRendering(KEdge edge, List<PackageObject> packages, Product product, ViewContext context) {
+    def KRoundedRectangle addPackageObjectRendering(KNode node, PackageObject po, boolean inOverview,
+        ViewContext context) {
+        node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
+            setBackgroundGradient(PACKAGE_OBJECT_COLOR_1.color, PACKAGE_OBJECT_COLOR_2.color, 90)
+            setGridPlacement(1)
+            addRectangle => [
+                setGridPlacement(3)
+                invisible = true
+                addRectangle => [
+                    invisible = true
+                    addSimpleLabel(SynthesisUtils.getId(po.uniqueId, context)) => [
+                        tooltip = po.uniqueId
+                    ]
+                ]
+                addVerticalLine(RIGHT, 0, 1) => [
+                    setGridPlacementData => [
+                        flexibleWidth = false
+                    ]
+                ]
+                if (inOverview) {
+                    addCollapseButton
+                } else {
+                    addRemoveButton
+                }
+            ]
+            setShadow(SHADOW_COLOR.color, 4, 4)
+            addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                ModifierState.NOT_PRESSED)
+        ]
+    }
+    
+    /**
+     * Adds the rendering for an edge showing a used package with resolved bundle and product.
+     * 
+     * @param edge The edge this rendering is for.
+     * @param packages The used packages shown by this edge.
+     * @param product The product in which this connection got resolved.
+     * @param context The view context for this visualization.
+     */
+    def addInternalUsedPackagesBundleEdgeRendering(KEdge edge, List<PackageObject> packages, Product product,
+        ViewContext context) {
         val tooltipText = "Packages\n" + packages.map [ it.uniqueId + "\n" ] + " for product " + product.uniqueId
         edge.addPolyline => [
             addHeadArrowDecorator => [
@@ -607,6 +655,29 @@ class OsgiStyles {
             configureCenterEdgeLabel(SynthesisUtils.getId(product.uniqueId, context)
                 + " (" + packages.size + " packages)")
             tooltip = tooltipText
+        ]
+    }
+    
+    /**
+     * Adds the rendering for an edge showing a used package.
+     */
+    def addUsedPackagesEdgeRendering(KEdge edge) {
+        edge.addPolyline => [
+            addHeadArrowDecorator => [
+                lineWidth = 1
+                background = "black".color
+                foreground = "black".color
+                selectionLineWidth = 1.5f
+                selectionForeground = SELECTION_EDGE_COLOR.color
+                selectionBackground = SELECTION_EDGE_COLOR.color
+                addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                    ModifierState.NOT_PRESSED)
+            ]
+            lineStyle = LineStyle.DASH
+            selectionLineWidth = 1.5f
+            selectionForeground = SELECTION_EDGE_COLOR.color
+            addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                ModifierState.NOT_PRESSED)
         ]
     }
     

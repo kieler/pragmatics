@@ -22,10 +22,16 @@ class BundleOverviewContext implements IOverviewVisualizationContext<Bundle> {
     List<Pair<BundleContext, BundleContext>> requiredBundleEdges
     
     /**
-     * All connections for the required packages that should be drawn.
+     * All connections for the required packages with resolved bundles that should be drawn.
      */
     @Accessors
-    List<UsedPackagesEdgeConnection> usedPackagesEdges
+    List<UsedPackagesOfBundleEdgeConnection> usedPackagesOfBundleEdges
+    
+    /**
+     * All connections for the required packages without known source bundles that should be drawn.
+     */
+    @Accessors
+    List<Pair<BundleContext, PackageObjectContext>> usedPackageEdges
     
     /**
      * The bundle contexts for all bundles in their collapsed form.
@@ -36,6 +42,12 @@ class BundleOverviewContext implements IOverviewVisualizationContext<Bundle> {
      * The bundle contexts for all bundles in their detailed form.
      */
     List<BundleContext> detailedBundleContexts
+    
+    /**
+     * All used packages not contained within another internal bundle where the providing bundle is unknown.
+     */
+    @Accessors
+    List<PackageObjectContext> usedPackageContexts
     
     /**
      * The bundles displayed in this context.
@@ -58,15 +70,17 @@ class BundleOverviewContext implements IOverviewVisualizationContext<Bundle> {
         this.parent = parent
         this.bundles = bundles
         requiredBundleEdges = new LinkedList
-        usedPackagesEdges = new LinkedList
+        usedPackagesOfBundleEdges = new LinkedList
+        usedPackageEdges = new LinkedList
         collapsedBundleContexts = new LinkedList
         detailedBundleContexts = new LinkedList
+        usedPackageContexts = new LinkedList
         expanded = false
         initializeChildVisualizationContexts
     }
     
     override getChildContexts() {
-        return ImmutableList.copyOf(detailedBundleContexts + collapsedBundleContexts)
+        return ImmutableList.copyOf(detailedBundleContexts + collapsedBundleContexts) // TODO: + usedPackageContexts
     }
     
     override getModelElement() {
@@ -123,16 +137,29 @@ class BundleOverviewContext implements IOverviewVisualizationContext<Bundle> {
             copy.detailedBundleContexts.add(newBundleContext)
         ]
         
+        copy.usedPackageContexts = new LinkedList
+        usedPackageContexts.forEach [
+            val newUsedPackageContext = deepCopy(seenContexts) as PackageObjectContext
+            newUsedPackageContext.parentVisualizationContext = copy
+            copy.usedPackageContexts.add(newUsedPackageContext)
+        ]
+        
         copy.requiredBundleEdges = new LinkedList<Pair<BundleContext, BundleContext>>
         requiredBundleEdges.forEach[
             copy.requiredBundleEdges.add(key.deepCopy(seenContexts) as BundleContext
                 -> value.deepCopy(seenContexts)as BundleContext)
         ]
         
-        copy.usedPackagesEdges = new LinkedList
-        usedPackagesEdges.forEach [
-            copy.usedPackagesEdges.add(new UsedPackagesEdgeConnection(sourceBundleContext.deepCopy(seenContexts)
+        copy.usedPackagesOfBundleEdges = new LinkedList
+        usedPackagesOfBundleEdges.forEach [
+            copy.usedPackagesOfBundleEdges.add(new UsedPackagesOfBundleEdgeConnection(sourceBundleContext.deepCopy(seenContexts)
                 as BundleContext, usedPackages, product, targetBundleContext.deepCopy(seenContexts) as BundleContext))
+        ]
+        
+        copy.usedPackageEdges = new LinkedList
+        usedPackageEdges.forEach [
+            copy.usedPackageEdges.add(key.deepCopy(seenContexts) as BundleContext
+                -> value.deepCopy(seenContexts) as PackageObjectContext)
         ]
         
         copy.bundles = bundles.clone

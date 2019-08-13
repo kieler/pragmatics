@@ -13,7 +13,7 @@ import org.eclipse.xtend.lib.annotations.Data
  * @author nre
  */
 @Data
-class UsedPackagesEdgeConnection {
+class UsedPackagesOfBundleEdgeConnection {
     new(BundleContext sourceBundleContext, List<PackageObject> usedPackages, Product product, BundleContext targetBundleContext) {
         this.sourceBundleContext = sourceBundleContext
         this.usedPackages = usedPackages

@@ -108,11 +108,28 @@ class ContextUtils {
                 value.allRequiringBundlesShown = false
             }
         ]
-        val usedPackagesView = overviewContext.usedPackagesEdges.clone
-        usedPackagesView.forEach [
+        val usedPackagesOfBundleView = overviewContext.usedPackagesOfBundleEdges.clone
+        usedPackagesOfBundleView.forEach [
             if (sourceBundleContext === context || targetBundleContext === context) {
-                overviewContext.usedPackagesEdges.remove(it)
+                overviewContext.usedPackagesOfBundleEdges.remove(it)
                 sourceBundleContext.allUsedPackagesShown = false
+            }
+        ]
+        val usedPackagesView = overviewContext.usedPackageEdges.clone
+        usedPackagesView.forEach [
+            if (key === context) {
+                overviewContext.usedPackageEdges.remove(it)
+                key.allUsedPackagesShown = false
+            }
+        ]
+    }
+    
+    def dispatch static void removeEdges(BundleOverviewContext overviewContext, PackageObjectContext context) {
+        val usedPackagesView = overviewContext.usedPackageEdges.clone
+        usedPackagesView.forEach [
+            if (value === context) {
+                overviewContext.usedPackageContexts.remove(it)
+                key.allUsedPackagesShown = false
             }
         ]
     }
@@ -314,13 +331,34 @@ class ContextUtils {
                 "parent context!")
         }
         // Only if this edge does not exist yet, add it to the list of used packages edges.
-        if (!parentContext.usedPackagesEdges.exists [
+        if (!parentContext.usedPackagesOfBundleEdges.exists [
             it.sourceBundleContext === sourceBundleContext &&
             it.product === product &&
             it.targetBundleContext === targetBundleContext
         ]) {
-            parentContext.usedPackagesEdges += new UsedPackagesEdgeConnection(sourceBundleContext, usedPackages,
+            parentContext.usedPackagesOfBundleEdges += new UsedPackagesOfBundleEdgeConnection(sourceBundleContext, usedPackages,
                 product, targetBundleContext)
+        }
+    }
+    
+    /**
+     * Adds a new edge to the parent bundle context of the bundle- and package context that shows a used package
+     * connection.
+     * 
+     * @param bundleContext The bundle context where the edge starts. It represents the bundle requiring the package.
+     * @param packageContext The package context where the edge ends. It represents the package required by the bundle.
+     */
+    def static void addUsedPackageEdge(BundleContext bundleContext, PackageObjectContext packageContext) {
+        val parentContext = bundleContext.parentVisualizationContext as BundleOverviewContext
+        if (packageContext.parentVisualizationContext !== parentContext) {
+            throw new IllegalArgumentException("The bundle- and package contexts both have to have the same " +
+                "parent context!")
+        }
+        // Only if this edge does not exist yet, add it to the list of used packages edges.
+        if (!parentContext.usedPackageEdges.exists [
+            key === bundleContext && value === packageContext
+        ]) {
+            parentContext.usedPackageEdges += bundleContext -> packageContext
         }
     }
     

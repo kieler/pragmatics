@@ -18,11 +18,11 @@ class PackageObjectContext implements IVisualizationContext<PackageObject> {
     /**
      * The parent visualization context.
      */
-    IOverviewVisualizationContext<PackageObject> parent
+    IOverviewVisualizationContext<?> parent
     
     private new() {}
     
-    new(PackageObject packageObject, IOverviewVisualizationContext<PackageObject> parent) {
+    new(PackageObject packageObject, IOverviewVisualizationContext<?> parent) {
         this.parent = parent
         this.packageObject = packageObject
     }
@@ -35,7 +35,7 @@ class PackageObjectContext implements IVisualizationContext<PackageObject> {
        return packageObject
     }
     
-    override IOverviewVisualizationContext<PackageObject> getParentVisualizationContext() {
+    override IOverviewVisualizationContext<?> getParentVisualizationContext() {
         return parent
     }
     

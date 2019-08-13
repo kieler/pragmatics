@@ -30,6 +30,7 @@ class PackageObjectOverviewSynthesis extends AbstractSubSynthesis<PackageObjectO
     @Inject extension KNodeExtensions
     @Inject extension KRenderingExtensions
     @Inject extension OsgiStyles
+    @Inject PackageObjectSynthesis packageObjectSynthesis
     @Inject SimplePackageObjectSynthesis simplePackageObjectSynthesis
     
     extension KGraphFactory = KGraphFactory.eINSTANCE
@@ -114,7 +115,7 @@ class PackageObjectOverviewSynthesis extends AbstractSubSynthesis<PackageObjectO
             tooltip = packageObjectOverviewContext.overviewText
             
             children += filteredDetailedPackageObjectContexts.flatMap [
-                return simplePackageObjectSynthesis.transform(it as PackageObjectContext) // TODO: make a specific synthesis for expanded package objects!
+                return packageObjectSynthesis.transform(it as PackageObjectContext)
             ]
         ]
     }

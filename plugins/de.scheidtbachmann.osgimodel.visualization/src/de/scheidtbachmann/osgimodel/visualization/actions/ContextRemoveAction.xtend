@@ -1,10 +1,12 @@
 package de.scheidtbachmann.osgimodel.visualization.actions
 
 import de.scheidtbachmann.osgimodel.visualization.context.BundleContext
+import de.scheidtbachmann.osgimodel.visualization.context.BundleOverviewContext
 import de.scheidtbachmann.osgimodel.visualization.context.ContextUtils
 import de.scheidtbachmann.osgimodel.visualization.context.IInterfaceComponentConnectionHolder
 import de.scheidtbachmann.osgimodel.visualization.context.IOverviewVisualizationContext
 import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
+import de.scheidtbachmann.osgimodel.visualization.context.PackageObjectContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceComponentContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceComponentOverviewContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceContext
@@ -43,6 +45,9 @@ class ContextRemoveAction extends AbstractVisualizationContextChangingAction {
             ServiceInterfaceContext case ovc instanceof ServiceComponentOverviewContext: {
                 (ovc as ServiceComponentOverviewContext).implementedServiceInterfaceContexts
                     .remove(modelVisualizationContext)
+            }
+            PackageObjectContext case ovc instanceof BundleOverviewContext: {
+                (ovc as BundleOverviewContext).usedPackageContexts.remove(modelVisualizationContext)
             }
             default: {
                 throw new IllegalArgumentException("ContextRemoveAction does not support removing "

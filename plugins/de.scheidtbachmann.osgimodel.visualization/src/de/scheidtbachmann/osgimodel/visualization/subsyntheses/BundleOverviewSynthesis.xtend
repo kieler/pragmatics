@@ -13,6 +13,7 @@ import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
 import de.scheidtbachmann.osgimodel.visualization.context.BundleContext
 import de.scheidtbachmann.osgimodel.visualization.context.BundleOverviewContext
+import de.scheidtbachmann.osgimodel.visualization.context.PackageObjectContext
 import java.util.EnumSet
 import org.eclipse.elk.core.math.ElkPadding
 import org.eclipse.elk.core.options.CoreOptions
@@ -34,8 +35,9 @@ class BundleOverviewSynthesis extends AbstractSubSynthesis<BundleOverviewContext
     @Inject extension KNodeExtensions
     @Inject extension KRenderingExtensions
     @Inject extension OsgiStyles
-    @Inject SimpleBundleSynthesis simpleBundleSynthesis
     @Inject BundleSynthesis bundleSynthesis
+    @Inject PackageObjectSynthesis packageObjectSynthesis
+    @Inject SimpleBundleSynthesis simpleBundleSynthesis
     
     extension KGraphFactory = KGraphFactory.eINSTANCE
     
@@ -122,8 +124,16 @@ class BundleOverviewSynthesis extends AbstractSubSynthesis<BundleOverviewContext
             addInvisibleContainerRendering
             tooltip = bundleOverviewContext.overviewText
             
+            // All bundles.
             children += filteredDetailedBundleContexts.flatMap [
                 return bundleSynthesis.transform(it as BundleContext)
+            ]
+            
+            // All packages.
+            val filteredPackageObjects = SynthesisUtils.filteredPackageObjectContexts(
+                bundleOverviewContext.usedPackageContexts, usedContext)
+            children += filteredPackageObjects.flatMap [
+                return packageObjectSynthesis.transform(it as PackageObjectContext)
             ]
             
             // Add all required bundle edges.
@@ -151,8 +161,8 @@ class BundleOverviewSynthesis extends AbstractSubSynthesis<BundleOverviewContext
                 requiringNode.outgoingEdges += edge
             ]
             
-            // Add all used packages edges.
-            bundleOverviewContext.usedPackagesEdges.forEach [ connection |
+            // Add all used packages edges of bundles.
+            bundleOverviewContext.usedPackagesOfBundleEdges.forEach [ connection |
                 val sourceBundleNode = connection.sourceBundleContext.node
                 val sourceBundlePort = sourceBundleNode.ports.findFirst [
                     data.filter(KIdentifier).head?.id === "importedPackages"
@@ -172,6 +182,23 @@ class BundleOverviewSynthesis extends AbstractSubSynthesis<BundleOverviewContext
 //                    ]
                 ]
                 sourceBundleNode.outgoingEdges += edge
+            ]
+            
+            // Add all other used package edges.
+            bundleOverviewContext.usedPackageEdges.forEach [
+                val bundleNode = key.node
+                val bundlePort = bundleNode.ports.findFirst [
+                    data.filter(KIdentifier).head?.id === "importedPackages"
+                ]
+                val packageNode = value.node
+                
+                val edge = createEdge(bundleNode, packageNode) => [
+                    addUsedPackagesEdgeRendering
+                    sourcePort = bundlePort
+                    source = bundleNode
+                    target = packageNode
+                ]
+                bundleNode.outgoingEdges += edge
             ]
         ]
     }

@@ -9,6 +9,7 @@ import de.scheidtbachmann.osgimodel.visualization.context.BundleContext
 import de.scheidtbachmann.osgimodel.visualization.context.BundleOverviewContext
 import de.scheidtbachmann.osgimodel.visualization.context.ContextUtils
 import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
+import de.scheidtbachmann.osgimodel.visualization.context.PackageObjectContext
 import de.scheidtbachmann.osgimodel.visualization.context.ProductContext
 import java.util.ArrayList
 import java.util.HashMap
@@ -101,13 +102,12 @@ class RevealUsedPackagesAction extends AbstractVisualizationContextChangingActio
         ]
         
         // Code for all external packages
-        externalImportedPackages.forEach[ importedPackage |
+        externalImportedPackages.forEach [ importedPackage |
             val usedBundles = osgiModel.bundles
             val bundleContainingPackage = usedBundles.findFirst[ usedBundle |
                 usedBundle.exportedPackages.findFirst [ uniqueId.equals(importedPackage.uniqueId) ] !== null
             ]
             val bundleContainingPackageContext = bundleContexts.get(bundleContainingPackage)
-            // TODO: Test this
             if (bundleContainingPackageContext !== null) {
                 // This package is provided by this bundle.
                 if (!externalProvidedPackagesForBundle.containsKey(bundleContainingPackageContext)) {
@@ -115,12 +115,11 @@ class RevealUsedPackagesAction extends AbstractVisualizationContextChangingActio
                 }
                 val providedPackages = externalProvidedPackagesForBundle.get(bundleContainingPackageContext)
                 providedPackages.add(importedPackage)
-            } else {
-                println("No bundle found in this product or the other used bundles that contains the package " + importedPackage.uniqueId)
             }
         ]
         if (!externalProvidedPackagesForBundle.empty) {
-            println(externalProvidedPackagesForBundle)
+            println("Warning: There are packages provided by bundles that are not in any product. This is not expected"
+                + "or handled in this view. Packages: " + externalProvidedPackagesForBundle)
         }
         
         // Make all necessary bundles detailed.
@@ -132,8 +131,6 @@ class RevealUsedPackagesAction extends AbstractVisualizationContextChangingActio
             }
         ]
         
-        // TODO: handle the externalProvidedPackagesForBundle and add some connections for that as well.
-        
         // Put the new connections in the overview context.
         providedPackagesForBundleForProduct.forEach [ product, usedPackagesByBundle |
             usedPackagesByBundle.forEach [ usedPackageBundleContext, usedPackages |
@@ -142,28 +139,18 @@ class RevealUsedPackagesAction extends AbstractVisualizationContextChangingActio
         ]
         bundleContext.allUsedPackagesShown = true
         
+        // Add the external packages and the connections to them.
+        externalImportedPackages.forEach [ package |
+            var packageContext = bundleOverviewContext.usedPackageContexts.findFirst [
+                modelElement === package
+            ]
+            if (packageContext === null) {
+                packageContext = new PackageObjectContext(package, bundleOverviewContext)
+                bundleOverviewContext.usedPackageContexts.add(packageContext)
+            }
+            ContextUtils.addUsedPackageEdge(bundleContext, packageContext)
+        ]
+        
         return null
     }
-    
-//    // TODO: Test this!
-//    def connectExternalUsedPackageBundleEdge(KNode sourceBundleNode, KNode usedPackageBundleNode,
-//        Bundle usedPackageBundle, List<PackageObject> usedPackages, ActionContext context) {
-//        val sourceBundlePort = sourceBundleNode.ports.findFirst[ data.filter(KIdentifier).head?.id === "importedPackages" ]
-//        // Do not add this edge, if it is already there.
-//        if (sourceBundlePort.node.outgoingEdges.findFirst[edge |
-//                edge.target === usedPackageBundleNode
-//            ] !== null) {
-//            return
-//        }
-//        
-//        val edge = createEdge(sourceBundleNode, usedPackageBundleNode, usedPackages) => [
-//            // TODO: other rendering
-//            addRequiredBundleEdgeRendering
-//            sourcePort = sourceBundlePort
-//            source = sourceBundleNode
-//            target = usedPackageBundleNode
-//        ]
-//        sourceBundleNode.outgoingEdges += edge
-//        
-//    }
 }
