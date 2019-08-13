@@ -73,6 +73,10 @@ class BundleContext implements IVisualizationContext<Bundle> {
         // The service components in bundles should only be shown if there are any.
         if (!bundle.serviceComponents.empty) {
             serviceComponentOverviewContext = new ServiceComponentOverviewContext(bundle.serviceComponents, this, false)
+            // Service components in bundles in a service component overview should be expanded initially.
+            if (parentVisualizationContext instanceof ServiceComponentOverviewContext) {
+                serviceComponentOverviewContext.expanded = true
+            }
         }
     }
     
