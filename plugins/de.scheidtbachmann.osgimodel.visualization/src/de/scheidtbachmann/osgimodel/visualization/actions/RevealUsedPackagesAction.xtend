@@ -54,8 +54,13 @@ class RevealUsedPackagesAction extends AbstractVisualizationContextChangingActio
         val overviewParentContext = bundleOverviewContext.parentVisualizationContext
         
         // Only show the connections for the product in the context, if there is any.
-        val List<Product> products = if (overviewParentContext instanceof ProductContext) {
-            #[overviewParentContext.modelElement]
+        var productParent = overviewParentContext
+        while (productParent !== null && !(productParent instanceof ProductContext)) {
+            productParent = productParent.parentVisualizationContext
+        }
+        
+        val List<Product> products = if (productParent instanceof ProductContext) {
+            #[productParent.modelElement]
         } else {
             osgiModel.products
         }
