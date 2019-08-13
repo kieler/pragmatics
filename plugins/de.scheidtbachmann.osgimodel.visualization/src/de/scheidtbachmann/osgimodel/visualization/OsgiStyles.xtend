@@ -243,6 +243,25 @@ class OsgiStyles {
         ]
     }
     
+    // ------------------------------------- Project renderings -------------------------------------
+    
+    /**
+     * Adds the rendering as a project overview.
+     */
+    def void addProjectRendering(KNode node) {
+        node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
+            setGridPlacement(1)
+            addRectangle => [
+                invisible = true
+                addSimpleLabel("Overview")
+            ]
+            addHorizontalSeperatorLine(1, 0)
+            addChildArea
+            setShadow(SHADOW_COLOR.color, 4, 4)
+            tooltip = "The overview of all available views for this OSGi project."
+        ]
+    }
+    
     // ------------------------------------- Product renderings -------------------------------------
     
     /**

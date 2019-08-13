@@ -122,7 +122,7 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
             modelNode.children += createNode => [
                 associateWith(model)
                 data += createKIdentifier => [ it.id = visContext.hashCode.toString ]
-                addOverviewRendering("Overview", "The overview of all available views for this OSGi project.")
+                addProjectRendering
                 
                 val overviewProductNodes = productOverviewSynthesis.transform(visContext.productOverviewContext)
                 children += overviewProductNodes
