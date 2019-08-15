@@ -12,6 +12,7 @@ import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 import de.scheidtbachmann.osgimodel.visualization.OsgiSynthesisProperties
 import de.scheidtbachmann.osgimodel.visualization.OsgiSynthesisProperties.ServiceComponentVisualizationMode
 import de.scheidtbachmann.osgimodel.visualization.context.BundleContext
+import de.scheidtbachmann.osgimodel.visualization.context.ReferencedInterfaceEdgeConnection
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceComponentContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceComponentOverviewContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceContext
@@ -134,14 +135,14 @@ class ServiceComponentOverviewSynthesis extends AbstractSubSynthesis<ServiceComp
             }
             
             // All service interfaces.
-            val filteredImplementedServiceInterfaceContexts = serviceComponentOverviewContext
-                .implementedServiceInterfaceContexts
-            children += filteredImplementedServiceInterfaceContexts.flatMap [
+            val filteredServiceInterfaceContexts = serviceComponentOverviewContext
+                .implementedOrReferencedServiceInterfaceContexts
+            children += filteredServiceInterfaceContexts.flatMap [
                 return serviceInterfaceSynthesis.transform(it as ServiceInterfaceContext)
             ]
             
-            // Add all implementing service component edges.
-            var List<Pair<ServiceComponentContext, ServiceInterfaceContext>>  implementedInterfaceEdges
+            var List<Pair<ServiceComponentContext, ServiceInterfaceContext>> implementedInterfaceEdges
+            var List<ReferencedInterfaceEdgeConnection> referencedInterfaceEdges
             if (serviceComponentOverviewContext.allowInBundleConnections && currentVisualizationMode.equals(
                 ServiceComponentVisualizationMode.IN_BUNDLES)) {
                 setLayoutOption(CoreOptions::HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN)
@@ -151,10 +152,13 @@ class ServiceComponentOverviewSynthesis extends AbstractSubSynthesis<ServiceComp
                     return bundleSynthesis.transform(it as BundleContext)
                 ]
                 implementedInterfaceEdges = serviceComponentOverviewContext.implementedInterfaceEdgesInBundles
+                referencedInterfaceEdges = serviceComponentOverviewContext.referencedInterfaceEdgesInBundles
             } else {
                 implementedInterfaceEdges = serviceComponentOverviewContext.implementedInterfaceEdgesPlain
+                referencedInterfaceEdges = serviceComponentOverviewContext.referencedInterfaceEdgesPlain
             }
             
+            // Add all implementing service component edges.
             implementedInterfaceEdges.forEach [
                 // Connects the service component and -interface via an arrow in UML style,
                 // so [component] ---implements--|> [interface]
@@ -177,6 +181,31 @@ class ServiceComponentOverviewSynthesis extends AbstractSubSynthesis<ServiceComp
                     target = interfaceNode
                 ]
                 componentNode.outgoingEdges += edge
+            ]
+            
+            // Add all referenced service interface edges.
+            referencedInterfaceEdges.forEach [
+                // Connects the service component and -interface via an arrow.
+                val component = it.serviceComponentContext
+                val interface = it.serviceInterfaceContext
+                val reference = it.reference
+                val componentNode = component.node
+                val interfaceNode = interface.node
+                val componentPort = componentNode.ports.findFirst [
+                    data.filter(KIdentifier).head?.id === "referencedServiceInterfaces"
+                ]
+                val interfacePort = interfaceNode.ports.findFirst [
+                    data.filter(KIdentifier).head?.id === "referencingServiceComponents"
+                ]
+                
+                val edge = createEdge(component, interface, reference) => [
+                    addReferencedInterfaceEdgeRendering(reference)
+                    source = interfaceNode
+                    target = componentNode
+                    sourcePort = interfacePort
+                    targetPort = componentPort
+                ]
+                interfaceNode.outgoingEdges += edge
             ]
         ]
     }

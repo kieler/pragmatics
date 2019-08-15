@@ -36,14 +36,14 @@ class ContextRemoveAction extends AbstractVisualizationContextChangingAction {
         
         switch modelVisualizationContext {
             ServiceComponentContext case ovc instanceof ServiceInterfaceOverviewContext: {
-                (ovc as ServiceInterfaceOverviewContext).implementingServiceComponentContexts
+                (ovc as ServiceInterfaceOverviewContext).implementingOrReferencingServiceComponentContexts
                     .remove(modelVisualizationContext)
             }
             BundleContext case ovc instanceof IInterfaceComponentConnectionHolder: {
                 (ovc as IInterfaceComponentConnectionHolder).referencedBundleContexts.remove(modelVisualizationContext)
             }
             ServiceInterfaceContext case ovc instanceof ServiceComponentOverviewContext: {
-                (ovc as ServiceComponentOverviewContext).implementedServiceInterfaceContexts
+                (ovc as ServiceComponentOverviewContext).implementedOrReferencedServiceInterfaceContexts
                     .remove(modelVisualizationContext)
             }
             PackageObjectContext case ovc instanceof BundleOverviewContext: {

@@ -7,6 +7,7 @@ import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KPortExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
 import de.scheidtbachmann.osgimodel.OsgiProject
+import de.scheidtbachmann.osgimodel.ServiceComponent
 import de.scheidtbachmann.osgimodel.ServiceInterface
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 import de.scheidtbachmann.osgimodel.visualization.OsgiSynthesisProperties
@@ -37,7 +38,7 @@ class ServiceInterfaceSynthesis extends AbstractSubSynthesis<ServiceInterfaceCon
                 addServiceInterfaceRendering(serviceInterface,
                     sic.parentVisualizationContext instanceof ServiceInterfaceOverviewContext, usedContext)
                 
-                // The ports that show the connection to the service components this service interface is implemented by
+                // The port that shows the connection to the service components this service interface is implemented by
                 // with actions to add them to the view.
                 val components = serviceInterface.serviceComponent
                 if (!components.empty) {
@@ -59,6 +60,38 @@ class ServiceInterfaceSynthesis extends AbstractSubSynthesis<ServiceInterfaceCon
                         }
                         
                         addImplementingServiceComponentsPortRendering(components.size, allImplementingComponentsShown)
+                        width = 12
+                        height = 12
+                    ]
+                }
+                
+                // The port that shows the connection to the service components referencing this service interface with
+                // actions to add them to the view.
+                val referencingComponents = serviceInterface.referencedBy.map [ 
+                    // Referenced are contained within the component using that reference. So the eContainer is the
+                    // component.
+                    it.eContainer as ServiceComponent
+                ]
+                if (!referencingComponents.empty) {
+                    ports += createPort(sic, "referencingServiceComponents") => [
+                        associateWith(sic)
+                        // Identifier helps for connecting to this port.
+                        data += createKIdentifier => [ it.id = "referencingServiceComponents"]
+                        // Referencing components are always shown and expanded to the east with the drawing direction.
+                        addLayoutParam(CoreOptions::PORT_SIDE, PortSide::EAST)
+                        
+                        val boolean allReferencingComponentsShown = switch (usedContext.getProperty(
+                            OsgiSynthesisProperties.CURRENT_SERVICE_COMPONENT_VISUALIZATION_MODE)) {
+                            case PLAIN: {
+                                sic.allReferencingComponentsShownPlain
+                            }
+                            case IN_BUNDLES: {
+                                sic.allReferencingComponentsShownInBundles
+                            }
+                        }
+                        
+                        addReferencingComponentsShownPortRendering(referencingComponents.size,
+                            allReferencingComponentsShown)
                         width = 12
                         height = 12
                     ]

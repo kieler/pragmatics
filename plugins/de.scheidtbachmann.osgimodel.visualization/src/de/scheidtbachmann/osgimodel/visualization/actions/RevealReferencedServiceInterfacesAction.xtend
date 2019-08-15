@@ -9,34 +9,36 @@ import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceContex
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceOverviewContext
 
 /**
- * Puts the service interfaces implemented by this service component next to this service component and connects them 
- * with an edge from this service component's 'implementedServiceInterfaces' port to the new service interface's
- * 'implementingServiceComponents' port.
+ * Puts the service interfaces referenced by this service component next to this service component and connects them 
+ * with an edge from this service component's 'referencedServiceComponents' port to the new service interface.
  * 
  * @author nre
  */
-class RevealImplementedServiceInterfacesAction extends AbstractRevealServiceInterfacesAction {
+class RevealReferencedServiceInterfacesAction extends AbstractRevealServiceInterfacesAction {
     
     /**
      * This action's ID.
      */
-    public static val String ID = RevealImplementedServiceInterfacesAction.name
+    public static val String ID = RevealReferencedServiceInterfacesAction.name
     
     override protected void revealInInterfaceOverview(ServiceComponent serviceComponent, 
         ServiceInterfaceOverviewContext serviceInterfaceOverviewContext) {
         // The service interfaces that are yet collapsed need to be expanded first.
-        serviceComponent.serviceInterfaces.forEach [ serviceInterface |
-            var implementedServiceInterfaceContext = serviceInterfaceOverviewContext.collapsedElements.findFirst [
+        serviceComponent.reference.forEach [ reference |
+            val serviceInterface = reference.serviceInterface
+            var referencedServiceInterfaceContext = serviceInterfaceOverviewContext.collapsedElements.findFirst [
                 return modelElement === serviceInterface
             ]
-            if (implementedServiceInterfaceContext !== null) {
-                ContextUtils.makeDetailed(serviceInterfaceOverviewContext, implementedServiceInterfaceContext)
+            if (referencedServiceInterfaceContext !== null) {
+                ContextUtils.makeDetailed(serviceInterfaceOverviewContext, referencedServiceInterfaceContext)
             }
         ]
         
-        // ----- Find/put the service component in the context for the PLAIN view -----
+        // ----- Find/put the service component in the context for the PLAIN view ----
         var serviceComponentContextPlain = serviceInterfaceOverviewContext
-            .implementingOrReferencingServiceComponentContexts.findFirst [ return it.modelElement === serviceComponent ]
+            .implementingOrReferencingServiceComponentContexts.findFirst [
+            return it.modelElement === serviceComponent
+        ]
         if (serviceComponentContextPlain === null) {
             serviceComponentContextPlain = new ServiceComponentContext(serviceComponent,
                 serviceInterfaceOverviewContext)
@@ -66,14 +68,15 @@ class RevealImplementedServiceInterfacesAction extends AbstractRevealServiceInte
         ContextUtils.makeDetailed(serviceComponentOverviewContext, serviceComponentContextInBundle)
         
         // Add all connections for both views.
-        serviceComponent.serviceInterfaces.forEach [ serviceInterface |
-            val implementedServiceInterfaceContext = serviceInterfaceOverviewContext.detailedElements.findFirst [
+        serviceComponent.reference.forEach [ reference |
+            val serviceInterface = reference.serviceInterface
+            val referencedServiceInterfaceContext = serviceInterfaceOverviewContext.detailedElements.findFirst [
                 return modelElement === serviceInterface
             ] as ServiceInterfaceContext
-            ContextUtils.addImplementingServiceComponentEdgePlain(implementedServiceInterfaceContext,
-                serviceComponentContextPlain_)
-            ContextUtils.addImplementingServiceComponentEdgeInBundle(implementedServiceInterfaceContext,
-                serviceComponentContextInBundle)
+            ContextUtils.addReferencedServiceInterfaceEdgePlain(serviceComponentContextPlain_,
+                referencedServiceInterfaceContext, reference)
+            ContextUtils.addReferencedServiceInterfaceEdgeInBundle(serviceComponentContextInBundle,
+                referencedServiceInterfaceContext, reference)
         ]
     }
     
@@ -81,32 +84,35 @@ class RevealImplementedServiceInterfacesAction extends AbstractRevealServiceInte
         ServiceComponentOverviewContext serviceComponentOverviewContext) {
         val serviceComponent = serviceComponentContext.modelElement
         
-        // Find/put the contexts of the implemented interfaces in the overview
-        serviceComponent.serviceInterfaces.forEach [ serviceInterface |
+        // Find/put the contexts of the referenced interfaces in the overview.
+        serviceComponent.reference.forEach [ reference |
+            val serviceInterface = reference.serviceInterface
             var serviceInterfaceContext = serviceComponentOverviewContext
                 .implementedOrReferencedServiceInterfaceContexts.findFirst [
                 modelElement === serviceInterface
             ]
-            // Create a new context if it is not yet in the view
+            // Create a new context if it is not yet in the view.
             if (serviceInterfaceContext === null) {
                 serviceInterfaceContext = new ServiceInterfaceContext(serviceInterface, serviceComponentOverviewContext)
                 serviceComponentOverviewContext.implementedOrReferencedServiceInterfaceContexts
                     .add(serviceInterfaceContext)
             }
-            // Add the edges for all implemented interfaces.
-            ContextUtils.addImplementingServiceComponentEdgePlain(serviceInterfaceContext, serviceComponentContext)
+            // Add the edges for all referenced interfaces.
+            ContextUtils.addReferencedServiceInterfaceEdgePlain(serviceComponentContext, serviceInterfaceContext,
+                reference)
         ]
     }
     
     override protected void revealInProduct(ServiceComponent serviceComponent, 
         ServiceComponentOverviewContext serviceComponentOverviewContext) {
         // The service interfaces that are not in the view need to be added first.
-        serviceComponent.serviceInterfaces.forEach [ serviceInterface |
-            var implementedServiceInterfaceContext = serviceComponentOverviewContext
+        serviceComponent.reference.forEach [ reference |
+            val serviceInterface = reference.serviceInterface
+            var referencedServiceInterfaceContext = serviceComponentOverviewContext
                 .implementedOrReferencedServiceInterfaceContexts.findFirst [
                 return modelElement === serviceInterface
             ]
-            if (implementedServiceInterfaceContext === null) {
+            if (referencedServiceInterfaceContext === null) {
                 serviceComponentOverviewContext.implementedOrReferencedServiceInterfaceContexts.add(
                     new ServiceInterfaceContext(serviceInterface, serviceComponentOverviewContext))
             }
@@ -137,15 +143,16 @@ class RevealImplementedServiceInterfacesAction extends AbstractRevealServiceInte
         ContextUtils.makeDetailed(innerServiceComponentOverviewContext, serviceComponentContextInBundle)
         
         // Add all connections for both views.
-        serviceComponent.serviceInterfaces.forEach [ serviceInterface |
-            val implementedServiceInterfaceContext = serviceComponentOverviewContext
+        serviceComponent.reference.forEach [ reference |
+            val serviceInterface = reference.serviceInterface
+            val referencedServiceInterfaceContext = serviceComponentOverviewContext
                 .implementedOrReferencedServiceInterfaceContexts.findFirst [
                 return modelElement === serviceInterface
             ] as ServiceInterfaceContext
-            ContextUtils.addImplementingServiceComponentEdgePlain(implementedServiceInterfaceContext,
-                serviceComponentContextPlain as ServiceComponentContext)
-            ContextUtils.addImplementingServiceComponentEdgeInBundle(implementedServiceInterfaceContext,
-                serviceComponentContextInBundle)
+            ContextUtils.addReferencedServiceInterfaceEdgePlain(serviceComponentContextPlain as ServiceComponentContext,
+                referencedServiceInterfaceContext, reference)
+            ContextUtils.addReferencedServiceInterfaceEdgeInBundle(serviceComponentContextInBundle,
+                referencedServiceInterfaceContext, reference)
         ]
     }
     

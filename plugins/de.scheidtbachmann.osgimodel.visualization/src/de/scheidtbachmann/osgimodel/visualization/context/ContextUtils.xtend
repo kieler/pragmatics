@@ -4,6 +4,7 @@ import de.scheidtbachmann.osgimodel.Bundle
 import de.scheidtbachmann.osgimodel.OsgiProject
 import de.scheidtbachmann.osgimodel.PackageObject
 import de.scheidtbachmann.osgimodel.Product
+import de.scheidtbachmann.osgimodel.Reference
 import java.util.List
 import org.eclipse.emf.ecore.EObject
 
@@ -161,6 +162,14 @@ class ContextUtils {
                 value.allImplementingComponentsShownPlain = false
             }
         ]
+        val referencedInterfaceEdgesPlain = overviewContext.referencedInterfaceEdgesPlain.clone
+        referencedInterfaceEdgesPlain.forEach [
+            if (it.serviceInterfaceContext === context) {
+                overviewContext.referencedInterfaceEdgesPlain.remove(it)
+                it.serviceComponentContext.allReferencedInterfacesShownPlain = false
+                it.serviceInterfaceContext.allReferencingComponentsShownPlain = false
+            }
+        ]
         
         // IN_BUNDLES variant:
         val implementedInterfaceEdgesInBundles = overviewContext.implementedInterfaceEdgesInBundles.clone
@@ -169,6 +178,14 @@ class ContextUtils {
                 overviewContext.implementedInterfaceEdgesInBundles.remove(it)
                 key.allImplementedInterfacesShownInBundles = false
                 value.allImplementingComponentsShownInBundles = false
+            }
+        ]
+        val referencedInterfaceEdgesInBundles = overviewContext.referencedInterfaceEdgesInBundles.clone
+        referencedInterfaceEdgesInBundles.forEach [
+            if (it.serviceInterfaceContext === context) {
+                overviewContext.referencedInterfaceEdgesInBundles.remove(it)
+                it.serviceComponentContext.allReferencedInterfacesShownInBundles = false
+                it.serviceInterfaceContext.allReferencingComponentsShownInBundles = false
             }
         ]
     }
@@ -182,6 +199,14 @@ class ContextUtils {
                 overviewContext.implementedInterfaceEdgesPlain.remove(it)
                 key.allImplementedInterfacesShownPlain = false
                 value.allImplementingComponentsShownPlain = false
+            }
+        ]
+        val referencedInterfaceEdges = overviewContext.referencedInterfaceEdgesPlain.clone
+        referencedInterfaceEdges.forEach [
+            if (it.serviceComponentContext === context) {
+                overviewContext.referencedInterfaceEdgesPlain.remove(it)
+                it.serviceComponentContext.allReferencedInterfacesShownPlain = false
+                it.serviceInterfaceContext.allReferencingComponentsShownPlain = false
             }
         ]
     }
@@ -206,6 +231,14 @@ class ContextUtils {
                         value.allImplementingComponentsShownInBundles = false
                     }
                 ]
+                val referencedInterfaceEdges = connectionHolder.referencedInterfaceEdgesInBundles.clone
+                referencedInterfaceEdges.forEach [
+                    if (it.serviceComponentContext === context) {
+                        connectionHolder.referencedInterfaceEdgesInBundles.remove(it)
+                        it.serviceComponentContext.allReferencedInterfacesShownInBundles = false
+                        it.serviceInterfaceContext.allReferencingComponentsShownInBundles = false
+                    }
+                ]
             }
         }
         
@@ -216,6 +249,14 @@ class ContextUtils {
                 overviewContext.implementedInterfaceEdgesPlain.remove(it)
                 key.allImplementedInterfacesShownPlain = false
                 value.allImplementingComponentsShownPlain = false
+            }
+        ]
+        val referencedInterfaceEdges = overviewContext.referencedInterfaceEdgesPlain.clone
+        referencedInterfaceEdges.forEach [
+            if (it.serviceComponentContext === context) {
+                overviewContext.referencedInterfaceEdgesPlain.remove(it)
+                it.serviceComponentContext.allReferencedInterfacesShownPlain = false
+                it.serviceInterfaceContext.allReferencingComponentsShownPlain = false
             }
         ]
     }
@@ -231,6 +272,14 @@ class ContextUtils {
                 value.allImplementingComponentsShownInBundles = false
             }
         ]
+        val referencedInterfaceEdges = overviewContext.referencedInterfaceEdgesInBundles.clone
+        referencedInterfaceEdges.forEach [
+            if (context.serviceComponentOverviewContext.detailedElements.contains(it.serviceComponentContext)) {
+                overviewContext.referencedInterfaceEdgesInBundles.remove(it)
+                it.serviceComponentContext.allReferencedInterfacesShownInBundles = false
+                it.serviceInterfaceContext.allImplementingComponentsShownInBundles = false
+            }
+        ]
     }
     
     def dispatch static void removeEdges(ServiceComponentOverviewContext overviewContext,
@@ -244,6 +293,14 @@ class ContextUtils {
                 value.allImplementingComponentsShownPlain = false
             }
         ]
+        val referencedInterfaceEdgesPlain = overviewContext.referencedInterfaceEdgesPlain.clone
+        referencedInterfaceEdgesPlain.forEach [
+            if (it.serviceInterfaceContext === context) {
+                overviewContext.referencedInterfaceEdgesPlain.remove(it)
+                it.serviceComponentContext.allReferencedInterfacesShownPlain = false
+                it.serviceInterfaceContext.allReferencingComponentsShownPlain = false
+            }
+        ]
         
         // IN_BUNDLES variant:
         val implementedInterfaceEdgesInBundles = overviewContext.implementedInterfaceEdgesInBundles?.clone
@@ -252,6 +309,14 @@ class ContextUtils {
                 overviewContext.implementedInterfaceEdgesInBundles.remove(it)
                 key.allImplementedInterfacesShownInBundles = false
                 value.allImplementingComponentsShownInBundles = false
+            }
+        ]
+        val referencedInterfaceEdgesInBundles = overviewContext.referencedInterfaceEdgesInBundles?.clone
+        referencedInterfaceEdgesInBundles?.forEach [
+            if (it.serviceInterfaceContext === context) {
+                overviewContext.referencedInterfaceEdgesInBundles.remove(it)
+                it.serviceComponentContext.allReferencedInterfacesShownInBundles = false
+                it.serviceInterfaceContext.allReferencingComponentsShownInBundles = false
             }
         ]
     }
@@ -387,8 +452,11 @@ class ContextUtils {
             possiblyConnectedContexts.containsAll(conntectedContexts)
     }
     
+    final static String DIFFERENT_PARENT_ERROR_MSG = "The element contexts both have to have the same parent context!"
+    
     /**
-     * Adds a implementing service component edge to the parent service interface context of the two given contexts.
+     * Adds a implementing service component edge to the parent service component or interface context of the two given
+     * contexts.
      * The direction of the edge indicates that the service interface of the {@code serviceInterfaceContext} is
      * implemented by the service component of the {@code serviceComponentContext}.
      * [component] ---implements---|> [interface]
@@ -400,8 +468,7 @@ class ContextUtils {
         ServiceComponentContext serviceComponentContext) {
         val parentContext = serviceInterfaceContext.parentVisualizationContext as IOverviewVisualizationContext<?>
         if (serviceComponentContext.parentVisualizationContext !== parentContext) {
-            throw new IllegalArgumentException("The interface and the component contexts both have to have the same " +
-                "parent context!")
+            throw new IllegalArgumentException(DIFFERENT_PARENT_ERROR_MSG)
         }
         val implementedInterfaceEdgesPlain = switch parentContext {
             ServiceComponentOverviewContext: {
@@ -437,7 +504,8 @@ class ContextUtils {
     }
     
     /**
-     * Adds a implementing service component edge to the parent service interface context of the two given contexts.
+     * Adds a implementing service component edge to the parent IInterfaceComponentConnectionHolder of the two given
+     * contexts.
      * The direction of the edge indicates that the service interface of the {@code serviceInterfaceContext} is
      * implemented by the service component of the {@code serviceComponentContext}.
      * [component] ---implements---|> [interface]
@@ -477,6 +545,98 @@ class ContextUtils {
             ]) {
                 serviceComponentContext.allImplementedInterfacesShownInBundles = true
             }
+        }
+    }
+    
+    /**
+     * Adds a referenced service interface edge to the parent service component or interface context of the two given
+     * contexts.
+     * The direction of the edge indicates that the service interface of the {@code serviceInterfaceContext} is
+     * referenced by the service component of the {@code serviceComponentContext}.
+     * 
+     * @param serviceComponentContext The service component context that references.
+     * @param serviceInterfaceContext The service interface context that is referenced.
+     * @param reference The additional data for the reference.
+     */
+    def static void addReferencedServiceInterfaceEdgePlain(ServiceComponentContext serviceComponentContext,
+        ServiceInterfaceContext serviceInterfaceContext, Reference reference) {
+        val parentContext = serviceInterfaceContext.parentVisualizationContext as IOverviewVisualizationContext<?>
+        if (serviceComponentContext.parentVisualizationContext !== parentContext) {
+            throw new IllegalArgumentException(DIFFERENT_PARENT_ERROR_MSG)
+        }
+        val referencedComponentEdgesPlain = switch parentContext { // XXX: Also easier possible with IInterfaceComponentConnectionHolder?
+            ServiceComponentOverviewContext: {
+                parentContext.referencedInterfaceEdgesPlain
+            }
+            ServiceInterfaceOverviewContext: {
+                parentContext.referencedInterfaceEdgesPlain
+            }
+        }
+        
+        // Only if this edge does not exist yet, add it to the list of referenced service component edges.
+        if (!referencedComponentEdgesPlain.exists [
+            it.serviceInterfaceContext === serviceInterfaceContext &&
+            it.serviceComponentContext === serviceComponentContext &&
+            it.reference === reference
+        ]) {
+            referencedComponentEdgesPlain += new ReferencedInterfaceEdgeConnection(serviceComponentContext,
+                serviceInterfaceContext, reference)
+            // Check if all interfaces are connected and mark that in the context.
+            if (serviceComponentContext.modelElement.reference.forall [ theReference |
+                referencedComponentEdgesPlain.exists [
+                    it.serviceComponentContext === serviceComponentContext &&
+                    it.serviceInterfaceContext.modelElement === theReference.serviceInterface &&
+                    it.reference === theReference
+                ]
+            ]) {
+                serviceComponentContext.allReferencedInterfacesShownPlain = true
+            }
+            // Check if all components are connected and mark that in the context.
+            // TODO: this. 
+        }
+    }
+    
+    /**
+     * Adds a referenced service interface edge to the parent IInterfaceComponentConnectionHolder of the two given
+     * contexts.
+     * The direction of the edge indicates that the service interface of the {@code serviceInterfaceContext} is
+     * referenced by the service component of the {@code serviceComponentContext}.
+     * 
+     * @param serviceComponentContext The service component context that is referencing. Is not directly contained in
+     * a common parent service interface context, but in a hierarchy of a service component and bundle context first.
+     * @param serviceInterfaceContext The service interface context that is referenced.
+     * @param refrence The additional data for the reference.
+     */
+    def static void addReferencedServiceInterfaceEdgeInBundle(ServiceComponentContext serviceComponentContext,
+        ServiceInterfaceContext serviceInterfaceContext, Reference reference) {
+        val parentContext = serviceInterfaceContext.parentVisualizationContext as IInterfaceComponentConnectionHolder
+        // The serviceComponent should be in the hierarchy as in:
+        // IInterfaceComponentConnectionHolder->BundleCtx->SCOCtx->SCCtx
+        if (serviceComponentContext.parentVisualizationContext.parentVisualizationContext.parentVisualizationContext
+            !== parentContext) {
+            throw new IllegalArgumentException("The interface and the component contexts are not in the correct "
+                + "context hierarchy!")
+        }
+        // Only if this edge does not exist yet, add it to the list of implementing service component edges.
+        if (!parentContext.referencedInterfaceEdgesInBundles.exists [
+            it.serviceComponentContext === serviceComponentContext &&
+            it.serviceInterfaceContext === serviceInterfaceContext &&
+            it.reference === reference
+        ]) {
+            parentContext.referencedInterfaceEdgesInBundles += new ReferencedInterfaceEdgeConnection(
+                serviceComponentContext, serviceInterfaceContext, reference)
+            // Check if all interfaces are connected and mark that in the context.
+            if (serviceComponentContext.modelElement.reference.forall [ theReference |
+                parentContext.referencedInterfaceEdgesInBundles.exists [
+                    it.serviceComponentContext === serviceComponentContext &&
+                    it.serviceInterfaceContext.modelElement === theReference.serviceInterface &&
+                    it.reference === theReference
+                ]
+            ]) {
+                serviceComponentContext.allReferencedInterfacesShownInBundles = true
+            }
+            // Check if all components are connected and mark that in the context.
+            // TODO: this. 
         }
     }
     

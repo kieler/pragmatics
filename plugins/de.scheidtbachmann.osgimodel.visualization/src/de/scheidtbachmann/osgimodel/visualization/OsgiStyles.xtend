@@ -23,6 +23,7 @@ import de.scheidtbachmann.osgimodel.Bundle
 import de.scheidtbachmann.osgimodel.Feature
 import de.scheidtbachmann.osgimodel.PackageObject
 import de.scheidtbachmann.osgimodel.Product
+import de.scheidtbachmann.osgimodel.Reference
 import de.scheidtbachmann.osgimodel.ServiceComponent
 import de.scheidtbachmann.osgimodel.ServiceInterface
 import de.scheidtbachmann.osgimodel.visualization.actions.ContextCollapseExpandAction
@@ -31,6 +32,7 @@ import de.scheidtbachmann.osgimodel.visualization.actions.FocusAction
 import de.scheidtbachmann.osgimodel.visualization.actions.OverviewContextCollapseExpandAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealImplementedServiceInterfacesAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealImplementingServiceComponentsAction
+import de.scheidtbachmann.osgimodel.visualization.actions.RevealReferencedServiceInterfacesAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealRequiredBundlesAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedByBundlesAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedPackagesAction
@@ -786,12 +788,29 @@ class OsgiStyles {
      * The rendering of a port that connects a service interface with the service components implementing it. Issues the
      * {@link RevealImplementingServiceComponentsAction} if clicked.
      */
-    def KRectangle addImplementingServiceComponentsPortRendering(KPort port, int numImplementingComponents, boolean allShown) {
+    def KRectangle addImplementingServiceComponentsPortRendering(KPort port, int numImplementingComponents, 
+       boolean allShown) {
         return port.addRectangle => [
             background = if (allShown) ALL_SHOWN_COLOR.color else NOT_ALL_SHOWN_COLOR.color
-            val tooltipText = "Show service components implementing this interface (" + numImplementingComponents + " total)."
+            val tooltipText = "Show service components implementing this interface (" + numImplementingComponents
+                + " total)."
             tooltip = tooltipText
             addSingleClickAction(RevealImplementingServiceComponentsAction::ID)
+        ]
+    }
+    
+    /**
+     * The rendering of a port that connects a service interface with the service components referencing it. Issues the
+     * {@link RevealReferencingServiceComponentsAction} if clicked.
+     */
+    def KRectangle addReferencingComponentsShownPortRendering(KPort port, int numReferencingComponents,
+        boolean allShown) {
+        return port.addRectangle => [
+            background = if (allShown) ALL_SHOWN_COLOR.color else NOT_ALL_SHOWN_COLOR.color
+            val tooltipText = "Show service components referencing this interface (" + numReferencingComponents
+                + " total)."
+            tooltip = tooltipText
+//            addSingleClickAction(RevealReferencingServiceComponentsAction::ID) // XXX: re-add this.
         ]
     }
     
@@ -899,6 +918,27 @@ class OsgiStyles {
     }
     
     /**
+     * Adds the rendering for an edge showing a reference of a service interface by a component.
+     */
+    def addReferencedInterfaceEdgeRendering(KEdge edge, Reference reference) {
+        edge.addPolyline => [
+            addArrowDecorator => [ // XXX: implement this with the reference.
+                selectionLineWidth = 1.5f
+                selectionForeground = SELECTION_EDGE_COLOR.color
+                selectionBackground = SELECTION_EDGE_COLOR.color
+                addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                    ModifierState.NOT_PRESSED)
+                suppressSelectablility
+            ]
+            lineStyle = LineStyle.DASH
+            selectionLineWidth = 1.5f
+            selectionForeground = SELECTION_EDGE_COLOR.color
+            addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                ModifierState.NOT_PRESSED)
+        ]
+    }
+    
+    /**
      * The rendering of a port that connects a service component with the service interfaces it implements. Issues the
      * {@link RevealImplementedServiceInterfaceAction} if clicked.
      */
@@ -910,6 +950,19 @@ class OsgiStyles {
                 + " total)."
             tooltip = tooltipText
             addSingleClickAction(RevealImplementedServiceInterfacesAction::ID)
+        ]
+    }
+    
+    /**
+     * The rendering of a port that connects a service component with the service interfaces it references. Issues the
+     * {@link RevealReferencedServiceInterfacesAction} if clicked.
+     */
+    def KRectangle addReferencedServiceInterfacesPortRendering(KPort port, int numReferences, boolean allShown) {
+        return port.addRectangle => [
+            background = if (allShown) ALL_SHOWN_COLOR.color else NOT_ALL_SHOWN_COLOR.color
+            val tooltipText = "Show service interfaces referenced by this component (" + numReferences + " total)."
+            tooltip = tooltipText
+            addSingleClickAction(RevealReferencedServiceInterfacesAction::ID)
         ]
     }
     

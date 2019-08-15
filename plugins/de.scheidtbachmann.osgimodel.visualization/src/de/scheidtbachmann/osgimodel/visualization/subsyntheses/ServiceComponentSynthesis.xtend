@@ -37,10 +37,11 @@ class ServiceComponentSynthesis extends AbstractSubSynthesis<ServiceComponentCon
                 addServiceComponentRendering(serviceComponent,
                     sc.parentVisualizationContext instanceof ServiceComponentOverviewContext, usedContext)
                 
-                // The ports that show the connection to the service interfaces this service component implements with
+                // The port that shows the connection to the service interfaces this service component implements with
                 // actions to add them to the view.
                 val interfaces = serviceComponent.serviceInterfaces
                 if (!interfaces.empty) {
+                    // Port for connecting to implemented service interfaces.
                     ports += createPort(sc, "implementedServiceInterfaces") => [
                         associateWith(sc)
                         // Identifier helps for connecting to this port later.
@@ -49,7 +50,7 @@ class ServiceComponentSynthesis extends AbstractSubSynthesis<ServiceComponentCon
                         // direction.
                         addLayoutParam(CoreOptions::PORT_SIDE, PortSide::EAST)
                         
-                        val boolean allImplementingComponentsShown = switch (usedContext.getProperty(
+                        val boolean allImplementingInterfacesShown = switch (usedContext.getProperty(
                             OsgiSynthesisProperties.CURRENT_SERVICE_COMPONENT_VISUALIZATION_MODE)) {
                             case PLAIN: {
                                 sc.allImplementedInterfacesShownPlain
@@ -59,8 +60,36 @@ class ServiceComponentSynthesis extends AbstractSubSynthesis<ServiceComponentCon
                             }
                         }
                             
-                        addImplementedServiceInterfacesPortRendering(interfaces.size,
-                            allImplementingComponentsShown)
+                        addImplementedServiceInterfacesPortRendering(interfaces.size, allImplementingInterfacesShown)
+                        width = 12
+                        height = 12
+                    ]
+                    
+                }
+                // The port that shows the connection to the service interfaces this service component references with
+                // actions to add them to the view.
+                val references = serviceComponent.reference
+                if (!references.empty) {
+                    // Port for connecting to referenced service interfaces.
+                    ports += createPort(sc, "referencedServiceInterfaces") => [
+                        associateWith(sc)
+                        // Identifier for connecting to this port.
+                        data += createKIdentifier => [ it.id = "referencedServiceInterfaces" ]
+                        // Referenced interfaces are always shown and expanded to the west against the drawing
+                        // direction.
+                        addLayoutParam(CoreOptions::PORT_SIDE, PortSide::WEST)
+                        
+                        val boolean allReferencedInterfacesShown = switch (usedContext.getProperty(
+                            OsgiSynthesisProperties.CURRENT_SERVICE_COMPONENT_VISUALIZATION_MODE)) {
+                            case PLAIN: {
+                                sc.allReferencedInterfacesShownPlain
+                            }
+                            case IN_BUNDLES: {
+                                sc.allReferencedInterfacesShownInBundles
+                            }
+                        }
+                        
+                        addReferencedServiceInterfacesPortRendering(references.size, allReferencedInterfacesShown)
                         width = 12
                         height = 12
                     ]

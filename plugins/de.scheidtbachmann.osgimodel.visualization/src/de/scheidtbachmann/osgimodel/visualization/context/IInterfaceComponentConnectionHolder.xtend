@@ -31,4 +31,18 @@ interface IInterfaceComponentConnectionHolder {
      */
     def List<Pair<ServiceComponentContext, ServiceInterfaceContext>> getImplementedInterfaceEdgesInBundles()
     
+    /**
+     * All connections for the referenced service interfaces that should be drawn in the
+     * {@link OsgiSynthesisProperties$ServiceComponentVisualizationMode#PLAIN} variant or also in any other variant, 
+     * if in bundle connections are not allowed.
+     */
+    def List<ReferencedInterfaceEdgeConnection> getReferencedInterfaceEdgesPlain()
+    
+    /**
+     * All connections for the referenced service interfaces that should be drawn in the
+     * {@link OsgiSynthesisProperties$ServiceComponentVisualizationMode#IN_BUNDLES} variant if in bundle connections are
+     * allowed.
+     */
+    def List<ReferencedInterfaceEdgeConnection> getReferencedInterfaceEdgesInBundles()
+    
 }

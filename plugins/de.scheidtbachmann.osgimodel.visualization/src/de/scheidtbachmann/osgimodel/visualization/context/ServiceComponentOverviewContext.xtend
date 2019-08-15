@@ -28,11 +28,11 @@ class ServiceComponentOverviewContext implements IOverviewVisualizationContext<S
     List<ServiceComponentContext> detailedServiceComponentContexts
     
     /**
-     * All service interfaces implemented by some service component in this overview that are added later by actions to
-     * this context.
+     * All service interfaces implemented or referenced by some service component in this overview that are added later
+     * by actions to this context.
      */
     @Accessors
-    List<ServiceInterfaceContext> implementedServiceInterfaceContexts
+    List<ServiceInterfaceContext> implementedOrReferencedServiceInterfaceContexts
     
     /**
      * All bundles defining the components of this overview, if in bundle connections are allowed.
@@ -57,6 +57,22 @@ class ServiceComponentOverviewContext implements IOverviewVisualizationContext<S
      */
     @Accessors
     List<Pair<ServiceComponentContext, ServiceInterfaceContext>> implementedInterfaceEdgesInBundles
+    
+    /**
+     * All connections for the referenced service interfaces that should be drawn in the
+     * {@link OsgiSynthesisProperties$ServiceComponentVisualizationMode#PLAIN} variant or also in any other variant, 
+     * if in bundle connections are not allowed.
+     */
+    @Accessors
+    List<ReferencedInterfaceEdgeConnection> referencedInterfaceEdgesPlain
+    
+    /**
+     * All connections for the referenced service interface that should be drawn in the
+     * {@link OsgiSynthesisProperties$ServiceComponentVisualizationMode#IN_BUNDLES} variant if in bundle connections are
+     * allowed.
+     */
+    @Accessors
+    List<ReferencedInterfaceEdgeConnection> referencedInterfaceEdgesInBundles
     
     /**
      * The service components displayed in this context.
@@ -98,10 +114,12 @@ class ServiceComponentOverviewContext implements IOverviewVisualizationContext<S
         this.allowInBundleConnections = allowInBundleConnections
         collapsedServiceComponentContexts = new LinkedList
         detailedServiceComponentContexts = new LinkedList
-        implementedServiceInterfaceContexts = new LinkedList
+        implementedOrReferencedServiceInterfaceContexts = new LinkedList
         implementedInterfaceEdgesPlain = new LinkedList
+        referencedInterfaceEdgesPlain = new LinkedList
         if (allowInBundleConnections) {
             implementedInterfaceEdgesInBundles = new LinkedList
+            referencedInterfaceEdgesInBundles = new LinkedList
         }
         expanded = false
         initializeChildVisualizationContexts
@@ -176,11 +194,11 @@ class ServiceComponentOverviewContext implements IOverviewVisualizationContext<S
             newServiceComponentContext.parentVisualizationContext = copy
             copy.detailedServiceComponentContexts.add(newServiceComponentContext)
         ]
-        copy.implementedServiceInterfaceContexts = new LinkedList
-        implementedServiceInterfaceContexts.forEach [
+        copy.implementedOrReferencedServiceInterfaceContexts = new LinkedList
+        implementedOrReferencedServiceInterfaceContexts.forEach [
             val newServiceInterfaceContext = deepCopy(seenContexts) as ServiceInterfaceContext
             newServiceInterfaceContext.parentVisualizationContext = copy
-            copy.implementedServiceInterfaceContexts.add(newServiceInterfaceContext)
+            copy.implementedOrReferencedServiceInterfaceContexts.add(newServiceInterfaceContext)
         ]
         if (referencedBundleContexts !== null) {
             copy.referencedBundleContexts = new LinkedList
@@ -195,11 +213,27 @@ class ServiceComponentOverviewContext implements IOverviewVisualizationContext<S
             copy.implementedInterfaceEdgesPlain.add(key.deepCopy(seenContexts) as ServiceComponentContext
                 -> value.deepCopy(seenContexts) as ServiceInterfaceContext)
         ]
+        copy.referencedInterfaceEdgesPlain = new LinkedList
+        referencedInterfaceEdgesPlain.forEach [
+            copy.referencedInterfaceEdgesPlain.add(new ReferencedInterfaceEdgeConnection(
+                serviceComponentContext.deepCopy(seenContexts) as ServiceComponentContext,
+                serviceInterfaceContext.deepCopy(seenContexts) as ServiceInterfaceContext, reference))
+        ]
+        
         if (implementedInterfaceEdgesInBundles !== null) {
             copy.implementedInterfaceEdgesInBundles = new LinkedList
             implementedInterfaceEdgesInBundles.forEach [
                 copy.implementedInterfaceEdgesInBundles.add(key.deepCopy(seenContexts) as ServiceComponentContext
                     -> value.deepCopy(seenContexts) as ServiceInterfaceContext)
+            ]
+        }
+        
+        if (referencedInterfaceEdgesInBundles !== null) {
+            copy.referencedInterfaceEdgesInBundles = new LinkedList
+            referencedInterfaceEdgesInBundles.forEach [
+                copy.referencedInterfaceEdgesInBundles.add(new ReferencedInterfaceEdgeConnection(
+                    serviceComponentContext.deepCopy(seenContexts) as ServiceComponentContext,
+                    serviceInterfaceContext.deepCopy(seenContexts) as ServiceInterfaceContext, reference))
             ]
         }
         

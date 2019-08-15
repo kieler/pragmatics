@@ -63,6 +63,10 @@
             id="de.scheidtbachmann.osgimodel.visualization.actions.RevealImplementedServiceInterfacesAction">
       </action>
       <action
+            class="de.scheidtbachmann.osgimodel.visualization.actions.RevealReferencedServiceInterfacesAction"
+            id="de.scheidtbachmann.osgimodel.visualization.actions.RevealReferencedServiceInterfacesAction">
+      </action>
+      <action
             class="de.scheidtbachmann.osgimodel.visualization.actions.ToggleServiceComponentVisualization"
             id="de.scheidtbachmann.osgimodel.visualization.actions.ToggleServiceComponentVisualization">
       </action>

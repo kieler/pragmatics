@@ -36,6 +36,20 @@ class ServiceInterfaceContext implements IVisualizationContext<ServiceInterface>
     @Accessors
     boolean allImplementingComponentsShownInBundles
     
+    /**
+     * Indicates whether all service components referencing this service interface are shown and connected to this.
+     * This is for the {@link OsgiSynthesisProperties$ServiceComponentVisualizationMode#PLAIN} variant.
+     */
+    @Accessors
+    boolean allReferencingComponentsShownPlain
+    
+    /**
+     * Indicates whether all service components referencing this service interface are shown and connected to this.
+     * This is for the {@link OsgiSynthesisProperties$ServiceComponentVisualizationMode#IN_BUNDLES} variant.
+     */
+    @Accessors
+    boolean allReferencingComponentsShownInBundles
+    
     private new() {}
     
     new(ServiceInterface serviceInterface, IOverviewVisualizationContext<?> parent) {
@@ -72,6 +86,8 @@ class ServiceInterfaceContext implements IVisualizationContext<ServiceInterface>
         val copy = new ServiceInterfaceContext
         copy.allImplementingComponentsShownPlain = allImplementingComponentsShownPlain
         copy.allImplementingComponentsShownInBundles = allImplementingComponentsShownInBundles
+        copy.allReferencingComponentsShownPlain = allReferencingComponentsShownPlain
+        copy.allReferencingComponentsShownInBundles = allReferencingComponentsShownInBundles
         copy.serviceInterface = serviceInterface
         copy.parent = null
         

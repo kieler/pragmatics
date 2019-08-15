@@ -69,13 +69,13 @@ class RevealImplementingServiceComponentsAction extends AbstractVisualizationCon
         // The service components that are not already represented in the overview need to be put in first.
         serviceInterface.serviceComponent.forEach [ serviceComponent |
             var implementingServiceComponentContext = serviceInterfaceOverviewContext
-                .implementingServiceComponentContexts.findFirst [
+                .implementingOrReferencingServiceComponentContexts.findFirst [
                     return it.modelElement === serviceComponent
                 ]
             if (implementingServiceComponentContext === null) {
                 implementingServiceComponentContext = new ServiceComponentContext(serviceComponent,
                     serviceInterfaceOverviewContext)
-                serviceInterfaceOverviewContext.implementingServiceComponentContexts
+                serviceInterfaceOverviewContext.implementingOrReferencingServiceComponentContexts
                     .add(implementingServiceComponentContext)
             }
             ContextUtils.addImplementingServiceComponentEdgePlain(serviceInterfaceContext,
