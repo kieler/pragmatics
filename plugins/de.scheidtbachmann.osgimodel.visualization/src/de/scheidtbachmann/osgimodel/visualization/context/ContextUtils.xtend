@@ -592,7 +592,15 @@ class ContextUtils {
                 serviceComponentContext.allReferencedInterfacesShownPlain = true
             }
             // Check if all components are connected and mark that in the context.
-            // TODO: this. 
+            if (serviceInterfaceContext.modelElement.referencedBy.forall [ theReference |
+                referencedComponentEdgesPlain.exists [
+                    it.serviceComponentContext.modelElement === theReference.eContainer &&
+                    it.serviceInterfaceContext === serviceInterfaceContext &&
+                    it.reference === theReference
+                ]
+            ]) {
+                serviceInterfaceContext.allReferencingComponentsShownPlain = true
+            }
         }
     }
     
@@ -636,7 +644,15 @@ class ContextUtils {
                 serviceComponentContext.allReferencedInterfacesShownInBundles = true
             }
             // Check if all components are connected and mark that in the context.
-            // TODO: this. 
+            if (serviceInterfaceContext.modelElement.referencedBy.forall [ theReference |
+                parentContext.referencedInterfaceEdgesInBundles.exists [
+                    it.serviceComponentContext.modelElement === theReference.eContainer &&
+                    it.serviceInterfaceContext === serviceInterfaceContext &&
+                    it.reference === theReference
+                ]
+            ]) {
+                serviceInterfaceContext.allReferencingComponentsShownInBundles = true
+            }
         }
     }
     

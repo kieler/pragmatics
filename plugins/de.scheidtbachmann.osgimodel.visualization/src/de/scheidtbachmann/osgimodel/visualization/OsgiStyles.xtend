@@ -33,6 +33,7 @@ import de.scheidtbachmann.osgimodel.visualization.actions.OverviewContextCollaps
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealImplementedServiceInterfacesAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealImplementingServiceComponentsAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealReferencedServiceInterfacesAction
+import de.scheidtbachmann.osgimodel.visualization.actions.RevealReferencingServiceComponentsAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealRequiredBundlesAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedByBundlesAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedPackagesAction
@@ -810,7 +811,7 @@ class OsgiStyles {
             val tooltipText = "Show service components referencing this interface (" + numReferencingComponents
                 + " total)."
             tooltip = tooltipText
-//            addSingleClickAction(RevealReferencingServiceComponentsAction::ID) // XXX: re-add this.
+            addSingleClickAction(RevealReferencingServiceComponentsAction::ID)
         ]
     }
     

@@ -1,6 +1,6 @@
 package de.scheidtbachmann.osgimodel.visualization.actions
 
-import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
+import de.scheidtbachmann.osgimodel.ServiceComponent
 import de.scheidtbachmann.osgimodel.visualization.context.BundleContext
 import de.scheidtbachmann.osgimodel.visualization.context.ContextUtils
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceComponentContext
@@ -9,18 +9,17 @@ import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceContex
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceOverviewContext
 
 /**
- * Puts the service components implementing this service interface next to this service interface and connects them with
- * an edge from the new service component's 'implementedServiceInterfaces' to this service interface's
- * 'implementingServiceComponents' port.
- *  
+ * Puts the service components referenced by this service interface next to this service interface and connects them 
+ * with an edge from this service interface's 'referencingServiceInterfaces' port to the new service interface.
+ * 
  * @author nre
  */
-class RevealImplementingServiceComponentsAction extends AbstractRevealServiceComponentsAction {
+class RevealReferencingServiceComponentsAction extends AbstractRevealServiceComponentsAction {
     
     /**
      * This action's ID.
      */
-    public static val String ID = RevealImplementingServiceComponentsAction.name
+    public static val String ID = RevealReferencingServiceComponentsAction.name
     
     override revealInInterfaceOverview(ServiceInterfaceContext serviceInterfaceContext,
         ServiceInterfaceOverviewContext serviceInterfaceOverviewContext) {
@@ -28,25 +27,27 @@ class RevealImplementingServiceComponentsAction extends AbstractRevealServiceCom
         // ----- Put the service components in the context for the PLAIN view -----
         
         // The service components that are not already represented in the overview need to be put in first.
-        serviceInterface.serviceComponent.forEach [ serviceComponent |
-            var implementingServiceComponentContext = serviceInterfaceOverviewContext
+        serviceInterface.referencedBy.forEach [ reference |
+            // Components are always the container of references in the EObject containment.
+            val serviceComponent = reference.eContainer as ServiceComponent
+            var referencingServiceComponentContext = serviceInterfaceOverviewContext
                 .implementingOrReferencingServiceComponentContexts.findFirst [
                     return it.modelElement === serviceComponent
                 ]
-            if (implementingServiceComponentContext === null) {
-                implementingServiceComponentContext = new ServiceComponentContext(serviceComponent,
+            if (referencingServiceComponentContext === null) {
+                referencingServiceComponentContext = new ServiceComponentContext(serviceComponent,
                     serviceInterfaceOverviewContext)
                 serviceInterfaceOverviewContext.implementingOrReferencingServiceComponentContexts
-                    .add(implementingServiceComponentContext)
+                    .add(referencingServiceComponentContext)
             }
-            ContextUtils.addImplementingServiceComponentEdgePlain(serviceInterfaceContext,
-                implementingServiceComponentContext)
+            ContextUtils.addReferencedServiceInterfaceEdgePlain(referencingServiceComponentContext,
+                serviceInterfaceContext, reference)
         ]
         
-        // ----- Put the service components and the bundles in the context for the IN_BUNDLES view -----
+        // ----- Put the service components and the bundles in the context for the IN_BUNDLES view. -----
         
-        serviceInterface.serviceComponent.forEach [ serviceComponent |
-            // Find the bundle context that should be containing a view on this service component.
+        serviceInterface.referencedBy.forEach [ reference |
+            val serviceComponent = reference.eContainer as ServiceComponent
             var referencedBundleContext = serviceInterfaceOverviewContext.referencedBundleContexts.findFirst [
                 return it.modelElement === serviceComponent.bundle
             ]
@@ -58,16 +59,16 @@ class RevealImplementingServiceComponentsAction extends AbstractRevealServiceCom
             
             val serviceComponentOverviewContext = referencedBundleContext.serviceComponentOverviewContext
             serviceComponentOverviewContext.expanded = true
-            var implementingServiceComponentContext = serviceComponentOverviewContext.childContexts.findFirst [
+            var referencingServiceComponentContext = serviceComponentOverviewContext.childContexts.findFirst [
                 return it.modelElement === serviceComponent
             ]
-            if (implementingServiceComponentContext === null) {
+            if (referencingServiceComponentContext === null) {
                 throw new IllegalStateException("The bundle context does not contain all its service components as "
                     + "own contexts!")
             }
-            ContextUtils.makeDetailed(serviceComponentOverviewContext, implementingServiceComponentContext)
-            ContextUtils.addImplementingServiceComponentEdgeInBundle(serviceInterfaceContext,
-                implementingServiceComponentContext as ServiceComponentContext)
+            ContextUtils.makeDetailed(serviceComponentOverviewContext, referencingServiceComponentContext)
+            ContextUtils.addReferencedServiceInterfaceEdgeInBundle(
+                referencingServiceComponentContext as ServiceComponentContext, serviceInterfaceContext, reference)
         ]
     }
     
@@ -75,9 +76,11 @@ class RevealImplementingServiceComponentsAction extends AbstractRevealServiceCom
         ServiceComponentOverviewContext serviceComponentOverviewContext) {
         val serviceInterface = serviceInterfaceContext.modelElement
         
-        // Expand the contexts of the implementing components in the overview.
-        serviceInterface.serviceComponent.forEach [ serviceComponent |
-            // First, make it detailed if it is not already.
+        // Expand the contexts of the referencing components in the overview.
+        serviceInterface.referencedBy.forEach [ reference |
+            // Components are always the container of references in the EObject containment.
+            val serviceComponent = reference.eContainer as ServiceComponent
+            // Make it detailed if it is not already.
             val collapsedServiceComponentContext = serviceComponentOverviewContext.collapsedElements.findFirst [
                 modelElement === serviceComponent
             ]
@@ -90,7 +93,8 @@ class RevealImplementingServiceComponentsAction extends AbstractRevealServiceCom
             ] as ServiceComponentContext
             // If the context is null, the component is not defined by this bundle and should therefore not be shown.
             if (serviceComponentContext !== null) {
-                ContextUtils.addImplementingServiceComponentEdgePlain(serviceInterfaceContext, serviceComponentContext)
+                ContextUtils.addReferencedServiceInterfaceEdgePlain(serviceComponentContext, serviceInterfaceContext,
+                    reference)
             }
         ]
     }
@@ -98,20 +102,23 @@ class RevealImplementingServiceComponentsAction extends AbstractRevealServiceCom
     override revealInProduct(ServiceInterfaceContext serviceInterfaceContext,
         ServiceComponentOverviewContext serviceComponentOverviewContext, ActionContext actionContext) {
         val serviceInterface = serviceInterfaceContext.modelElement
-        val filteredServiceComponents = SynthesisUtils.filteredServiceComponents(serviceInterface.serviceComponent,
-            serviceComponentOverviewContext)
+        val filteredReferences = serviceInterface.referencedBy.filter [
+            // Only the references whose containing component are in the overview.
+            serviceComponentOverviewContext.modelElement.contains(eContainer)
+        ]
         
-        filteredServiceComponents.forEach [ serviceComponent |
-            // ----- Expand the service components in the context for the PLAIN view -----
-            var implementingServiceComponentContextPlain = serviceComponentOverviewContext.childContexts.findFirst [
+        filteredReferences.forEach [ reference |
+            val serviceComponent = reference.eContainer as ServiceComponent
+            // ----- Expand the service components in the context for the PLAIN view. -----
+            var referencingServiceComponentContextPlain = serviceComponentOverviewContext.childContexts.findFirst [
                 modelElement === serviceComponent
             ]
-            ContextUtils.makeDetailed(serviceComponentOverviewContext, implementingServiceComponentContextPlain)
-            ContextUtils.addImplementingServiceComponentEdgePlain(serviceInterfaceContext,
-                implementingServiceComponentContextPlain as ServiceComponentContext)
-        
-            // ----- Put the service components and the bundles in the context for the IN_BUNDLES view -----
-        
+            ContextUtils.makeDetailed(serviceComponentOverviewContext, referencingServiceComponentContextPlain)
+            ContextUtils.addReferencedServiceInterfaceEdgePlain(
+                referencingServiceComponentContextPlain as ServiceComponentContext, serviceInterfaceContext, reference)
+            
+            // ----- Put the service components and the bundles in the context for the IN_BUNDLES view. -----
+            
             // Find the bundle context that should be containing a view on this service component.
             var referencedBundleContext = serviceComponentOverviewContext.referencedBundleContexts.findFirst [
                 modelElement === serviceComponent.bundle
@@ -132,18 +139,20 @@ class RevealImplementingServiceComponentsAction extends AbstractRevealServiceCom
                 actionContext.activeViewer.toggleExpansion(nodes.head)
 //                actionContext.KNode.setProperty(KlighdProperties.EXPAND, true)
             }
-            var implementingServiceComponentContextInBundles = innerServiceComponentOverviewContext
-                .childContexts.findFirst [
+            
+            var referencingServiceComponentContextInBundles = innerServiceComponentOverviewContext.childContexts
+                .findFirst [
                     modelElement === serviceComponent
                 ]
-            if (implementingServiceComponentContextInBundles === null) {
+            if (referencingServiceComponentContextInBundles === null) {
                 throw new IllegalStateException("The bundle context does not contain all its service components as "
                     + "own contexts!")
             }
             ContextUtils.makeDetailed(innerServiceComponentOverviewContext,
-                implementingServiceComponentContextInBundles)
-            ContextUtils.addImplementingServiceComponentEdgeInBundle(serviceInterfaceContext,
-                implementingServiceComponentContextInBundles as ServiceComponentContext)
+                referencingServiceComponentContextInBundles)
+            ContextUtils.addReferencedServiceInterfaceEdgeInBundle(
+                referencingServiceComponentContextInBundles as ServiceComponentContext, serviceInterfaceContext,
+                reference)
         ]
     }
     
