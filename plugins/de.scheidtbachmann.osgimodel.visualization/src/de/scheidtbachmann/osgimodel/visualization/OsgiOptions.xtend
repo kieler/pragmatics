@@ -28,7 +28,7 @@ class OsgiOptions {
     
     /** Option for filtering an overview by only elements matching the regular expression in the option. */
     public static final SynthesisOption FILTER_BY = SynthesisOption.createTextOption(
-        "Filter by IDs with (Java regex)")
+        "Filter by IDs with (Java regex)", ".*.*")
         
     /** Option for limiting the length of descriptive texts. */
     public static final SynthesisOption DESCRIPTION_LENGTH = SynthesisOption.createRangeOption(
