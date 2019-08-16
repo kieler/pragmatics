@@ -53,17 +53,29 @@ abstract class AbstractVisualizationContextChangingAction implements IAction {
         }
         
         // Change the visualization.
-        var newContext = changeVisualization(modelVisualizationContext, context)
-        if (newContext === null) {
-            newContext = currentVisualizationContext
+        try {
+            var newContext = changeVisualization(modelVisualizationContext, context)
+            if (newContext === null) {
+                newContext = currentVisualizationContext
+            }
+            
+            // Put the old context, that will be updated below at the at index + 1 and remember that new index as the
+            // current index.
+            visualizationContexts.add(index + 1, newContext)
+            context.viewContext.setProperty(OsgiSynthesisProperties.CURRENT_VISUALIZATION_CONTEXT_INDEX, index + 1)
+            
+            return ActionResult.createResult(true).doSynthesis
+            
+        } catch (Exception e) {
+            // Put an error model in the context and show that. // TODO.
+//            val errorModel = new ErrorModel("The action failed to execute and threw an exception.", e)
+//            visualizationContexts.add(index + 1, errorModel) // TODO: Vis context of that.
+//            context.viewContext.setProperty(OsgiSynthesisProperties.CURRENT_VISUALIZATION_CONTEXT_INDEX, index + 1)
+            
+            // Show the exception, but continue normally.
+            e.printStackTrace
+            return ActionResult.createResult(true).doSynthesis
         }
-        
-        // Put the old context, that will be updated below at the at index + 1 and remember that new index as the
-        // current index.
-        visualizationContexts.add(index + 1, newContext)
-        context.viewContext.setProperty(OsgiSynthesisProperties.CURRENT_VISUALIZATION_CONTEXT_INDEX, index + 1)
-        
-        return ActionResult.createResult(true).doSynthesis
     }
     
     /**
