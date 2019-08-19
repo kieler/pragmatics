@@ -6,6 +6,7 @@ import de.cau.cs.kieler.klighd.ViewContext
 import de.cau.cs.kieler.klighd.kgraph.KEdge
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.kgraph.KPort
+import de.cau.cs.kieler.klighd.krendering.Arc
 import de.cau.cs.kieler.klighd.krendering.KContainerRendering
 import de.cau.cs.kieler.klighd.krendering.KRectangle
 import de.cau.cs.kieler.klighd.krendering.KRoundedRectangle
@@ -899,10 +900,16 @@ class OsgiStyles {
     
     /**
      * Adds the rendering for an edge showing an implementation of a service interface by a component.
+     * As the component provides the functionality of the interface, the edge rendering is in UML style of providing
+     * a service:
+     * [component] ---------o [interface]
      */
     def addImplementingComponentEdgeRendering(KEdge edge) {
         edge.addPolyline => [
-            addInheritanceTriangleArrowDecorator => [
+            addEllipse => [
+                setDecoratorPlacementData(16, 16, -8, 1, false)
+                foreground = "black".color
+                background = "white".color
                 selectionLineWidth = 1.5f
                 selectionForeground = SELECTION_EDGE_COLOR.color
                 selectionBackground = SELECTION_EDGE_COLOR.color
@@ -919,11 +926,20 @@ class OsgiStyles {
     }
     
     /**
-     * Adds the rendering for an edge showing a reference of a service interface by a component.
+     * Adds the rendering for an edge showing a reference of a service interface by a component. That means this edge
+     * shows if a component needs another interface's service to work properly.
+     * This is visualized in a UML-similar way:
+     * [interface] }[multiplicity]---------- [component]
      */
     def addReferencedInterfaceEdgeRendering(KEdge edge, Reference reference) {
         edge.addPolyline => [
-            addArrowDecorator => [ // XXX: implement this with the reference.
+            addArc => [
+                startAngle = 270
+                arcAngle = 180
+                arcType = Arc.OPEN
+                setDecoratorPlacementData(19, 19, 0, 0, true)
+                foreground = "black".color
+                background = "white".color
                 selectionLineWidth = 1.5f
                 selectionForeground = SELECTION_EDGE_COLOR.color
                 selectionBackground = SELECTION_EDGE_COLOR.color
@@ -937,6 +953,7 @@ class OsgiStyles {
             addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                 ModifierState.NOT_PRESSED)
         ]
+        edge.addTailEdgeLabel(reference.cardinality + "\n" + reference.referenceName)
     }
     
     /**

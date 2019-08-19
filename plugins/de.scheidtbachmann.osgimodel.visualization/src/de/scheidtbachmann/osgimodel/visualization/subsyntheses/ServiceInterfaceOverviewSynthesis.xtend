@@ -121,6 +121,7 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
             associateWith(serviceInterfaceOverviewContext)
             configureOverviewLayout
             setLayoutOption(LayeredMetaDataProvider::SPACING_NODE_NODE_BETWEEN_LAYERS, 30.0)
+            setLayoutOption(CoreOptions.SPACING_EDGE_LABEL, 4.0)
             addInvisibleContainerRendering
             tooltip = serviceInterfaceOverviewContext.overviewText
             

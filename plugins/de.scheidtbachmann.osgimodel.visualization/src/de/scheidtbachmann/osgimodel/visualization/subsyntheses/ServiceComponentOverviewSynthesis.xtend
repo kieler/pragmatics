@@ -121,6 +121,7 @@ class ServiceComponentOverviewSynthesis extends AbstractSubSynthesis<ServiceComp
         createNode => [
             associateWith(serviceComponentOverviewContext)
             configureOverviewLayout
+            setLayoutOption(CoreOptions.SPACING_EDGE_LABEL, 4.0)
             addInvisibleContainerRendering
             tooltip = serviceComponentOverviewContext.overviewText
             
