@@ -2,6 +2,7 @@ package de.scheidtbachmann.osgimodel.visualization.actions
 
 import de.cau.cs.kieler.klighd.IAction
 import de.cau.cs.kieler.klighd.kgraph.KEdge
+import de.cau.cs.kieler.klighd.kgraph.KLabel
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
 import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
@@ -26,11 +27,12 @@ class SelectRelatedAction implements IAction {
         val clickedElement = context.KGraphElement
         elementsToSelect.add(clickedElement)
         
-        // If the element is an edge, also select all incident nodes.
+        // If the element is an edge, also select all incident nodes and labels.
         switch clickedElement {
             KEdge: {
                 elementsToSelect.add(clickedElement.source)
                 elementsToSelect.add(clickedElement.target)
+                elementsToSelect.addAll(clickedElement.labels)
             }
             KNode: {
                 // If the element is a node, also select all incident edges and their nodes.
@@ -56,6 +58,12 @@ class SelectRelatedAction implements IAction {
                 val sameDomainElements = new ArrayList<KNode>
                 sameDomainElement(rootKNode, clickedModelElement, sameDomainElements, context)
                 elementsToSelect.addAll(sameDomainElements)
+            }
+            KLabel: {
+                // If the element is an edge label, also select the edge.
+                if (clickedElement.parent instanceof KEdge) {
+                    elementsToSelect.add(clickedElement.parent)
+                }
             }
         }
         

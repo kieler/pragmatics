@@ -677,6 +677,10 @@ class OsgiStyles {
         edge.createLabel => [
             configureCenterEdgeLabel(SynthesisUtils.getId(product.uniqueId, context)
                 + " (" + packages.size + " packages)")
+            data.filter(KText).forEach [
+                addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                    ModifierState.NOT_PRESSED)
+            ]
             tooltip = tooltipText
         ]
     }
@@ -953,7 +957,12 @@ class OsgiStyles {
             addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                 ModifierState.NOT_PRESSED)
         ]
-        edge.addTailEdgeLabel(reference.cardinality + "\n" + reference.referenceName)
+        edge.addTailEdgeLabel(reference.cardinality + "\n" + reference.referenceName) => [
+            data.filter(KText).forEach [
+                addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                    ModifierState.NOT_PRESSED)
+            ]
+        ]
     }
     
     /**
