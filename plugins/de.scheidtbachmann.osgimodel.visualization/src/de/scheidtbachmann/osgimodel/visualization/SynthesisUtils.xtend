@@ -95,7 +95,7 @@ final class SynthesisUtils {
             oc.modelElement.contains(it)
         ]
         
-        val regex = usedContext.getOptionValue(FILTER_BY) as String
+        val regex = ".*" + usedContext.getOptionValue(FILTER_BY) as String + ".*"
         if (!regex.empty && !elementsInContext.empty) {
             val (M) => boolean filter = switch (elementsInContext.head) {
                 Bundle case usedContext.getOptionValue(FILTER_BUNDLES) === true: {
@@ -143,7 +143,7 @@ final class SynthesisUtils {
      */
     def static <M extends EObject> Iterable<? extends IVisualizationContext<M>> filteredElementContexts(
         List<? extends IVisualizationContext<M>> visualizationContexts, ViewContext usedContext) {
-        val regex = usedContext.getOptionValue(FILTER_BY) as String
+        val regex = ".*" + usedContext.getOptionValue(FILTER_BY) as String + ".*"
         if (!regex.empty && !visualizationContexts.empty) {
             val (IVisualizationContext<M>) => boolean filter = switch (visualizationContexts.head.modelElement) {
                 Bundle case usedContext.getOptionValue(FILTER_BUNDLES) === true: {

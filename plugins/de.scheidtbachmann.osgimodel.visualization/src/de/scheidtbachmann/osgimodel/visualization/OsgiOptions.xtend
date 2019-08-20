@@ -37,9 +37,9 @@ class OsgiOptions {
     /** Category option containing options for text filtering. */
     public static final SynthesisOption FILTER_CATEGORY = SynthesisOption.createCategory("Filter", false)
     
-    /** Option for filtering an overview by only elements matching the regular expression in the option. */
+    /** Option for filtering an overview by only elements containing the regular expression in their identifier. */
     public static final SynthesisOption FILTER_BY = SynthesisOption.createTextOption(
-        "Filter by IDs with (Java regex)", ".*.*").setCategory(FILTER_CATEGORY)
+        "Filter by IDs containing ... (Java regex)", "").setCategory(FILTER_CATEGORY)
     
     /** Option that indicates if the {@link #FILTER_BY} option should be applied to shown bundles. */
     public static final SynthesisOption FILTER_BUNDLES = SynthesisOption.createCheckOption(
