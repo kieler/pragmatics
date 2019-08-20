@@ -8,6 +8,7 @@ import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
+import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
 import de.scheidtbachmann.osgimodel.visualization.context.BundleCategoryContext
 import de.scheidtbachmann.osgimodel.visualization.context.BundleCategoryOverviewContext
 import java.util.EnumSet
@@ -79,7 +80,8 @@ class BundleCategoryOverviewSynthesis extends AbstractSubSynthesis<BundleCategor
      */
     private def KNode transformCollapsedBundleCategoriesOverview(
         BundleCategoryOverviewContext bundleCategoryOverviewContext) {
-        val filteredCollapsedBundleCategoryContexts = bundleCategoryOverviewContext.collapsedElements
+        val filteredCollapsedBundleCategoryContexts = SynthesisUtils.filteredElementContexts(
+            bundleCategoryOverviewContext.collapsedElements, usedContext)
         createNode => [
             associateWith(bundleCategoryOverviewContext)
             configureBoxLayout
@@ -103,7 +105,8 @@ class BundleCategoryOverviewSynthesis extends AbstractSubSynthesis<BundleCategor
      */
     private def KNode transformDetailedBundleCategoriesOverview(
         BundleCategoryOverviewContext bundleCategoryOverviewContext) {
-        val filteredDetailedBundleCategoryContexts = bundleCategoryOverviewContext.detailedElements
+        val filteredDetailedBundleCategoryContexts = SynthesisUtils.filteredElementContexts(
+            bundleCategoryOverviewContext.detailedElements, usedContext)
         createNode => [
             associateWith(bundleCategoryOverviewContext)
             configureOverviewLayout

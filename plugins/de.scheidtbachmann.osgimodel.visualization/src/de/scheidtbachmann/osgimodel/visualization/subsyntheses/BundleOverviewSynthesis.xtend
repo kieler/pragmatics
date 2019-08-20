@@ -85,8 +85,8 @@ class BundleOverviewSynthesis extends AbstractSubSynthesis<BundleOverviewContext
      * @param bundleOverviewContext The overview context for all bundles in this subsynthesis.
      */
     private def KNode transformCollapsedBundlesOverview(BundleOverviewContext bundleOverviewContext) {
-        val filteredCollapsedBundleContexts = SynthesisUtils.filteredBasicOsgiObjectContexts(
-            bundleOverviewContext.collapsedElements, usedContext)
+        val filteredCollapsedBundleContexts = SynthesisUtils.filteredElementContexts(
+            bundleOverviewContext.collapsedElements, usedContext).toList
         createNode => [
             associateWith(bundleOverviewContext)
             configureBoxLayout
@@ -116,7 +116,7 @@ class BundleOverviewSynthesis extends AbstractSubSynthesis<BundleOverviewContext
      * @param bundleOverviewContext The overview context for all bundles in this subsynthesis.
      */
     private def KNode transformDetailedBundlesOverview(BundleOverviewContext bundleOverviewContext) {
-        val filteredDetailedBundleContexts = SynthesisUtils.filteredBasicOsgiObjectContexts(
+        val filteredDetailedBundleContexts = SynthesisUtils.filteredElementContexts(
             bundleOverviewContext.detailedElements, usedContext)
         createNode => [
             associateWith(bundleOverviewContext)
@@ -130,7 +130,7 @@ class BundleOverviewSynthesis extends AbstractSubSynthesis<BundleOverviewContext
             ]
             
             // All packages.
-            val filteredPackageObjects = SynthesisUtils.filteredPackageObjectContexts(
+            val filteredPackageObjects = SynthesisUtils.filteredElementContexts(
                 bundleOverviewContext.usedPackageContexts, usedContext)
             children += filteredPackageObjects.flatMap [
                 return packageObjectSynthesis.transform(it as PackageObjectContext)

@@ -11,6 +11,7 @@ import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 import de.scheidtbachmann.osgimodel.visualization.OsgiSynthesisProperties
 import de.scheidtbachmann.osgimodel.visualization.OsgiSynthesisProperties.ServiceComponentVisualizationMode
+import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
 import de.scheidtbachmann.osgimodel.visualization.context.BundleContext
 import de.scheidtbachmann.osgimodel.visualization.context.ReferencedInterfaceEdgeConnection
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceComponentContext
@@ -83,20 +84,23 @@ class ServiceComponentOverviewSynthesis extends AbstractSubSynthesis<ServiceComp
     }
     
     /**
-     * The top part of the service component overview rendering containing all collapsed service component renderings in a box layout.
+     * The top part of the service component overview rendering containing all collapsed service component renderings in
+     * a box layout.
      * 
      * @param serviceComponentOverviewContext The overview context for all service components in this subsynthesis.
      */
     private def KNode transformCollapsedServiceComponentsOverview(
         ServiceComponentOverviewContext serviceComponentOverviewContext) {
-        val filteredCollapsedServiceComponentContexts = serviceComponentOverviewContext.collapsedElements
+        val filteredCollapsedServiceComponentContexts = SynthesisUtils.filteredElementContexts(
+            serviceComponentOverviewContext.collapsedElements, usedContext)
         createNode => [
             associateWith(serviceComponentOverviewContext)
             configureBoxLayout
             addInvisibleContainerRendering
             tooltip = serviceComponentOverviewContext.overviewText
             
-            val currentVisualizationMode = usedContext.getProperty(OsgiSynthesisProperties.CURRENT_SERVICE_COMPONENT_VISUALIZATION_MODE)
+            val currentVisualizationMode = usedContext.getProperty(OsgiSynthesisProperties
+                .CURRENT_SERVICE_COMPONENT_VISUALIZATION_MODE)
             // All service components.
             if (!serviceComponentOverviewContext.allowInBundleConnections || currentVisualizationMode.equals(
                 ServiceComponentVisualizationMode.PLAIN)) {
@@ -104,15 +108,16 @@ class ServiceComponentOverviewSynthesis extends AbstractSubSynthesis<ServiceComp
                     // The string to sort by. Either the shortened ID or the name.
                     modelElement.name
                 ].forEach [ collapsedServiceComponentContext, index |
-                    children += simpleServiceComponentSynthesis.transform(collapsedServiceComponentContext as ServiceComponentContext , -index)
+                    children += simpleServiceComponentSynthesis.transform(
+                        collapsedServiceComponentContext as ServiceComponentContext , -index)
                 ]
             }
         ]
     }
     
     /**
-     * The bottom part of the service component overview rendering containing all detailed service component renderings and their
-     * connections in a layered layout.
+     * The bottom part of the service component overview rendering containing all detailed service component renderings
+     * and their connections in a layered layout.
      * 
      * @param serviceComponentOverviewContext The overview context for all service components in this subsynthesis.
      */
@@ -125,19 +130,21 @@ class ServiceComponentOverviewSynthesis extends AbstractSubSynthesis<ServiceComp
             addInvisibleContainerRendering
             tooltip = serviceComponentOverviewContext.overviewText
             
-            val currentVisualizationMode = usedContext.getProperty(OsgiSynthesisProperties.CURRENT_SERVICE_COMPONENT_VISUALIZATION_MODE)
+            val currentVisualizationMode = usedContext.getProperty(OsgiSynthesisProperties
+                .CURRENT_SERVICE_COMPONENT_VISUALIZATION_MODE)
             // All service components.
             if (!serviceComponentOverviewContext.allowInBundleConnections || currentVisualizationMode.equals(
                 ServiceComponentVisualizationMode.PLAIN)) {
-                val filteredDetailedServiceComponentContexts = serviceComponentOverviewContext.detailedElements
+                val filteredDetailedServiceComponentContexts = SynthesisUtils.filteredElementContexts(
+                    serviceComponentOverviewContext.detailedElements, usedContext)
                 children += filteredDetailedServiceComponentContexts.flatMap [
                     return serviceComponentSynthesis.transform(it as ServiceComponentContext)
                 ]
             }
             
             // All service interfaces.
-            val filteredServiceInterfaceContexts = serviceComponentOverviewContext
-                .implementedOrReferencedServiceInterfaceContexts
+            val filteredServiceInterfaceContexts = SynthesisUtils.filteredElementContexts(
+                serviceComponentOverviewContext.implementedOrReferencedServiceInterfaceContexts, usedContext)
             children += filteredServiceInterfaceContexts.flatMap [
                 return serviceInterfaceSynthesis.transform(it as ServiceInterfaceContext)
             ]

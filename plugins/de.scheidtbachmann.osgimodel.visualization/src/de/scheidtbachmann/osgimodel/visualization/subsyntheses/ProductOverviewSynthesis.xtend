@@ -42,13 +42,13 @@ class ProductOverviewSynthesis extends AbstractSubSynthesis<ProductOverviewConte
                 setLayoutOption(CoreOptions::NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.MINIMUM_SIZE))
                 addOverviewRendering("Products", productOverviewContext.overviewText)
                 
-                val filteredCollapsedProducts = SynthesisUtils.filteredBasicOsgiObjectContexts(
+                val filteredCollapsedProducts = SynthesisUtils.filteredElementContexts(
                     productOverviewContext.collapsedElements, usedContext)
                 children += filteredCollapsedProducts.flatMap [
                     return simpleProductSynthesis.transform(it as ProductContext) // TODO: add priority ordering.
                 ]
                 
-                val filteredDetailedProducts = SynthesisUtils.filteredBasicOsgiObjectContexts(
+                val filteredDetailedProducts = SynthesisUtils.filteredElementContexts(
                     productOverviewContext.detailedElements, usedContext)
                 children += filteredDetailedProducts.flatMap [
                     return productSynthesis.transform(it as ProductContext)

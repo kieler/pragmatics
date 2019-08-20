@@ -6,8 +6,11 @@ import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties
 import de.cau.cs.kieler.klighd.kgraph.KGraphElement
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
-import de.scheidtbachmann.osgimodel.BasicOsgiObject
+import de.scheidtbachmann.osgimodel.Bundle
+import de.scheidtbachmann.osgimodel.BundleCategory
+import de.scheidtbachmann.osgimodel.Feature
 import de.scheidtbachmann.osgimodel.PackageObject
+import de.scheidtbachmann.osgimodel.Product
 import de.scheidtbachmann.osgimodel.ServiceComponent
 import de.scheidtbachmann.osgimodel.ServiceInterface
 import de.scheidtbachmann.osgimodel.visualization.context.IOverviewVisualizationContext
@@ -16,6 +19,7 @@ import java.util.List
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.Direction
 import org.eclipse.elk.core.options.EdgeRouting
+import org.eclipse.emf.ecore.EObject
 
 import static de.scheidtbachmann.osgimodel.visualization.OsgiOptions.*
 
@@ -77,39 +81,57 @@ final class SynthesisUtils {
     }
     
     /**
-     * Filters the list of given basic osgi objects by the filter options of the diagram options and the overview
-     * context they are shown in.
+     * Filters the list of given objects visualized in the osgi synthesis by the filter options of the diagram options
+     * and the overview context they are shown in.
      * 
      * @param elements The unfiltered list of all elements.
-     * @param moc The element overview context showing which of the given elements are relevant.
+     * @param oc The element overview context showing which of the given elements are relevant.
      * @param usedContext The ViewContext used to display the diagram these elements are shown in.
      * @return An Iterable of the elements filtered by the diagram options.
      */
-    def static <M extends BasicOsgiObject> Iterable<M> filteredElements(List<M> elements,
-        IOverviewVisualizationContext<M> moc, ViewContext usedContext) {
+    def static <M extends EObject> Iterable<M> filteredElements(List<M> elements, IOverviewVisualizationContext<M> oc,
+        ViewContext usedContext) {
         val elementsInContext = elements.filter [
-            moc.modelElement.contains(it)
+            oc.modelElement.contains(it)
         ]
+        
         val regex = usedContext.getOptionValue(FILTER_BY) as String
-        if (!regex.empty) {
-            return elementsInContext.filter[ it.uniqueId.matches(regex) ]
+        if (!regex.empty && !elementsInContext.empty) {
+            val (M) => boolean filter = switch (elementsInContext.head) {
+                Bundle case usedContext.getOptionValue(FILTER_BUNDLES) === true: {
+                    [ (it as Bundle)          .uniqueId    .matches(regex) ]
+                }
+                Feature case usedContext.getOptionValue(FILTER_FEATURES) === true: {
+                    [ (it as Feature)         .uniqueId    .matches(regex) ]
+                }
+                Product case usedContext.getOptionValue(FILTER_PRODUCTS) === true: {
+                    [ (it as Product)         .uniqueId    .matches(regex) ]
+                }
+                BundleCategory case usedContext.getOptionValue(FILTER_BUNDLE_CATEGORIES) === true: {
+                    [ (it as BundleCategory)  .categoryName.matches(regex) ]
+                }
+                PackageObject case usedContext.getOptionValue(FILTER_PACKAGE_OBJECTS) === true: {
+                    [ (it as PackageObject)   .uniqueId    .matches(regex) ]
+                }
+                ServiceComponent case usedContext.getOptionValue(FILTER_SERVICE_COMPONENTS) === true: {
+                    [ (it as ServiceComponent).name        .matches(regex) ]
+                }
+                ServiceInterface case usedContext.getOptionValue(FILTER_SERVICE_INTERFACES) === true: {
+                    [ (it as ServiceInterface).name        .matches(regex) ]
+                }
+                default: {
+                    // In case the option for the filter is turned off, just return the given list.
+                    null
+                }
+            }
+            if (filter === null) {
+                return elementsInContext
+            } else {
+                return elementsInContext.filter(filter)
+            }
         } else {
             return elementsInContext
         }
-    }
-    
-    /**
-     * Filters the list of given service components by the overview context they are shown in.
-     * 
-     * @param components The unfiltered list of all components.
-     * @param oc The overview context showing which of the given contexts are relevant.
-     * @return An Iterable of the components filtered by the contained context.
-     */
-    def static Iterable<ServiceComponent> filteredServiceComponents(List<ServiceComponent> components,
-        IOverviewVisualizationContext<ServiceComponent> oc) {
-        return components.filter [
-            oc.modelElement.contains(it)
-        ]
     }
     
     /**
@@ -119,44 +141,41 @@ final class SynthesisUtils {
      * @param usedContext The ViewContext used to display the diagram these visualizations are shown in.
      * @return An Iterable of the visualization contexts filtered by the diagram options.
      */
-    def static <M extends BasicOsgiObject> Iterable<? extends IVisualizationContext<M>>
-    filteredBasicOsgiObjectContexts(List<? extends IVisualizationContext<M>> visualizationContexts,
-        ViewContext usedContext) {
+    def static <M extends EObject> Iterable<? extends IVisualizationContext<M>> filteredElementContexts(
+        List<? extends IVisualizationContext<M>> visualizationContexts, ViewContext usedContext) {
         val regex = usedContext.getOptionValue(FILTER_BY) as String
-        if (!regex.empty) {
-            return visualizationContexts.filter[ it.modelElement.uniqueId.matches(regex) ]
-        } else {
-            return visualizationContexts
-        }
-    }
-    
-    /**
-     * Basically the same as {@link #filteredBasicOsgiObjectContexts(List, ViewContext)},
-     * just for the non-BasicOsgiObject of {@link ServiceInterface}s.
-     * 
-     * @see #filteredBasicOsgiObjectContexts(List, ViewContext)
-     */
-    def static Iterable<? extends IVisualizationContext<ServiceInterface>> filteredServiceInterfaceContexts(
-        List<? extends IVisualizationContext<ServiceInterface>> visualizationContexts, ViewContext usedContext) {
-        val regex = usedContext.getOptionValue(FILTER_BY) as String
-        if (!regex.empty) {
-            return visualizationContexts.filter[ it.modelElement.name.matches(regex) ]
-        } else {
-            return visualizationContexts
-        }
-    }
-    
-    /**
-     * Basically the same as {@link #filteredBasicOsgiObjectContexts(List, ViewContext)},
-     * just for the non-BasicOsgiObject of {@link PackageObject}s.
-     * 
-     * @see #filteredBasicOsgiObjectContexts(List, ViewContext)
-     */
-    def static Iterable<? extends IVisualizationContext<PackageObject>> filteredPackageObjectContexts(
-        List<? extends IVisualizationContext<PackageObject>> visualizationContexts, ViewContext usedContext) {
-        val regex = usedContext.getOptionValue(FILTER_BY) as String
-        if (!regex.empty) {
-            return visualizationContexts.filter[ it.modelElement.uniqueId.matches(regex) ]
+        if (!regex.empty && !visualizationContexts.empty) {
+            val (IVisualizationContext<M>) => boolean filter = switch (visualizationContexts.head.modelElement) {
+                Bundle case usedContext.getOptionValue(FILTER_BUNDLES) === true: {
+                    [ (modelElement as Bundle)          .uniqueId    .matches(regex) ]
+                }
+                Feature case usedContext.getOptionValue(FILTER_FEATURES) === true: {
+                    [ (modelElement as Feature)         .uniqueId    .matches(regex) ]
+                }
+                Product case usedContext.getOptionValue(FILTER_PRODUCTS) === true: {
+                    [ (modelElement as Product)         .uniqueId    .matches(regex) ]
+                }
+                BundleCategory case usedContext.getOptionValue(FILTER_BUNDLE_CATEGORIES) === true: {
+                    [ (modelElement as BundleCategory)  .categoryName.matches(regex) ]
+                }
+                PackageObject case usedContext.getOptionValue(FILTER_PACKAGE_OBJECTS) === true: {
+                    [ (modelElement as PackageObject)   .uniqueId    .matches(regex) ]
+                }
+                ServiceComponent case usedContext.getOptionValue(FILTER_SERVICE_COMPONENTS) === true: {
+                    [ (modelElement as ServiceComponent).name        .matches(regex) ]
+                }
+                ServiceInterface case usedContext.getOptionValue(FILTER_SERVICE_INTERFACES) === true: {
+                    [ (modelElement as ServiceInterface).name        .matches(regex) ]
+                }
+                default: {
+                    null
+                }
+            }
+            if (filter === null) {
+                return visualizationContexts
+            } else {
+                return visualizationContexts.filter(filter)
+            }
         } else {
             return visualizationContexts
         }

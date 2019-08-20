@@ -81,7 +81,7 @@ class PackageObjectOverviewSynthesis extends AbstractSubSynthesis<PackageObjectO
      */
     private def KNode transformCollapsedPackageObjectsOverview(
         PackageObjectOverviewContext packageObjectOverviewContext) {
-        val filteredCollapsedPackageObjectContexts = SynthesisUtils.filteredPackageObjectContexts(
+        val filteredCollapsedPackageObjectContexts = SynthesisUtils.filteredElementContexts(
             packageObjectOverviewContext.collapsedElements, usedContext)
         createNode => [
             associateWith(packageObjectOverviewContext)
@@ -106,7 +106,7 @@ class PackageObjectOverviewSynthesis extends AbstractSubSynthesis<PackageObjectO
      */
     private def KNode transformDetailedPackageObjectsOverview(
         PackageObjectOverviewContext packageObjectOverviewContext) {
-        val filteredDetailedPackageObjectContexts = SynthesisUtils.filteredPackageObjectContexts(
+        val filteredDetailedPackageObjectContexts = SynthesisUtils.filteredElementContexts(
             packageObjectOverviewContext.detailedElements, usedContext)
         createNode => [
             associateWith(packageObjectOverviewContext)

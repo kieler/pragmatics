@@ -98,8 +98,9 @@ class RevealImplementingServiceComponentsAction extends AbstractRevealServiceCom
     override revealInProduct(ServiceInterfaceContext serviceInterfaceContext,
         ServiceComponentOverviewContext serviceComponentOverviewContext, ActionContext actionContext) {
         val serviceInterface = serviceInterfaceContext.modelElement
-        val filteredServiceComponents = SynthesisUtils.filteredServiceComponents(serviceInterface.serviceComponent,
-            serviceComponentOverviewContext)
+        val filteredServiceComponents = serviceInterface.serviceComponent.filter [
+            serviceComponentOverviewContext.modelElement.contains(it)
+        ]
         
         filteredServiceComponents.forEach [ serviceComponent |
             // ----- Expand the service components in the context for the PLAIN view -----

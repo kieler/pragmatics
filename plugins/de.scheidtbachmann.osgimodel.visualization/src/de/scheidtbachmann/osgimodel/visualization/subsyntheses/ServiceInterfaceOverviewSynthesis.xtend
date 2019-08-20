@@ -92,7 +92,7 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
      */
     private def KNode transformCollapsedServiceInterfacesOverview(
         ServiceInterfaceOverviewContext serviceInterfaceOverviewContext) {
-        val filteredCollapsedServiceInterfaceContexts = SynthesisUtils.filteredServiceInterfaceContexts(
+        val filteredCollapsedServiceInterfaceContexts = SynthesisUtils.filteredElementContexts(
             serviceInterfaceOverviewContext.collapsedElements, usedContext)
         createNode => [
             associateWith(serviceInterfaceOverviewContext)
@@ -126,7 +126,7 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
             tooltip = serviceInterfaceOverviewContext.overviewText
             
             // All service interfaces.
-            val filteredDetailedServiceInterfaceContexts = SynthesisUtils.filteredServiceInterfaceContexts(
+            val filteredDetailedServiceInterfaceContexts = SynthesisUtils.filteredElementContexts(
                 serviceInterfaceOverviewContext.detailedElements, usedContext)
             children += filteredDetailedServiceInterfaceContexts.flatMap [
                 return serviceInterfaceSynthesis.transform(it as ServiceInterfaceContext)
@@ -137,8 +137,8 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
             switch (usedContext.getProperty(OsgiSynthesisProperties.CURRENT_SERVICE_COMPONENT_VISUALIZATION_MODE)) {
                 case PLAIN: {
                     // All service components.
-                    val filteredServiceComponentContexts = serviceInterfaceOverviewContext
-                        .implementingOrReferencingServiceComponentContexts
+                    val filteredServiceComponentContexts = SynthesisUtils.filteredElementContexts(
+                        serviceInterfaceOverviewContext.implementingOrReferencingServiceComponentContexts, usedContext)
                     children += filteredServiceComponentContexts.flatMap [
                         return serviceComponentSynthesis.transform(it as ServiceComponentContext)
                     ]
@@ -148,7 +148,8 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
                 case IN_BUNDLES: {
                     setLayoutOption(CoreOptions::HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN)
                     // All bundles containing the service components.
-                    val filteredBundleContexts = serviceInterfaceOverviewContext.referencedBundleContexts
+                    val filteredBundleContexts = SynthesisUtils.filteredElementContexts(
+                        serviceInterfaceOverviewContext.referencedBundleContexts, usedContext)
                     children += filteredBundleContexts.flatMap [
                         return bundleSynthesis.transform(it as BundleContext)
                     ]

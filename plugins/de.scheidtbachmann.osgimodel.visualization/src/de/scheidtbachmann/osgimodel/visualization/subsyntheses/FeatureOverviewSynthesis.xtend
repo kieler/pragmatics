@@ -82,7 +82,7 @@ class FeatureOverviewSynthesis extends AbstractSubSynthesis<FeatureOverviewConte
      * @param featureOverviewContext The overview context for all features in this subsynthesis.
      */
     private def KNode transformCollapsedFeaturesOverview(FeatureOverviewContext featureOverviewContext) {
-        val filteredCollapsedFeatureContexts = SynthesisUtils.filteredBasicOsgiObjectContexts(
+        val filteredCollapsedFeatureContexts = SynthesisUtils.filteredElementContexts(
             featureOverviewContext.collapsedElements, usedContext)
         createNode => [
             associateWith(featureOverviewContext)
@@ -113,7 +113,7 @@ class FeatureOverviewSynthesis extends AbstractSubSynthesis<FeatureOverviewConte
      * @param featureOverviewContext The overview context for all features in this subsynthesis.
      */
     private def KNode transformDetailedFeaturesOverview(FeatureOverviewContext featureOverviewContext) {
-        val filteredDetailedFeatureContexts = SynthesisUtils.filteredBasicOsgiObjectContexts(
+        val filteredDetailedFeatureContexts = SynthesisUtils.filteredElementContexts(
             featureOverviewContext.detailedElements, usedContext)
         createNode => [
             associateWith(featureOverviewContext)
