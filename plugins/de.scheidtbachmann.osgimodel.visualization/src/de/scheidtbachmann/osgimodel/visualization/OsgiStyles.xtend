@@ -81,12 +81,22 @@ class OsgiStyles {
     public static final String SHADOW_COLOR = "black"
     
     // Edge colors.
-    public static final String SELECTION_EDGE_COLOR = "blue"
+    public static final String SELECTION_COLOR = "blue"
     
     /** The roundness of visualized rounded rectangles. */
     static final int ROUNDNESS = 4
     
     // ------------------------------------- Generic renderings -------------------------------------
+    
+    /**
+     * Sets the selection style of the node.
+     */
+    def setSelectionStyle(KContainerRendering rendering) {
+        rendering => [
+            selectionLineWidth = 2 * lineWidthValue;
+            selectionForeground = SELECTION_COLOR.color;
+        ]
+    }
     
     /**
      * Adds a simple rendering for any named OSGi element to the given node.
@@ -95,7 +105,7 @@ class OsgiStyles {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             setShadow(SHADOW_COLOR.color, 4, 4)
             addSimpleLabel(name)
-            // Styles of the surrounding rectangle
+            setSelectionStyle
         ]
     }
     
@@ -142,6 +152,7 @@ class OsgiStyles {
             addChildArea
             setShadow(SHADOW_COLOR.color, 4, 4)
             tooltip = tooltipText
+            setSelectionStyle
         ]
         
         // Collapsed
@@ -181,6 +192,7 @@ class OsgiStyles {
             ]
             setShadow(SHADOW_COLOR.color, 4, 4)
             tooltip = tooltipText
+            setSelectionStyle
         ]
     }
     
@@ -199,6 +211,7 @@ class OsgiStyles {
                 suppressSelectability
                 fontSize = 8
                 fontBold = true
+                selectionFontBold = true
                 val size = estimateTextSize
                 setPointPlacementData(RIGHT, 0, 0.5f, TOP, 0, 0.5f, H_CENTRAL, V_CENTRAL, 4f, 4f, size.width, size.height)
                 addSingleOrMultiClickAction(actionId)
@@ -244,6 +257,7 @@ class OsgiStyles {
             // Remove the default bold property on selected texts.
             selectionFontBold = false
             selectionBackground = KlighdConstants.DEFAULT_SELECTION_HIGHLIGHTING_BACKGROUND_COLOR
+//            suppressSelectability // TODO: this without a selectionBackground would be better, but that also removes the text hover popups. It should not remove them.
         ]
     }
     
@@ -263,6 +277,7 @@ class OsgiStyles {
             addChildArea
             setShadow(SHADOW_COLOR.color, 4, 4)
             tooltip = "The overview of all available views for this OSGi project."
+            setSelectionStyle
         ]
     }
     
@@ -296,6 +311,7 @@ class OsgiStyles {
                 ModifierState.NOT_PRESSED)
             setShadow(SHADOW_COLOR.color, 4, 4)
             tooltip = p.uniqueId
+            setSelectionStyle
         ]
     }
     
@@ -349,6 +365,7 @@ class OsgiStyles {
             setShadow(SHADOW_COLOR.color, 4, 4)
             addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                 ModifierState.NOT_PRESSED)
+            setSelectionStyle
         ]
     }
     
@@ -382,6 +399,7 @@ class OsgiStyles {
                 ModifierState.NOT_PRESSED)
             setShadow(SHADOW_COLOR.color, 4, 4)
             tooltip = f.uniqueId
+            setSelectionStyle
         ]
     }
     
@@ -435,6 +453,7 @@ class OsgiStyles {
             setShadow(SHADOW_COLOR.color, 4, 4)
             addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                 ModifierState.NOT_PRESSED)
+            setSelectionStyle
         ]
     }
     
@@ -472,6 +491,7 @@ class OsgiStyles {
                 ModifierState.NOT_PRESSED)
             setShadow(SHADOW_COLOR.color, 4, 4)
             tooltip = b.uniqueId
+            setSelectionStyle
         ]
     }
     
@@ -536,6 +556,7 @@ class OsgiStyles {
             setShadow(SHADOW_COLOR.color, 4, 4)
             addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                 ModifierState.NOT_PRESSED)
+            setSelectionStyle
         ]
     }
     
@@ -576,15 +597,15 @@ class OsgiStyles {
                 background = "black".color
                 foreground = "black".color
                 selectionLineWidth = 1.5f
-                selectionForeground = SELECTION_EDGE_COLOR.color
-                selectionBackground = SELECTION_EDGE_COLOR.color
+                selectionForeground = SELECTION_COLOR.color
+                selectionBackground = SELECTION_COLOR.color
                 addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                     ModifierState.NOT_PRESSED)
                 suppressSelectablility
             ]
             lineStyle = LineStyle.DASH
             selectionLineWidth = 3
-            selectionForeground = SELECTION_EDGE_COLOR.color
+            selectionForeground = SELECTION_COLOR.color
             addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                 ModifierState.NOT_PRESSED)
         ]
@@ -641,6 +662,7 @@ class OsgiStyles {
             setShadow(SHADOW_COLOR.color, 4, 4)
             addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                 ModifierState.NOT_PRESSED)
+            setSelectionStyle
         ]
     }
     
@@ -661,8 +683,8 @@ class OsgiStyles {
                 background = "black".color
                 foreground = "black".color
                 selectionLineWidth = 1.5f
-                selectionForeground = SELECTION_EDGE_COLOR.color
-                selectionBackground = SELECTION_EDGE_COLOR.color
+                selectionForeground = SELECTION_COLOR.color
+                selectionBackground = SELECTION_COLOR.color
                 addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                     ModifierState.NOT_PRESSED)
                 suppressSelectablility
@@ -670,7 +692,7 @@ class OsgiStyles {
             lineStyle = LineStyle.DASH
             tooltip = tooltipText
             selectionLineWidth = 1.5f
-            selectionForeground = SELECTION_EDGE_COLOR.color
+            selectionForeground = SELECTION_COLOR.color
             addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                 ModifierState.NOT_PRESSED)
         ]
@@ -695,14 +717,14 @@ class OsgiStyles {
                 background = "black".color
                 foreground = "black".color
                 selectionLineWidth = 1.5f
-                selectionForeground = SELECTION_EDGE_COLOR.color
-                selectionBackground = SELECTION_EDGE_COLOR.color
+                selectionForeground = SELECTION_COLOR.color
+                selectionBackground = SELECTION_COLOR.color
                 addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                     ModifierState.NOT_PRESSED)
             ]
             lineStyle = LineStyle.DASH
             selectionLineWidth = 1.5f
-            selectionForeground = SELECTION_EDGE_COLOR.color
+            selectionForeground = SELECTION_COLOR.color
             addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                 ModifierState.NOT_PRESSED)
         ]
@@ -738,6 +760,7 @@ class OsgiStyles {
                 ModifierState.NOT_PRESSED)
             setShadow(SHADOW_COLOR.color, 4, 4)
             tooltip = s.name
+            setSelectionStyle
         ]
     }
     
@@ -787,6 +810,7 @@ class OsgiStyles {
             setShadow(SHADOW_COLOR.color, 4, 4)
             addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                 ModifierState.NOT_PRESSED)
+            setSelectionStyle
         ]
     }
     
@@ -850,6 +874,7 @@ class OsgiStyles {
                 ModifierState.NOT_PRESSED)
             setShadow(SHADOW_COLOR.color, 4, 4)
             tooltip = s.name
+            setSelectionStyle
         ]
     }
     
@@ -899,6 +924,7 @@ class OsgiStyles {
             setShadow(SHADOW_COLOR.color, 4, 4)
             addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                 ModifierState.NOT_PRESSED)
+            setSelectionStyle
         ]
     }
     
@@ -915,15 +941,15 @@ class OsgiStyles {
                 foreground = "black".color
                 background = "white".color
                 selectionLineWidth = 1.5f
-                selectionForeground = SELECTION_EDGE_COLOR.color
-                selectionBackground = SELECTION_EDGE_COLOR.color
+                selectionForeground = SELECTION_COLOR.color
+                selectionBackground = SELECTION_COLOR.color
                 addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                     ModifierState.NOT_PRESSED)
                 suppressSelectablility
             ]
             lineStyle = LineStyle.DASH
             selectionLineWidth = 1.5f
-            selectionForeground = SELECTION_EDGE_COLOR.color
+            selectionForeground = SELECTION_COLOR.color
             addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                 ModifierState.NOT_PRESSED)
         ]
@@ -945,15 +971,15 @@ class OsgiStyles {
                 foreground = "black".color
                 background = "white".color
                 selectionLineWidth = 1.5f
-                selectionForeground = SELECTION_EDGE_COLOR.color
-                selectionBackground = SELECTION_EDGE_COLOR.color
+                selectionForeground = SELECTION_COLOR.color
+                selectionBackground = SELECTION_COLOR.color
                 addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                     ModifierState.NOT_PRESSED)
                 suppressSelectablility
             ]
             lineStyle = LineStyle.DASH
             selectionLineWidth = 1.5f
-            selectionForeground = SELECTION_EDGE_COLOR.color
+            selectionForeground = SELECTION_COLOR.color
             addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                 ModifierState.NOT_PRESSED)
         ]
