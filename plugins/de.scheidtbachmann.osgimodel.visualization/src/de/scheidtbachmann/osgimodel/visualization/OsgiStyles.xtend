@@ -258,8 +258,7 @@ class OsgiStyles {
             setGridPlacementData().from(LEFT, 10, 0, TOP, 8, 0).to(RIGHT, 10, 0, BOTTOM, 8, 0)
             // Remove the default bold property on selected texts.
             selectionFontBold = false
-            selectionBackground = KlighdConstants.DEFAULT_SELECTION_HIGHLIGHTING_BACKGROUND_COLOR
-//            suppressSelectability // TODO: this without a selectionBackground would be better, but that also removes the text hover popups. It should not remove them.
+            suppressSelectability
         ]
     }
     
