@@ -60,8 +60,8 @@ class ServiceInterfaceSynthesis extends AbstractSubSynthesis<ServiceInterfaceCon
                         }
                         
                         addImplementingServiceComponentsPortRendering(components.size, allImplementingComponentsShown)
-                        width = 12
-                        height = 12
+                        width = 16
+                        height = 16
                     ]
                 }
                 
@@ -92,8 +92,8 @@ class ServiceInterfaceSynthesis extends AbstractSubSynthesis<ServiceInterfaceCon
                         
                         addReferencingComponentsShownPortRendering(referencingComponents.size,
                             allReferencingComponentsShown)
-                        width = 12
-                        height = 12
+                        width = 9.5f
+                        height = 19
                     ]
                 }
             ]

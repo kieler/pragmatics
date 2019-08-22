@@ -7,7 +7,9 @@ import de.cau.cs.kieler.klighd.kgraph.KEdge
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.kgraph.KPort
 import de.cau.cs.kieler.klighd.krendering.Arc
+import de.cau.cs.kieler.klighd.krendering.KArc
 import de.cau.cs.kieler.klighd.krendering.KContainerRendering
+import de.cau.cs.kieler.klighd.krendering.KEllipse
 import de.cau.cs.kieler.klighd.krendering.KRectangle
 import de.cau.cs.kieler.klighd.krendering.KRoundedRectangle
 import de.cau.cs.kieler.klighd.krendering.KText
@@ -817,10 +819,12 @@ class OsgiStyles {
     /**
      * The rendering of a port that connects a service interface with the service components implementing it. Issues the
      * {@link RevealImplementingServiceComponentsAction} if clicked.
+     * Port rendering is like UML for a component offering an interface:
+     * [component]--------o[interface]
      */
-    def KRectangle addImplementingServiceComponentsPortRendering(KPort port, int numImplementingComponents, 
+    def KEllipse addImplementingServiceComponentsPortRendering(KPort port, int numImplementingComponents, 
        boolean allShown) {
-        return port.addRectangle => [
+        return port.addEllipse => [
             background = if (allShown) ALL_SHOWN_COLOR.color else NOT_ALL_SHOWN_COLOR.color
             val tooltipText = "Show service components implementing this interface (" + numImplementingComponents
                 + " total)."
@@ -832,11 +836,21 @@ class OsgiStyles {
     /**
      * The rendering of a port that connects a service interface with the service components referencing it. Issues the
      * {@link RevealReferencingServiceComponentsAction} if clicked.
+     * Port rendering is like UML for a component requesting an interface:
+     * [component]------C[interface]
      */
-    def KRectangle addReferencingComponentsShownPortRendering(KPort port, int numReferencingComponents,
+    def KArc addReferencingComponentsShownPortRendering(KPort port, int numReferencingComponents,
         boolean allShown) {
-        return port.addRectangle => [
-            background = if (allShown) ALL_SHOWN_COLOR.color else NOT_ALL_SHOWN_COLOR.color
+        return port.addArc => [
+            startAngle = 270
+            arcAngle = 180
+            arcType = Arc.OPEN
+            setAreaPlacementData => [
+                topLeft = createKPosition(LEFT, 0, -1, TOP, 0, 0)
+            ]
+            if (!allShown) {
+                background = NOT_ALL_SHOWN_COLOR.color
+            }
             val tooltipText = "Show service components referencing this interface (" + numReferencingComponents
                 + " total)."
             tooltip = tooltipText
@@ -930,23 +944,9 @@ class OsgiStyles {
     
     /**
      * Adds the rendering for an edge showing an implementation of a service interface by a component.
-     * As the component provides the functionality of the interface, the edge rendering is in UML style of providing
-     * a service:
-     * [component] ---------o [interface]
      */
     def addImplementingComponentEdgeRendering(KEdge edge) {
         edge.addPolyline => [
-            addEllipse => [
-                setDecoratorPlacementData(16, 16, -8, 1, false)
-                foreground = "black".color
-                background = "white".color
-                selectionLineWidth = 1.5f
-                selectionForeground = SELECTION_COLOR.color
-                selectionBackground = SELECTION_COLOR.color
-                addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
-                    ModifierState.NOT_PRESSED)
-                suppressSelectablility
-            ]
             lineStyle = LineStyle.DASH
             selectionLineWidth = 1.5f
             selectionForeground = SELECTION_COLOR.color
@@ -958,25 +958,10 @@ class OsgiStyles {
     /**
      * Adds the rendering for an edge showing a reference of a service interface by a component. That means this edge
      * shows if a component needs another interface's service to work properly.
-     * This is visualized in a UML-similar way:
-     * [interface] }[multiplicity]---------- [component]
+     * Similar to UML, the multiplicity and reference name is labeled on the edge.
      */
     def addReferencedInterfaceEdgeRendering(KEdge edge, Reference reference) {
         edge.addPolyline => [
-            addArc => [
-                startAngle = 270
-                arcAngle = 180
-                arcType = Arc.OPEN
-                setDecoratorPlacementData(19, 19, 0, 0, true)
-                foreground = "black".color
-                background = "white".color
-                selectionLineWidth = 1.5f
-                selectionForeground = SELECTION_COLOR.color
-                selectionBackground = SELECTION_COLOR.color
-                addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
-                    ModifierState.NOT_PRESSED)
-                suppressSelectablility
-            ]
             lineStyle = LineStyle.DASH
             selectionLineWidth = 1.5f
             selectionForeground = SELECTION_COLOR.color
