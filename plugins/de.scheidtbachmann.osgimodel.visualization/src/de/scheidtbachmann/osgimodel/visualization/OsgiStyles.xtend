@@ -210,11 +210,13 @@ class OsgiStyles {
      */
     def KRectangle addCollapseExpandButton(KContainerRendering container, boolean expand) {
         val label = if (expand) "+" else "-"
+        val doWhat = if (expand) "Expand" else "Collapse"
         return container.addButton(label, ContextCollapseExpandAction::ID) => [
             setGridPlacementData => [
                 flexibleWidth = false
             ]
             lineWidth = 0
+            tooltip = doWhat + " this element."
         ]
     }
     
@@ -228,7 +230,8 @@ class OsgiStyles {
             setGridPlacementData => [
                 flexibleWidth = false
             ]
-            lineWidth = 0 
+            lineWidth = 0
+            tooltip = "Remove this element from the view."
         ]
     }
     
@@ -241,11 +244,13 @@ class OsgiStyles {
      */
     def KRectangle addOverviewContextCollapseExpandButton(KContainerRendering container, boolean expand) {
         val label = if (expand) "+" else "-"
+        val doWhat = if (expand) "Expand" else "Collapse"
         return container.addButton(label, OverviewContextCollapseExpandAction.ID) => [
             setGridPlacementData => [
                 flexibleWidth = false
             ]
             lineWidth = 0
+            tooltip = doWhat + " this overview."
         ]
     }
     
@@ -260,6 +265,7 @@ class OsgiStyles {
                 flexibleWidth = false
             ]
             lineWidth = 0
+            tooltip = "Focus the view to this overview alone."
         ]
     }
     
