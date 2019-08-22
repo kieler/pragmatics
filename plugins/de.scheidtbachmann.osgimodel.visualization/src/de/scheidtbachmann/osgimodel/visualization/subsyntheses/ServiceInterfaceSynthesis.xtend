@@ -35,8 +35,6 @@ class ServiceInterfaceSynthesis extends AbstractSubSynthesis<ServiceInterfaceCon
                 addLayoutParam(CoreOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_SIDE)
                 associateWith(sic)
                 data += createKIdentifier => [ it.id = sic.hashCode.toString ]
-                addServiceInterfaceRendering(serviceInterface,
-                    sic.parentVisualizationContext instanceof ServiceInterfaceOverviewContext, usedContext)
                 
                 // The port that shows the connection to the service components this service interface is implemented by
                 // with actions to add them to the view.
@@ -96,6 +94,11 @@ class ServiceInterfaceSynthesis extends AbstractSubSynthesis<ServiceInterfaceCon
                         height = 19
                     ]
                 }
+                
+                // Add the rendering.
+                val hasChildren = !children.empty
+                addServiceInterfaceRendering(serviceInterface,
+                    sic.parentVisualizationContext instanceof ServiceInterfaceOverviewContext, hasChildren, usedContext)
             ]
         ]
     }

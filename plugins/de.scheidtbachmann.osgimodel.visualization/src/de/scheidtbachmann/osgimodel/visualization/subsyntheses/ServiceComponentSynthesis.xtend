@@ -34,8 +34,6 @@ class ServiceComponentSynthesis extends AbstractSubSynthesis<ServiceComponentCon
                 addLayoutParam(CoreOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_SIDE)
                 associateWith(sc)
                 data += createKIdentifier => [ it.id = sc.hashCode.toString ]
-                addServiceComponentRendering(serviceComponent,
-                    sc.parentVisualizationContext instanceof ServiceComponentOverviewContext, usedContext)
                 
                 // The port that shows the connection to the service interfaces this service component implements with
                 // actions to add them to the view.
@@ -94,6 +92,11 @@ class ServiceComponentSynthesis extends AbstractSubSynthesis<ServiceComponentCon
                         height = 12
                     ]
                 }
+                
+                // Add the rendering.
+                val hasChildren = !children.empty
+                addServiceComponentRendering(serviceComponent,
+                    sc.parentVisualizationContext instanceof ServiceComponentOverviewContext, hasChildren, usedContext)
             ]
         ]
     }

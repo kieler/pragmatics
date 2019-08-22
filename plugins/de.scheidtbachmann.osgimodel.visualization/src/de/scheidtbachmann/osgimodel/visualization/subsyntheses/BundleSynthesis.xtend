@@ -41,7 +41,6 @@ class BundleSynthesis extends AbstractSubSynthesis<BundleContext, KNode> {
                 addLayoutParam(CoreOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_SIDE)
                 associateWith(bc)
                 data += createKIdentifier => [ it.id = bc.hashCode.toString ]
-                addBundleRendering(bundle, bc.parentVisualizationContext instanceof BundleOverviewContext, usedContext)
                 
                 // Only show any connection ports if this bundle is shown in a bundle overview.
                 if (bc.parentVisualizationContext instanceof BundleOverviewContext) {
@@ -98,6 +97,11 @@ class BundleSynthesis extends AbstractSubSynthesis<BundleContext, KNode> {
                         bc.serviceComponentOverviewContext)
                     children += componentOverviewNodes
                 }
+                
+                // Add the rendering.
+                val hasChildren = !children.empty
+                addBundleRendering(bundle, bc.parentVisualizationContext instanceof BundleOverviewContext, hasChildren,
+                    usedContext)
             ]
         ]
     }

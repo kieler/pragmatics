@@ -341,7 +341,8 @@ class OsgiStyles {
      * 
      * @return The entire rendering for a product.
      */
-    def KRoundedRectangle addProductRendering(KNode node, Product p, boolean inOverview, ViewContext context) {
+    def KRoundedRectangle addProductRendering(KNode node, Product p, boolean inOverview, boolean hasChildren,
+        ViewContext context) {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             setBackgroundGradient(PRODUCT_COLOR_1.color, PRODUCT_COLOR_2.color, 90)
             setGridPlacement(1)
@@ -376,8 +377,10 @@ class OsgiStyles {
                     tooltip = p.about
                 ]
             ]
-            addHorizontalSeperatorLine(1, 0)
-            addChildArea
+            if (hasChildren) {
+                addHorizontalSeperatorLine(1, 0)
+                addChildArea
+            }
             setShadow(SHADOW_COLOR.color, 4, 4)
             addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                 ModifierState.NOT_PRESSED)
@@ -424,7 +427,8 @@ class OsgiStyles {
      * 
      * @return The entire rendering for a feature.
      */
-    def KRoundedRectangle addFeatureRendering(KNode node, Feature f, boolean inOverview, ViewContext context) {
+    def KRoundedRectangle addFeatureRendering(KNode node, Feature f, boolean inOverview, boolean hasChildren,
+        ViewContext context) {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             setBackgroundGradient(FEATURE_COLOR_1.color, FEATURE_COLOR_2.color, 90)
             setGridPlacement(1)
@@ -459,8 +463,10 @@ class OsgiStyles {
                     tooltip = f.about
                 ]
             ]
-            addHorizontalSeperatorLine(1, 0)
-            addChildArea
+            if (hasChildren) {
+                addHorizontalSeperatorLine(1, 0)
+                addChildArea
+            }
             setShadow(SHADOW_COLOR.color, 4, 4)
             addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                 ModifierState.NOT_PRESSED)
@@ -511,7 +517,8 @@ class OsgiStyles {
      * 
      * @return The entire rendering for a bundle.
      */
-    def KRoundedRectangle addBundleRendering(KNode node, Bundle b, boolean inOverview, ViewContext context) {
+    def KRoundedRectangle addBundleRendering(KNode node, Bundle b, boolean inOverview, boolean hasChildren,
+        ViewContext context) {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             if (b.isIsExternal) {
                 setBackgroundGradient(EXTERNAL_BUNDLE_COLOR_1.color, EXTERNAL_BUNDLE_COLOR_2.color, 90)
@@ -557,8 +564,10 @@ class OsgiStyles {
                     tooltip = b.about
                 ]
             ]
-            addHorizontalSeperatorLine(1, 0)
-            addChildArea
+            if (hasChildren) {
+                addHorizontalSeperatorLine(1, 0)
+                addChildArea
+            }
             setShadow(SHADOW_COLOR.color, 4, 4)
             addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                 ModifierState.NOT_PRESSED)
@@ -775,7 +784,7 @@ class OsgiStyles {
      * @return The entire rendering for a service interface.
      */
     def KRoundedRectangle addServiceInterfaceRendering(KNode node, ServiceInterface si, boolean inOverview,
-        ViewContext context) {
+        boolean hasChildren, ViewContext context) {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             setBackgroundGradient(SERVICE_INTERFACE_COLOR_1.color, SERVICE_INTERFACE_COLOR_2.color, 90)
             setGridPlacement(1)
@@ -806,8 +815,10 @@ class OsgiStyles {
                     tooltip = si.about
                 ]
             ]
-            addHorizontalSeperatorLine(1, 0)
-            addChildArea
+            if (hasChildren) {
+                addHorizontalSeperatorLine(1, 0)
+                addChildArea
+            }
             setShadow(SHADOW_COLOR.color, 4, 4)
             addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                 ModifierState.NOT_PRESSED)
@@ -896,7 +907,7 @@ class OsgiStyles {
      * @return The entire rendering for a service component.
      */
     def KRoundedRectangle addServiceComponentRendering(KNode node, ServiceComponent sc, boolean inOverview,
-        ViewContext context) {
+        boolean hasChildren, ViewContext context) {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             setBackgroundGradient(SERVICE_COMPONENT_COLOR_1.color, SERVICE_COMPONENT_COLOR_2.color, 90)
             setGridPlacement(1)
@@ -927,8 +938,10 @@ class OsgiStyles {
                     tooltip = sc.about
                 ]
             ]
-            addHorizontalSeperatorLine(1, 0)
-            addChildArea
+            if (hasChildren) {
+                addHorizontalSeperatorLine(1, 0)
+                addChildArea
+            }
             setShadow(SHADOW_COLOR.color, 4, 4)
             addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                 ModifierState.NOT_PRESSED)

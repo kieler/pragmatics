@@ -35,8 +35,6 @@ class ProductSynthesis extends AbstractSubSynthesis<ProductContext, KNode> {
             pc.createNode() => [
                 associateWith(pc)
                 data += createKIdentifier => [ it.id = pc.hashCode.toString ]
-                addProductRendering(product,
-                    pc.parentVisualizationContext instanceof ProductOverviewContext, usedContext)
                 setLayoutOption(CoreOptions::NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.MINIMUM_SIZE))
                 
                 // Show a feature overview of all features within this product.
@@ -51,6 +49,11 @@ class ProductSynthesis extends AbstractSubSynthesis<ProductContext, KNode> {
                 val overviewServiceComponentNodes = serviceComponentOverviewSynthesis.transform(
                     pc.serviceComponentOverviewContext)
                 children += overviewServiceComponentNodes
+                
+                // Add the rendering.
+                val hasChildren = !children.empty
+                addProductRendering(product,
+                    pc.parentVisualizationContext instanceof ProductOverviewContext, hasChildren, usedContext)
             ]
         ]
     }

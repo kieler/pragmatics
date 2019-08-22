@@ -35,7 +35,6 @@ class FeatureSynthesis extends AbstractSubSynthesis<FeatureContext, KNode> {
                 addLayoutParam(CoreOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_SIDE)
                 associateWith(fc)
                 data += createKIdentifier => [ it.id = fc.hashCode.toString ]
-                addFeatureRendering(feature, fc.parentVisualizationContext instanceof FeatureOverviewContext, usedContext)
                 
                 // Show a bundle overview of all bundles provided by this feature.
                 if (fc.bundleOverviewContext !== null) {
@@ -44,6 +43,11 @@ class FeatureSynthesis extends AbstractSubSynthesis<FeatureContext, KNode> {
                         fc.bundleOverviewContext)
                     children += bundleOverviewNodes
                 }
+                
+                // Add the rendering.
+                val hasChildren = !children.empty
+                addFeatureRendering(feature, fc.parentVisualizationContext instanceof FeatureOverviewContext,
+                    hasChildren, usedContext)
             ]
         ]
     }
