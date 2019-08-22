@@ -132,23 +132,13 @@ class OsgiStyles {
                         flexibleWidth = false
                     ]
                 ]
-                addButton("Focus", FocusAction::ID) => [
-                    setGridPlacementData => [
-                        flexibleWidth = false
-                    ]
-                    lineWidth = 0
-                ]
+                addFocusButton
                 addVerticalLine(RIGHT, 0, 1) => [
                     setGridPlacementData => [
                         flexibleWidth = false
                     ]
                 ]
-                addButton("-", OverviewContextCollapseExpandAction.ID) => [
-                    setGridPlacementData => [
-                        flexibleWidth = false
-                    ]
-                    lineWidth = 0
-                ]
+                addOverviewContextCollapseExpandButton(false)
             ]
             addHorizontalSeperatorLine(1, 0)
             addChildArea
@@ -174,23 +164,13 @@ class OsgiStyles {
                         flexibleWidth = false
                     ]
                 ]
-                addButton("Focus", FocusAction::ID) => [
-                    setGridPlacementData => [
-                        flexibleWidth = false
-                    ]
-                    lineWidth = 0
-                ]
+                addFocusButton
                 addVerticalLine(RIGHT, 0, 1) => [
                     setGridPlacementData => [
                         flexibleWidth = false
                     ]
                 ]
-                addButton("+", OverviewContextCollapseExpandAction.ID) => [
-                    setGridPlacementData => [
-                        flexibleWidth = false
-                    ]
-                    lineWidth = 0
-                ]
+                addOverviewContextCollapseExpandButton(true)
             ]
             setShadow(SHADOW_COLOR.color, 4, 4)
             tooltip = tooltipText
@@ -225,9 +205,12 @@ class OsgiStyles {
      * Adds a button in a grid placement rendering that causes the {@link ContextCollapseAction} to be called.
      * 
      * @param container The parent rendering this button should be added to.
+     * @param expand Whether this button should expand or collapse. {@code true} for expanding, {@code false} for
+     * collapsing.
      */
-    def KRectangle addCollapseButton(KContainerRendering container) {
-        return container.addButton("-", ContextCollapseExpandAction::ID) => [
+    def KRectangle addCollapseExpandButton(KContainerRendering container, boolean expand) {
+        val label = if (expand) "+" else "-"
+        return container.addButton(label, ContextCollapseExpandAction::ID) => [
             setGridPlacementData => [
                 flexibleWidth = false
             ]
@@ -246,6 +229,37 @@ class OsgiStyles {
                 flexibleWidth = false
             ]
             lineWidth = 0 
+        ]
+    }
+    
+    /**
+     * Adds a button in a grid placement that causes the {@link OverviewContextCollapseExpandAction} to be called.
+     * 
+     * @param container The parent rendering this button should be added to.
+     * @param expand Whether this button should expand or collapse. {@code true} for expanding, {@code false} for
+     * collapsing.
+     */
+    def KRectangle addOverviewContextCollapseExpandButton(KContainerRendering container, boolean expand) {
+        val label = if (expand) "+" else "-"
+        return container.addButton(label, OverviewContextCollapseExpandAction.ID) => [
+            setGridPlacementData => [
+                flexibleWidth = false
+            ]
+            lineWidth = 0
+        ]
+    }
+    
+    /**
+     * Adds a button in grid placement that causes the {@link FocusAction} to be called.
+     * 
+     * @param container The parent rendering this button should be added to.
+     */
+    def KRectangle addFocusButton(KContainerRendering container) {
+        return container.addButton("Focus", FocusAction::ID) => [
+            setGridPlacementData => [
+                flexibleWidth = false
+            ]
+            lineWidth = 0
         ]
     }
     
@@ -300,12 +314,7 @@ class OsgiStyles {
                     flexibleWidth = false
                 ]
             ]
-            addButton("+", ContextCollapseExpandAction::ID) => [
-                setGridPlacementData => [
-                    flexibleWidth = false
-                ]
-                lineWidth = 0
-            ]
+            addCollapseExpandButton(true)
             setBackgroundGradient(PRODUCT_COLOR_1.color, PRODUCT_COLOR_2.color, 90)
             addDoubleClickAction(ContextCollapseExpandAction::ID)
             addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
@@ -343,7 +352,7 @@ class OsgiStyles {
                     ]
                 ]
                 if (inOverview) {
-                    addCollapseButton
+                    addCollapseExpandButton(false)
                 } else {
                     addRemoveButton
                 }
@@ -388,12 +397,7 @@ class OsgiStyles {
                     flexibleWidth = false
                 ]
             ]
-            addButton("+", ContextCollapseExpandAction::ID) => [
-                setGridPlacementData => [
-                    flexibleWidth = false
-                ]
-                lineWidth = 0
-            ]
+            addCollapseExpandButton(true)
             setBackgroundGradient(FEATURE_COLOR_1.color, FEATURE_COLOR_2.color, 90)
             addDoubleClickAction(ContextCollapseExpandAction::ID)
             addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
@@ -431,7 +435,7 @@ class OsgiStyles {
                     ]
                 ]
                 if (inOverview) {
-                    addCollapseButton
+                    addCollapseExpandButton(false)
                 } else {
                     addRemoveButton
                 }
@@ -476,12 +480,7 @@ class OsgiStyles {
                     flexibleWidth = false
                 ]
             ]
-            addButton("+", ContextCollapseExpandAction::ID) => [
-                setGridPlacementData => [
-                    flexibleWidth = false
-                ]
-                lineWidth = 0
-            ]
+            addCollapseExpandButton(true)
             if (b.isIsExternal) {
                 setBackgroundGradient(EXTERNAL_BUNDLE_COLOR_1.color, EXTERNAL_BUNDLE_COLOR_2.color, 90)
             } else {
@@ -534,7 +533,7 @@ class OsgiStyles {
                     ]
                 ]
                 if (inOverview) {
-                    addCollapseButton
+                    addCollapseExpandButton(false)
                 } else {
                     addRemoveButton
                 }
@@ -655,7 +654,7 @@ class OsgiStyles {
                     ]
                 ]
                 if (inOverview) {
-                    addCollapseButton
+                    addCollapseExpandButton(false)
                 } else {
                     addRemoveButton
                 }
@@ -749,12 +748,7 @@ class OsgiStyles {
                     flexibleWidth = false
                 ]
             ]
-            addButton("+", ContextCollapseExpandAction::ID) => [
-                setGridPlacementData => [
-                    flexibleWidth = false
-                ]
-                lineWidth = 0
-            ]
+            addCollapseExpandButton(true)
             setBackgroundGradient(SERVICE_INTERFACE_COLOR_1.color, SERVICE_INTERFACE_COLOR_2.color, 90)
             addDoubleClickAction(ContextCollapseExpandAction::ID)
             addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
@@ -794,7 +788,7 @@ class OsgiStyles {
                     ]
                 ]
                 if (inOverview) {
-                    addCollapseButton
+                    addCollapseExpandButton(false)
                 } else {
                     addRemoveButton
                 }
@@ -875,12 +869,7 @@ class OsgiStyles {
                     flexibleWidth = false
                 ]
             ]
-            addButton("+", ContextCollapseExpandAction::ID) => [
-                setGridPlacementData => [
-                    flexibleWidth = false
-                ]
-                lineWidth = 0
-            ]
+            addCollapseExpandButton(true)
             setBackgroundGradient(SERVICE_COMPONENT_COLOR_1.color, SERVICE_COMPONENT_COLOR_2.color, 90)
             addDoubleClickAction(ContextCollapseExpandAction::ID)
             addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
@@ -920,7 +909,7 @@ class OsgiStyles {
                     ]
                 ]
                 if (inOverview) {
-                    addCollapseButton
+                    addCollapseExpandButton(false)
                 } else {
                     addRemoveButton
                 }
