@@ -34,7 +34,7 @@ class SimpleBundleCategorySynthesis extends AbstractSubSynthesis<BundleCategoryC
                 data += createKIdentifier => [ it.id = bcc.hashCode.toString ]
                 val label = bundleCategory.categoryName
                 setLayoutOption(CoreOptions::PRIORITY, priority)
-                addGenericRendering(label) // TODO: add a feature specific rendering.
+                addGenericRendering(label) // TODO: add a bundle category specific rendering.
             ]
         ]
     }

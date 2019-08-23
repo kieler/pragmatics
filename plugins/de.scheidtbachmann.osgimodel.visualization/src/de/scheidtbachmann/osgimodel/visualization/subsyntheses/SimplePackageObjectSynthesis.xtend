@@ -35,7 +35,7 @@ class SimplePackageObjectSynthesis extends AbstractSubSynthesis<PackageObjectCon
                 data += createKIdentifier => [ it.id = poc.hashCode.toString ]
                 val label = packageObject.uniqueId
                 setLayoutOption(CoreOptions::PRIORITY, priority)
-                addGenericRendering(SynthesisUtils.getId(label, usedContext)) // TODO: add a feature specific rendering.
+                addGenericRendering(SynthesisUtils.getId(label, usedContext)) // TODO: add a package object specific rendering.
             ]
         ]
     }

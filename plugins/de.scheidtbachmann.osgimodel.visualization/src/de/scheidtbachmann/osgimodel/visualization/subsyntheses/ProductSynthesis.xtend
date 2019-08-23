@@ -30,6 +30,10 @@ class ProductSynthesis extends AbstractSubSynthesis<ProductContext, KNode> {
     extension KGraphFactory = KGraphFactory.eINSTANCE
     
     override transform(ProductContext pc) {
+        transform(pc, 0)
+    }
+    
+    def transform(ProductContext pc, int priority) {
         val product = pc.modelElement
         return #[
             pc.createNode() => [
@@ -50,6 +54,7 @@ class ProductSynthesis extends AbstractSubSynthesis<ProductContext, KNode> {
                     pc.serviceComponentOverviewContext)
                 children += overviewServiceComponentNodes
                 
+                setLayoutOption(CoreOptions::PRIORITY, priority)
                 // Add the rendering.
                 val hasChildren = !children.empty
                 addProductRendering(product,
