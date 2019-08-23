@@ -1,12 +1,13 @@
 package de.scheidtbachmann.osgimodel.visualization
 
-import java.util.List
+import de.cau.cs.kieler.klighd.ViewContext
+import de.cau.cs.kieler.klighd.kgraph.KIdentifier
+import de.cau.cs.kieler.klighd.krendering.extensions.KEdgeExtensions
+import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
+import de.scheidtbachmann.osgimodel.visualization.context.ReferencedInterfaceEdgeConnection
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceComponentContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceContext
-import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
-import de.cau.cs.kieler.klighd.krendering.extensions.KEdgeExtensions
-import de.cau.cs.kieler.klighd.kgraph.KIdentifier
-import de.scheidtbachmann.osgimodel.visualization.context.ReferencedInterfaceEdgeConnection
+import java.util.List
 
 /**
  * A class for common parts of syntheses that are collected in this helper class to avoid duplicate code.
@@ -68,7 +69,7 @@ final class OsgiCommonSynthesis {
      */
     def static addReferencedInterfaceEdges(List<ReferencedInterfaceEdgeConnection> referencedInterfaceEdges,
         extension KEdgeExtensions edgeExtensions, extension KNodeExtensions nodeExtensions,
-        extension OsgiStyles styles) {
+        extension OsgiStyles styles, ViewContext usedContext) {
         referencedInterfaceEdges.forEach [
             // Connects the service component and -interface via an arrow.
             val component = it.serviceComponentContext
@@ -84,7 +85,7 @@ final class OsgiCommonSynthesis {
             ]
             
             val edge = createEdge(component, interface, reference) => [
-                addReferencedInterfaceEdgeRendering(reference)
+                addReferencedInterfaceEdgeRendering(reference, usedContext)
                 source = interfaceNode
                 target = componentNode
                 sourcePort = interfacePort

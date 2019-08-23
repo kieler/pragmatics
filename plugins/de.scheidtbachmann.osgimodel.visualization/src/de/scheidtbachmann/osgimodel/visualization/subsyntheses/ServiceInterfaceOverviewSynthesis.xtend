@@ -164,7 +164,7 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
             
             // Add all referenced service interface edges.
             OsgiCommonSynthesis.addReferencedInterfaceEdges(referencedInterfaceEdges, kEdgeExtensions,
-                kNodeExtensions, osgiStyles)
+                kNodeExtensions, osgiStyles, usedContext)
         ]
     }
     

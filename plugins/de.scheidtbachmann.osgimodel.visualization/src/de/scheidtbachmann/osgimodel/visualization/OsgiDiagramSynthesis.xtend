@@ -86,15 +86,17 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
        
     override getDisplayedSynthesisOptions() {
         val options = new LinkedHashSet()
-        // Add Bundle options.
-        options.addAll(BUNDLE_SHOW_SERVICE_COMPONENTS)
         
         // Add general options.
-        options.addAll(SIMPLE_TEXT, DESCRIPTION_LENGTH, SHORTEN_BY)
+        options.addAll(SIMPLE_TEXT)
         
-        // Add all filter options.
+        // Add all text filter options.
         options.addAll(FILTER_BY, FILTER_BUNDLE_CATEGORIES, FILTER_BUNDLES, FILTER_CATEGORY, FILTER_FEATURES,
             FILTER_PACKAGE_OBJECTS, FILTER_PRODUCTS, FILTER_SERVICE_COMPONENTS, FILTER_SERVICE_INTERFACES)
+        
+        // Add all view filter options.
+        options.addAll(BUNDLE_SHOW_SERVICE_COMPONENTS, FILTER_CARDINALITY_LABEL, FILTER_DESCRIPTIONS,
+            DESCRIPTION_LENGTH, SHORTEN_BY)
         
         return options.toList
     }

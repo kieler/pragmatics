@@ -1,7 +1,6 @@
 package de.scheidtbachmann.osgimodel.visualization
 
 import com.google.inject.Inject
-import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.klighd.ViewContext
 import de.cau.cs.kieler.klighd.kgraph.KEdge
 import de.cau.cs.kieler.klighd.kgraph.KNode
@@ -42,6 +41,8 @@ import de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedByBundlesAct
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedPackagesAction
 import de.scheidtbachmann.osgimodel.visualization.actions.SelectRelatedAction
 import java.util.List
+
+import static de.scheidtbachmann.osgimodel.visualization.OsgiOptions.*
 
 import static extension de.cau.cs.kieler.klighd.microlayout.PlacementUtil.*
 import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
@@ -371,12 +372,14 @@ class OsgiStyles {
                     tooltip = p.uniqueId
                 ]
             ]
-            addRectangle => [
-                invisible = true
-                addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(p.about, context)) => [
-                    tooltip = p.about
+            if (context.getOptionValue(FILTER_DESCRIPTIONS) as Boolean) {
+                addRectangle => [
+                    invisible = true
+                    addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(p.about, context)) => [
+                        tooltip = p.about
+                    ]
                 ]
-            ]
+            }
             if (hasChildren) {
                 addHorizontalSeperatorLine(1, 0)
                 addChildArea
@@ -457,12 +460,14 @@ class OsgiStyles {
                     tooltip = f.uniqueId
                 ]
             ]
-            addRectangle => [
-                invisible = true
-                addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(f.about, context)) => [
-                    tooltip = f.about
+            if (context.getOptionValue(FILTER_DESCRIPTIONS) as Boolean) {
+                addRectangle => [
+                    invisible = true
+                    addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(f.about, context)) => [
+                        tooltip = f.about
+                    ]
                 ]
-            ]
+            }
             if (hasChildren) {
                 addHorizontalSeperatorLine(1, 0)
                 addChildArea
@@ -558,12 +563,14 @@ class OsgiStyles {
                     tooltip = b.uniqueId
                 ]
             ]
-            addRectangle => [
-                invisible = true
-                addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(b.about, context)) => [
-                    tooltip = b.about
+            if (context.getOptionValue(FILTER_DESCRIPTIONS) as Boolean) {
+                addRectangle => [
+                    invisible = true
+                    addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(b.about, context)) => [
+                        tooltip = b.about
+                    ]
                 ]
-            ]
+            }
             if (hasChildren) {
                 addHorizontalSeperatorLine(1, 0)
                 addChildArea
@@ -808,13 +815,15 @@ class OsgiStyles {
                     addRemoveButton
                 }
             ]
-            addHorizontalSeperatorLine(1, 0)
-            addRectangle => [
-                invisible = true
-                addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(si.about, context)) => [
-                    tooltip = si.about
+            if (context.getOptionValue(FILTER_DESCRIPTIONS) as Boolean) {
+                addHorizontalSeperatorLine(1, 0)
+                addRectangle => [
+                    invisible = true
+                    addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(si.about, context)) => [
+                        tooltip = si.about
+                    ]
                 ]
-            ]
+            }
             if (hasChildren) {
                 addHorizontalSeperatorLine(1, 0)
                 addChildArea
@@ -931,13 +940,15 @@ class OsgiStyles {
                     addRemoveButton
                 }
             ]
-            addHorizontalSeperatorLine(1, 0)
-            addRectangle => [
-                invisible = true
-                addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(sc.about, context)) => [
-                    tooltip = sc.about
+            if (context.getOptionValue(FILTER_DESCRIPTIONS) as Boolean) {
+                addHorizontalSeperatorLine(1, 0)
+                addRectangle => [
+                    invisible = true
+                    addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(sc.about, context)) => [
+                        tooltip = sc.about
+                    ]
                 ]
-            ]
+            }
             if (hasChildren) {
                 addHorizontalSeperatorLine(1, 0)
                 addChildArea
@@ -967,7 +978,7 @@ class OsgiStyles {
      * shows if a component needs another interface's service to work properly.
      * Similar to UML, the multiplicity and reference name is labeled on the edge.
      */
-    def addReferencedInterfaceEdgeRendering(KEdge edge, Reference reference) {
+    def addReferencedInterfaceEdgeRendering(KEdge edge, Reference reference, ViewContext usedContext) {
         edge.addPolyline => [
             lineStyle = LineStyle.DASH
             selectionLineWidth = 1.5f
@@ -975,12 +986,14 @@ class OsgiStyles {
             addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                 ModifierState.NOT_PRESSED)
         ]
-        edge.addTailEdgeLabel(reference.cardinality + "\n" + reference.referenceName) => [
-            data.filter(KText).forEach [
-                addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
-                    ModifierState.NOT_PRESSED)
+        if (usedContext.getOptionValue(FILTER_CARDINALITY_LABEL) as Boolean) {
+            edge.addTailEdgeLabel(reference.cardinality + "\n" + reference.referenceName) => [
+                data.filter(KText).forEach [
+                    addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                        ModifierState.NOT_PRESSED)
+                ]
             ]
-        ]
+        }
     }
     
     /**
