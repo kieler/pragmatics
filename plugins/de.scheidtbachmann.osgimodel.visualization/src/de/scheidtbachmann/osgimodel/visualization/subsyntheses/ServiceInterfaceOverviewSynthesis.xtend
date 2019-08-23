@@ -2,13 +2,13 @@ package de.scheidtbachmann.osgimodel.visualization.subsyntheses
 
 import com.google.inject.Inject
 import de.cau.cs.kieler.klighd.kgraph.KGraphFactory
-import de.cau.cs.kieler.klighd.kgraph.KIdentifier
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.krendering.extensions.KEdgeExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
 import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
+import de.scheidtbachmann.osgimodel.visualization.OsgiCommonSynthesis
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 import de.scheidtbachmann.osgimodel.visualization.OsgiSynthesisProperties
 import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
@@ -35,10 +35,10 @@ import static extension de.scheidtbachmann.osgimodel.visualization.SynthesisUtil
  * @author nre
  */
 class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInterfaceOverviewContext, KNode> {
-    @Inject extension KEdgeExtensions
-    @Inject extension KNodeExtensions
-    @Inject extension KRenderingExtensions
-    @Inject extension OsgiStyles
+    @Inject extension KEdgeExtensions kEdgeExtensions
+    @Inject extension KNodeExtensions kNodeExtensions
+    @Inject extension KRenderingExtensions kRenderingExtensions
+    @Inject extension OsgiStyles osgiStyles
     @Inject BundleSynthesis bundleSynthesis
     @Inject ServiceComponentSynthesis serviceComponentSynthesis
     @Inject ServiceInterfaceSynthesis serviceInterfaceSynthesis
@@ -159,54 +159,12 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInte
             }
             
             // Add all implementing service component edges.
-            implementedInterfaceEdges.forEach [ // XXX This is identical to the SCOSynth. version.
-                // Connects the service component and -interface via an arrow in UML style,
-                // so [component] ---implements---|> [interface]
-                val component = key
-                val interface = value
-                val componentNode = component.node
-                val interfaceNode = interface.node
-                val componentPort = componentNode.ports.findFirst [
-                    data.filter(KIdentifier).head?.id === "implementedServiceInterfaces"
-                ]
-                val interfacePort = interfaceNode.ports.findFirst [
-                    data.filter(KIdentifier).head?.id === "implementingServiceComponents"
-                ]
-                
-                val edge = createEdge(component, interface) => [
-                    addImplementingComponentEdgeRendering
-                    sourcePort = componentPort
-                    targetPort = interfacePort
-                    source = componentNode
-                    target = interfaceNode
-                ]
-                componentNode.outgoingEdges += edge
-            ]
+            OsgiCommonSynthesis.addImplementedInterfaceEdges(implementedInterfaceEdges, kEdgeExtensions,
+                kNodeExtensions, osgiStyles)
             
             // Add all referenced service interface edges.
-            referencedInterfaceEdges.forEach [ // XXX This is identical to the SCOSynth. version.
-                // Connects the service component and -interface via an arrow.
-                val component = it.serviceComponentContext
-                val interface = it.serviceInterfaceContext
-                val reference = it.reference
-                val componentNode = component.node
-                val interfaceNode = interface.node
-                val componentPort = componentNode.ports.findFirst [
-                    data.filter(KIdentifier).head?.id === "referencedServiceInterfaces"
-                ]
-                val interfacePort = interfaceNode.ports.findFirst [
-                    data.filter(KIdentifier).head?.id === "referencingServiceComponents"
-                ]
-                
-                val edge = createEdge(component, interface, reference) => [
-                    addReferencedInterfaceEdgeRendering(reference)
-                    source = interfaceNode
-                    target = componentNode
-                    sourcePort = interfacePort
-                    targetPort = componentPort
-                ]
-                interfaceNode.outgoingEdges += edge
-            ]
+            OsgiCommonSynthesis.addReferencedInterfaceEdges(referencedInterfaceEdges, kEdgeExtensions,
+                kNodeExtensions, osgiStyles)
         ]
     }
     

@@ -560,18 +560,11 @@ class ContextUtils {
      */
     def static void addReferencedServiceInterfaceEdgePlain(ServiceComponentContext serviceComponentContext,
         ServiceInterfaceContext serviceInterfaceContext, Reference reference) {
-        val parentContext = serviceInterfaceContext.parentVisualizationContext as IOverviewVisualizationContext<?>
+        val parentContext = serviceInterfaceContext.parentVisualizationContext as IInterfaceComponentConnectionHolder
         if (serviceComponentContext.parentVisualizationContext !== parentContext) {
             throw new IllegalArgumentException(DIFFERENT_PARENT_ERROR_MSG)
         }
-        val referencedComponentEdgesPlain = switch parentContext { // XXX: Also easier possible with IInterfaceComponentConnectionHolder?
-            ServiceComponentOverviewContext: {
-                parentContext.referencedInterfaceEdgesPlain
-            }
-            ServiceInterfaceOverviewContext: {
-                parentContext.referencedInterfaceEdgesPlain
-            }
-        }
+        val referencedComponentEdgesPlain = parentContext.referencedInterfaceEdgesPlain
         
         // Only if this edge does not exist yet, add it to the list of referenced service component edges.
         if (!referencedComponentEdgesPlain.exists [
