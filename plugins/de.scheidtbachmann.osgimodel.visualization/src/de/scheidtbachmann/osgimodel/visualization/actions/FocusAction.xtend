@@ -20,4 +20,8 @@ class FocusAction extends AbstractVisualizationContextChangingAction {
         return modelVisualizationContext
     }
     
+    override protected ActionResult getActionResult() {
+        return super.getActionResult().doZoomToFit
+    }
+    
 }

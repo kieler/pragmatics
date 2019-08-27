@@ -64,7 +64,7 @@ abstract class AbstractVisualizationContextChangingAction implements IAction {
             visualizationContexts.add(index + 1, newContext)
             context.viewContext.setProperty(OsgiSynthesisProperties.CURRENT_VISUALIZATION_CONTEXT_INDEX, index + 1)
             
-            return ActionResult.createResult(true).doSynthesis
+            return getActionResult
             
         } catch (Exception e) {
             // Put an error model in the context and show that. // TODO.
@@ -74,7 +74,7 @@ abstract class AbstractVisualizationContextChangingAction implements IAction {
             
             // Show the exception, but continue normally.
             e.printStackTrace
-            return ActionResult.createResult(true).doSynthesis
+            return getActionResult
         }
     }
     
@@ -85,7 +85,15 @@ abstract class AbstractVisualizationContextChangingAction implements IAction {
      * @return The new main visualization context that will be used for the next synthesis or {@code null} if the
      * visualization focus does not change.
      */
-    protected abstract def <M extends EObject> IVisualizationContext<?> changeVisualization(IVisualizationContext<M> modelVisualizationContext,
-        ActionContext actionContext)
+    protected abstract def <M extends EObject> IVisualizationContext<?> changeVisualization(
+        IVisualizationContext<M> modelVisualizationContext, ActionContext actionContext)
+    
+    /**
+     * Returns a new {@link ActionResult} this action will return when executed. Should be overriden by individual
+     * actions, if additional layout or animation settings need to be set.
+     */
+    protected def ActionResult getActionResult() {
+        return ActionResult.createResult(true).doSynthesis
+    }
     
 }
