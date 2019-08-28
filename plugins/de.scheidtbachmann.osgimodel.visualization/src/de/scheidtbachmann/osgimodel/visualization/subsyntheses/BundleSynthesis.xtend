@@ -38,7 +38,7 @@ class BundleSynthesis extends AbstractSubSynthesis<BundleContext, KNode> {
         val bundle = bc.modelElement
         return #[
             bc.createNode() => [
-                addLayoutParam(CoreOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_SIDE)
+                addLayoutParam(CoreOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_ORDER)
                 associateWith(bc)
                 data += createKIdentifier => [ it.id = bc.hashCode.toString ]
                 
@@ -68,6 +68,7 @@ class BundleSynthesis extends AbstractSubSynthesis<BundleContext, KNode> {
                             data += createKIdentifier => [ it.id = "requiredBundles" ]
                             // Required bundles are always shown and expanded to the east with the drawing direction.
                             addLayoutParam(CoreOptions::PORT_SIDE, PortSide::EAST)
+                            addLayoutParam(CoreOptions::PORT_INDEX, 0)
                             addRequiredBundlesPortRendering(filteredRequiredBundles.size, bc.allRequiredBundlesShown)
                             width = 12
                             height = 12
@@ -81,6 +82,7 @@ class BundleSynthesis extends AbstractSubSynthesis<BundleContext, KNode> {
                             data += createKIdentifier => [ it.id = "importedPackages" ]
                             // Bundles supporting used packages are always shown and expanded to the east with the drawing direction.
                             addLayoutParam(CoreOptions::PORT_SIDE, PortSide::EAST)
+                            addLayoutParam(CoreOptions::PORT_INDEX, 1)
                             addUsedPackagesPortRendering(bc.allUsedPackagesShown)
                             width = 12
                             height = 12
