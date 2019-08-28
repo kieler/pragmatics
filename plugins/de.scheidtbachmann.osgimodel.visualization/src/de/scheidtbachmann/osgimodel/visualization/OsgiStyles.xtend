@@ -9,6 +9,7 @@ import de.cau.cs.kieler.klighd.krendering.Arc
 import de.cau.cs.kieler.klighd.krendering.KArc
 import de.cau.cs.kieler.klighd.krendering.KContainerRendering
 import de.cau.cs.kieler.klighd.krendering.KEllipse
+import de.cau.cs.kieler.klighd.krendering.KPolyline
 import de.cau.cs.kieler.klighd.krendering.KRectangle
 import de.cau.cs.kieler.klighd.krendering.KRoundedRectangle
 import de.cau.cs.kieler.klighd.krendering.KText
@@ -29,6 +30,7 @@ import de.scheidtbachmann.osgimodel.Reference
 import de.scheidtbachmann.osgimodel.ServiceComponent
 import de.scheidtbachmann.osgimodel.ServiceInterface
 import de.scheidtbachmann.osgimodel.visualization.actions.ContextCollapseExpandAction
+import de.scheidtbachmann.osgimodel.visualization.actions.ContextExpandAllAction
 import de.scheidtbachmann.osgimodel.visualization.actions.ContextRemoveAction
 import de.scheidtbachmann.osgimodel.visualization.actions.FocusAction
 import de.scheidtbachmann.osgimodel.visualization.actions.OverviewContextCollapseExpandAction
@@ -122,23 +124,17 @@ class OsgiStyles {
             setGridPlacement(1)
             addDoubleClickAction(OverviewContextCollapseExpandAction.ID)
             addRectangle => [
-                setGridPlacement(5)
+                setGridPlacement(7)
                 invisible = true
                 addRectangle => [
                     invisible = true
                     addSimpleLabel(headlineText)
                 ]
-                addVerticalLine(RIGHT, 0, 1) => [
-                    setGridPlacementData => [
-                        flexibleWidth = false
-                    ]
-                ]
+                addVerticalLine
                 addFocusButton
-                addVerticalLine(RIGHT, 0, 1) => [
-                    setGridPlacementData => [
-                        flexibleWidth = false
-                    ]
-                ]
+                addVerticalLine
+                addExpandAllButton
+                addVerticalLine
                 addOverviewContextCollapseExpandButton(false)
             ]
             addHorizontalSeperatorLine(1, 0)
@@ -160,22 +156,28 @@ class OsgiStyles {
                     invisible = true
                     addSimpleLabel(headlineText)
                 ]
-                addVerticalLine(RIGHT, 0, 1) => [
-                    setGridPlacementData => [
-                        flexibleWidth = false
-                    ]
-                ]
+                addVerticalLine
                 addFocusButton
-                addVerticalLine(RIGHT, 0, 1) => [
-                    setGridPlacementData => [
-                        flexibleWidth = false
-                    ]
-                ]
+                addVerticalLine
                 addOverviewContextCollapseExpandButton(true)
             ]
             setShadow(SHADOW_COLOR.color, 4, 4)
             tooltip = tooltipText
             setSelectionStyle
+        ]
+    }
+    
+    /**
+     * Adds a vertical line without flexible width into a grid placement.
+     * 
+     * @param container The parent rendering this button should be added to.
+     */
+    
+    def KPolyline addVerticalLine(KContainerRendering container) {
+        container.addVerticalLine(RIGHT, 0, 1) => [
+            setGridPlacementData => [
+                flexibleWidth = false
+            ]
         ]
     }
     
@@ -218,6 +220,21 @@ class OsgiStyles {
             ]
             lineWidth = 0
             tooltip = doWhat + " this element."
+        ]
+    }
+    
+    /**
+     * Adds a button in a grid placement rendering that causes the {@link ContextExpandAllAction} to be called.
+     * 
+     * @param container The parent rendering this button should be added to.
+     */
+    def KRectangle addExpandAllButton(KContainerRendering container) {
+        return container.addButton("Expand all", ContextExpandAllAction::ID) => [
+            setGridPlacementData => [
+                flexibleWidth = false
+            ]
+            lineWidth = 0
+            tooltip = "Expand all elements in this overview."
         ]
     }
     
@@ -316,11 +333,7 @@ class OsgiStyles {
                 invisible = true
                 addSimpleLabel(name)
             ]
-            addVerticalLine(RIGHT, 0, 1) => [
-                setGridPlacementData => [
-                    flexibleWidth = false
-                ]
-            ]
+            addVerticalLine
             addCollapseExpandButton(true)
             setBackgroundGradient(PRODUCT_COLOR_1.color, PRODUCT_COLOR_2.color, 90)
             addDoubleClickAction(ContextCollapseExpandAction::ID)
@@ -354,11 +367,7 @@ class OsgiStyles {
                     invisible = true
                     addSimpleLabel(p.descriptiveName)
                 ]
-                addVerticalLine(RIGHT, 0, 1) => [
-                    setGridPlacementData => [
-                        flexibleWidth = false
-                    ]
-                ]
+                addVerticalLine
                 if (inOverview) {
                     addCollapseExpandButton(false)
                 } else {
@@ -404,11 +413,7 @@ class OsgiStyles {
                 invisible = true
                 addSimpleLabel(label)
             ]
-            addVerticalLine(RIGHT, 0, 1) => [
-                setGridPlacementData => [
-                    flexibleWidth = false
-                ]
-            ]
+            addVerticalLine
             addCollapseExpandButton(true)
             setBackgroundGradient(FEATURE_COLOR_1.color, FEATURE_COLOR_2.color, 90)
             addDoubleClickAction(ContextCollapseExpandAction::ID)
@@ -442,11 +447,7 @@ class OsgiStyles {
                     invisible = true
                     addSimpleLabel(f.descriptiveName)
                 ]
-                addVerticalLine(RIGHT, 0, 1) => [
-                    setGridPlacementData => [
-                        flexibleWidth = false
-                    ]
-                ]
+                addVerticalLine
                 if (inOverview) {
                     addCollapseExpandButton(false)
                 } else {
@@ -492,11 +493,7 @@ class OsgiStyles {
                 invisible = true
                 addSimpleLabel(label)
             ]
-            addVerticalLine(RIGHT, 0, 1) => [
-                setGridPlacementData => [
-                    flexibleWidth = false
-                ]
-            ]
+            addVerticalLine
             addCollapseExpandButton(true)
             if (b.isIsExternal) {
                 setBackgroundGradient(EXTERNAL_BUNDLE_COLOR_1.color, EXTERNAL_BUNDLE_COLOR_2.color, 90)
@@ -545,11 +542,7 @@ class OsgiStyles {
                     }
                     addSimpleLabel(name)
                 ]
-                addVerticalLine(RIGHT, 0, 1) => [
-                    setGridPlacementData => [
-                        flexibleWidth = false
-                    ]
-                ]
+                addVerticalLine
                 if (inOverview) {
                     addCollapseExpandButton(false)
                 } else {
@@ -670,11 +663,7 @@ class OsgiStyles {
                         tooltip = po.uniqueId
                     ]
                 ]
-                addVerticalLine(RIGHT, 0, 1) => [
-                    setGridPlacementData => [
-                        flexibleWidth = false
-                    ]
-                ]
+                addVerticalLine
                 if (inOverview) {
                     addCollapseExpandButton(false)
                 } else {
@@ -765,11 +754,7 @@ class OsgiStyles {
                 invisible = true
                 addSimpleLabel(name)
             ]
-            addVerticalLine(RIGHT, 0, 1) => [
-                setGridPlacementData => [
-                    flexibleWidth = false
-                ]
-            ]
+            addVerticalLine
             addCollapseExpandButton(true)
             setBackgroundGradient(SERVICE_INTERFACE_COLOR_1.color, SERVICE_INTERFACE_COLOR_2.color, 90)
             addDoubleClickAction(ContextCollapseExpandAction::ID)
@@ -804,11 +789,7 @@ class OsgiStyles {
                         tooltip = si.name
                     ]
                 ]
-                addVerticalLine(RIGHT, 0, 1) => [
-                    setGridPlacementData => [
-                        flexibleWidth = false
-                    ]
-                ]
+                addVerticalLine
                 if (inOverview) {
                     addCollapseExpandButton(false)
                 } else {
@@ -890,11 +871,7 @@ class OsgiStyles {
                 invisible = true
                 addSimpleLabel(name)
             ]
-            addVerticalLine(RIGHT, 0, 1) => [
-                setGridPlacementData => [
-                    flexibleWidth = false
-                ]
-            ]
+            addVerticalLine
             addCollapseExpandButton(true)
             setBackgroundGradient(SERVICE_COMPONENT_COLOR_1.color, SERVICE_COMPONENT_COLOR_2.color, 90)
             addDoubleClickAction(ContextCollapseExpandAction::ID)
@@ -929,11 +906,7 @@ class OsgiStyles {
                         tooltip = sc.name
                     ]
                 ]
-                addVerticalLine(RIGHT, 0, 1) => [
-                    setGridPlacementData => [
-                        flexibleWidth = false
-                    ]
-                ]
+                addVerticalLine
                 if (inOverview) {
                     addCollapseExpandButton(false)
                 } else {
