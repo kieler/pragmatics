@@ -147,9 +147,9 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
                     visContext.serviceInterfaceOverviewContext)
                 children += overviewServiceInterfaceNodes
                 
-                val overviewImportedPackagesNodes = packageObjectOverviewSynthesis.transform(
-                    visContext.importedPackageOverviewContext)
-                children += overviewImportedPackagesNodes
+//                val overviewImportedPackagesNodes = packageObjectOverviewSynthesis.transform(
+//                    visContext.importedPackageOverviewContext)
+//                children += overviewImportedPackagesNodes
                 
                 val overviewBundleCategoryNodes = bundleCategoryOverviewSynthesis.transform(
                     visContext.bundleCategoryOverviewContext)
