@@ -70,6 +70,8 @@ class OsgiStyles {
     public static final String EXTERNAL_BUNDLE_COLOR_2   = "#F0FBFF" // HSV 195 6 100
     public static final String FEATURE_COLOR_1           = "#E0FFE9" // HSV 137 12 100
     public static final String FEATURE_COLOR_2           = "#C2FFD3" // HSV 137 24 100
+    public static final String EXTERNAL_FEATURE_COLOR_1  = "#F7FFFA" // HSV 137 3 100
+    public static final String EXTERNAL_FEATURE_COLOR_2  = "#F0FFF4" // HSV 137 6 100
     public static final String PACKAGE_OBJECT_COLOR_1    = "#E7E0FF" // HSV 253 12 100
     public static final String PACKAGE_OBJECT_COLOR_2    = "#CFC2FF" // HSV 253 24 100
     public static final String PRODUCT_COLOR_1           = "#FFEAE0" // HSV 19 12 100
@@ -415,7 +417,11 @@ class OsgiStyles {
             ]
             addVerticalLine
             addCollapseExpandButton(true)
-            setBackgroundGradient(FEATURE_COLOR_1.color, FEATURE_COLOR_2.color, 90)
+            if (f.isIsExternal) {
+                setBackgroundGradient(EXTERNAL_FEATURE_COLOR_1.color, EXTERNAL_FEATURE_COLOR_2.color, 90)
+            } else {
+                setBackgroundGradient(FEATURE_COLOR_1.color, FEATURE_COLOR_2.color, 90)
+            }
             addDoubleClickAction(ContextCollapseExpandAction::ID)
             addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                 ModifierState.NOT_PRESSED)
@@ -438,14 +444,25 @@ class OsgiStyles {
     def KRoundedRectangle addFeatureRendering(KNode node, Feature f, boolean inOverview, boolean hasChildren,
         ViewContext context) {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
-            setBackgroundGradient(FEATURE_COLOR_1.color, FEATURE_COLOR_2.color, 90)
+            if (f.isIsExternal) {
+                setBackgroundGradient(EXTERNAL_FEATURE_COLOR_1.color, EXTERNAL_FEATURE_COLOR_2.color, 90)
+            } else {
+                setBackgroundGradient(FEATURE_COLOR_1.color, FEATURE_COLOR_2.color, 90)
+            }
             setGridPlacement(1)
             addRectangle => [
                 setGridPlacement(3)
                 invisible = true
                 addRectangle => [
                     invisible = true
-                    addSimpleLabel(f.descriptiveName)
+                    var String name = ""
+                    if (f.isIsExternal) {
+                        name += "(External) "
+                    }
+                    if (f.descriptiveName !== null) {
+                        name += f.descriptiveName
+                    }
+                    addSimpleLabel(name)
                 ]
                 addVerticalLine
                 if (inOverview) {
