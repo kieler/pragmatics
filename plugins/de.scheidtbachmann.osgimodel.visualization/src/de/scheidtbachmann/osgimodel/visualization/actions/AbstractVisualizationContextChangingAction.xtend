@@ -6,7 +6,9 @@ import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
 import de.scheidtbachmann.osgimodel.visualization.context.ContextUtils
 import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
 import java.util.HashMap
+import org.eclipse.core.runtime.Status
 import org.eclipse.emf.ecore.EObject
+import org.eclipse.ui.statushandlers.StatusManager
 
 /**
  * An abstract action that allows to change the {@link IVisualizationContext} for a model so that the old one is still
@@ -73,7 +75,13 @@ abstract class AbstractVisualizationContextChangingAction implements IAction {
 //            context.viewContext.setProperty(OsgiSynthesisProperties.CURRENT_VISUALIZATION_CONTEXT_INDEX, index + 1)
             
             // Show the exception, but continue normally.
-            e.printStackTrace
+//            e.printStackTrace
+            // TODO: remove this eclipse ui dependency once this is possible via a service.
+            StatusManager.getManager().handle(new Status(Status.ERROR, "de.scheidtbachmann.osgimodel.visualization",
+                "Something went wrong while executing the " + this.class.canonicalName + " action.\n" + 
+                "Please view the error log and send the stack trace and the way to " +
+                "reproduce this error to the developer.", e), 
+                StatusManager.SHOW.bitwiseOr(StatusManager.LOG));
             return getActionResult
         }
     }
