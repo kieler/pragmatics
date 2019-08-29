@@ -385,7 +385,7 @@ class ContextUtils {
      * 
      * @param sourceBundleContext The bundle context where the edge starts.
      * @param usedPackages The packages required by the source bundle and provided by the target bundle.
-     * @param product The product in that this relation holds.
+     * @param product The product in that this relation holds. May be null, if this is provided by no product.
      * @param targetBundleContext The bundle context where the edge ends.
      */
     def static void addUsedPackagesEdge(BundleContext sourceBundleContext, List<PackageObject> usedPackages,
@@ -401,8 +401,8 @@ class ContextUtils {
             it.product === product &&
             it.targetBundleContext === targetBundleContext
         ]) {
-            parentContext.usedPackagesOfBundleEdges += new UsedPackagesOfBundleEdgeConnection(sourceBundleContext, usedPackages,
-                product, targetBundleContext)
+            parentContext.usedPackagesOfBundleEdges += new UsedPackagesOfBundleEdgeConnection(sourceBundleContext,
+                usedPackages, product, targetBundleContext)
         }
     }
     

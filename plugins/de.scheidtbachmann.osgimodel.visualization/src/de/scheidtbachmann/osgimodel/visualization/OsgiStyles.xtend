@@ -704,7 +704,11 @@ class OsgiStyles {
      */
     def addInternalUsedPackagesBundleEdgeRendering(KEdge edge, List<PackageObject> packages, Product product,
         ViewContext context) {
-        val tooltipText = "Packages\n" + packages.map [ it.uniqueId + "\n" ] + " for product " + product.uniqueId
+        var tooltipText_ = "Packages\n" + packages.map [ it.uniqueId + "\n" ]
+        if (product !== null) {
+            tooltipText_ += " for product " + product.uniqueId
+        }
+        val tooltipText = tooltipText_
         edge.addPolyline => [
             addHeadArrowDecorator => [
                 lineWidth = 1
@@ -725,8 +729,13 @@ class OsgiStyles {
                 ModifierState.NOT_PRESSED)
         ]
         edge.createLabel => [
-            configureCenterEdgeLabel(SynthesisUtils.getId(product.uniqueId, context)
-                + " (" + packages.size + " packages)")
+            val package_s = if (packages.size === 1) "package" else "packages"
+            if (product === null) {
+                configureCenterEdgeLabel("(" + packages.size + " " + package_s + ")")
+            } else {
+                configureCenterEdgeLabel(SynthesisUtils.getId(product.uniqueId, context)
+                    + " (" + packages.size + " " + package_s + ")")
+            }
             data.filter(KText).forEach [
                 addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
                     ModifierState.NOT_PRESSED)

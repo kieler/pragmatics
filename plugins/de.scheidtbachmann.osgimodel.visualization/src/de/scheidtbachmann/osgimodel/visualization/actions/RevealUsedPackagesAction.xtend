@@ -70,7 +70,7 @@ class RevealUsedPackagesAction extends AbstractVisualizationContextChangingActio
 
         // Map that tells for each product which of its bundles provides which imported packages.
         val Map<Product, Map<BundleContext, List<PackageObject>>> providedPackagesForBundleForProduct = new HashMap
-        val Map<BundleContext, List<PackageObject>> externalProvidedPackagesForBundle = new HashMap
+        val Map<BundleContext, List<PackageObject>> providedPackagesForBundleNoProduct = new HashMap
         
         // Split the imported packages by the ones imported from external packages and the ones provided by some
         // bundle within this project.
@@ -115,20 +115,17 @@ class RevealUsedPackagesAction extends AbstractVisualizationContextChangingActio
             val bundleContainingPackageContext = bundleContexts.get(bundleContainingPackage)
             if (bundleContainingPackageContext !== null) {
                 // This package is provided by this bundle.
-                if (!externalProvidedPackagesForBundle.containsKey(bundleContainingPackageContext)) {
-                    externalProvidedPackagesForBundle.put(bundleContexts.get(bundleContainingPackageContext), new ArrayList<PackageObject>)
+                if (!providedPackagesForBundleNoProduct.containsKey(bundleContainingPackageContext)) {
+                    providedPackagesForBundleNoProduct.put(bundleContainingPackageContext, new ArrayList<PackageObject>)
                 }
-                val providedPackages = externalProvidedPackagesForBundle.get(bundleContainingPackageContext)
+                val providedPackages = providedPackagesForBundleNoProduct.get(bundleContainingPackageContext)
                 providedPackages.add(importedPackage)
             }
         ]
-        if (!externalProvidedPackagesForBundle.empty) {
-            println("Warning: There are packages provided by bundles that are not in any product. This is not expected"
-                + "or handled in this view. Packages: " + externalProvidedPackagesForBundle)
-        }
+        externalImportedPackages.removeAll(providedPackagesForBundleNoProduct.values.flatten)
         
         // Make all necessary bundles detailed.
-        val externalBundlesToReveal = externalProvidedPackagesForBundle.keySet.toList
+        val externalBundlesToReveal = providedPackagesForBundleNoProduct.keySet.toList
         val internalBundlesToReveal = providedPackagesForBundleForProduct.values.flatMap [ keySet ].toSet
         Iterables.concat(externalBundlesToReveal, internalBundlesToReveal).forEach [ bundleToMakeDetailedContext |
             if (bundleOverviewContext.collapsedElements.contains(bundleToMakeDetailedContext)) {
@@ -141,6 +138,9 @@ class RevealUsedPackagesAction extends AbstractVisualizationContextChangingActio
             usedPackagesByBundle.forEach [ usedPackageBundleContext, usedPackages |
                 ContextUtils.addUsedPackagesEdge(bundleContext, usedPackages, product, usedPackageBundleContext)
             ]
+        ]
+        providedPackagesForBundleNoProduct.forEach [ usedPackageBundleContext, usedPackages |
+            ContextUtils.addUsedPackagesEdge(bundleContext, usedPackages, null, usedPackageBundleContext)
         ]
         bundleContext.allUsedPackagesShown = true
         

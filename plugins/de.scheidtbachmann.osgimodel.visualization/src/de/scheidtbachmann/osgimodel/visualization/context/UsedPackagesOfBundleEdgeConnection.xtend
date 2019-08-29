@@ -32,7 +32,7 @@ class UsedPackagesOfBundleEdgeConnection {
     List<PackageObject> usedPackages
     
     /**
-     * The product in that this connection is used.
+     * The product in that this connection is used. May be null if this connection is used in no product.
      */
     Product product
     
