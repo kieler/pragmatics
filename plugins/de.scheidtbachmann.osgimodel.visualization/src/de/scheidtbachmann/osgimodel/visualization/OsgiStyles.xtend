@@ -381,6 +381,8 @@ class OsgiStyles {
                 invisible = true
                 addSimpleLabel("ID: " + SynthesisUtils.getId(p.uniqueId, context)) => [
                     tooltip = p.uniqueId
+                    addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                        ModifierState.NOT_PRESSED)
                 ]
             ]
             if (context.getOptionValue(FILTER_DESCRIPTIONS) as Boolean) {
@@ -388,6 +390,8 @@ class OsgiStyles {
                     invisible = true
                     addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(p.about, context)) => [
                         tooltip = p.about
+                        addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                            ModifierState.NOT_PRESSED)
                     ]
                 ]
             }
@@ -476,6 +480,8 @@ class OsgiStyles {
                 invisible = true
                 addSimpleLabel("ID: " + SynthesisUtils.getId(f.uniqueId, context)) => [
                     tooltip = f.uniqueId
+                    addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                        ModifierState.NOT_PRESSED)
                 ]
             ]
             if (context.getOptionValue(FILTER_DESCRIPTIONS) as Boolean) {
@@ -483,6 +489,8 @@ class OsgiStyles {
                     invisible = true
                     addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(f.about, context)) => [
                         tooltip = f.about
+                        addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                            ModifierState.NOT_PRESSED)
                     ]
                 ]
             }
@@ -571,6 +579,8 @@ class OsgiStyles {
                 invisible = true
                 addSimpleLabel("ID: " + SynthesisUtils.getId(b.uniqueId, context)) => [
                     tooltip = b.uniqueId
+                    addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                        ModifierState.NOT_PRESSED)
                 ]
             ]
             if (context.getOptionValue(FILTER_DESCRIPTIONS) as Boolean) {
@@ -578,6 +588,8 @@ class OsgiStyles {
                     invisible = true
                     addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(b.about, context)) => [
                         tooltip = b.about
+                        addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                            ModifierState.NOT_PRESSED)
                     ]
                 ]
             }
@@ -678,6 +690,8 @@ class OsgiStyles {
                     invisible = true
                     addSimpleLabel(SynthesisUtils.getId(po.uniqueId, context)) => [
                         tooltip = po.uniqueId
+                        addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                            ModifierState.NOT_PRESSED)
                     ]
                 ]
                 addVerticalLine
@@ -813,6 +827,8 @@ class OsgiStyles {
                     invisible = true
                     addSimpleLabel(SynthesisUtils.getId(si.name, context)) => [
                         tooltip = si.name
+                        addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                            ModifierState.NOT_PRESSED)
                     ]
                 ]
                 addVerticalLine
@@ -828,6 +844,8 @@ class OsgiStyles {
                     invisible = true
                     addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(si.about, context)) => [
                         tooltip = si.about
+                        addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                            ModifierState.NOT_PRESSED)
                     ]
                 ]
             }
@@ -930,6 +948,8 @@ class OsgiStyles {
                     invisible = true
                     addSimpleLabel(SynthesisUtils.getId(sc.name, context)) => [
                         tooltip = sc.name
+                        addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                            ModifierState.NOT_PRESSED)
                     ]
                 ]
                 addVerticalLine
@@ -945,6 +965,8 @@ class OsgiStyles {
                     invisible = true
                     addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(sc.about, context)) => [
                         tooltip = sc.about
+                        addSingleClickAction(SelectRelatedAction::ID, ModifierState.NOT_PRESSED, ModifierState.NOT_PRESSED,
+                            ModifierState.NOT_PRESSED)
                     ]
                 ]
             }
