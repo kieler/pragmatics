@@ -95,7 +95,7 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
             FILTER_PACKAGE_OBJECTS, FILTER_PRODUCTS, FILTER_SERVICE_COMPONENTS, FILTER_SERVICE_INTERFACES)
         
         // Add all view filter options.
-        options.addAll(BUNDLE_SHOW_SERVICE_COMPONENTS, FILTER_CARDINALITY_LABEL, FILTER_DESCRIPTIONS,
+        options.addAll(SHOW_EXTERNAL, BUNDLE_SHOW_SERVICE_COMPONENTS, FILTER_CARDINALITY_LABEL, FILTER_DESCRIPTIONS,
             DESCRIPTION_LENGTH, SHORTEN_BY)
         
         return options.toList

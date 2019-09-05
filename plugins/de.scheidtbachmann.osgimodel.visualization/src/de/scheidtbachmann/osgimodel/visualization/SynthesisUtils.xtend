@@ -147,10 +147,22 @@ final class SynthesisUtils {
         if (!regex.empty && !visualizationContexts.empty) {
             val (IVisualizationContext<M>) => boolean filter = switch (visualizationContexts.head.modelElement) {
                 Bundle case usedContext.getOptionValue(FILTER_BUNDLES) === true: {
-                    [ (modelElement as Bundle)          .uniqueId    .matches(regex) ]
+                    [ (modelElement as Bundle)          .uniqueId    .matches(regex) 
+                        && if (usedContext.getOptionValue(OsgiOptions.SHOW_EXTERNAL) === true) {
+                            true
+                        } else {
+                            !(modelElement as Bundle).isExternal
+                        }
+                    ]
                 }
                 Feature case usedContext.getOptionValue(FILTER_FEATURES) === true: {
-                    [ (modelElement as Feature)         .uniqueId    .matches(regex) ]
+                    [ (modelElement as Feature)         .uniqueId    .matches(regex)
+                        && if (usedContext.getOptionValue(OsgiOptions.SHOW_EXTERNAL) === true) {
+                            true
+                        } else {
+                            !(modelElement as Feature).isExternal
+                        }
+                    ]
                 }
                 Product case usedContext.getOptionValue(FILTER_PRODUCTS) === true: {
                     [ (modelElement as Product)         .uniqueId    .matches(regex) ]

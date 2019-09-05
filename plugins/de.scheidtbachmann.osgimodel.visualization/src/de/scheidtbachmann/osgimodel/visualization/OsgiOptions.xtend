@@ -62,6 +62,10 @@ class OsgiOptions {
     public static final SynthesisOption VIEW_FILTER_CATEGORY = SynthesisOption.createCategory("View filter", false)
         .setCategory(FILTER_CATEGORY)
     
+    /** Option indicating whether external elements should be shown. */
+    public static final SynthesisOption SHOW_EXTERNAL = SynthesisOption.createCheckOption(
+        "Show external elements", true).setCategory(VIEW_FILTER_CATEGORY)
+    
     /** Option indicating whether service components should be shown in bundles. */
     public static final SynthesisOption BUNDLE_SHOW_SERVICE_COMPONENTS = SynthesisOption.createCheckOption(
         "Show Service Components", true).setCategory(VIEW_FILTER_CATEGORY)
