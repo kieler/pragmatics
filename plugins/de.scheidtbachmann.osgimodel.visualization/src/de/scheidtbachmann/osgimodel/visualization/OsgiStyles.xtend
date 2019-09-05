@@ -100,7 +100,7 @@ class OsgiStyles {
      */
     def setSelectionStyle(KContainerRendering rendering) {
         rendering => [
-            selectionLineWidth = 2 * lineWidthValue;
+            selectionLineWidth = 3 * lineWidthValue;
             selectionForeground = SELECTION_COLOR.color;
         ]
     }
