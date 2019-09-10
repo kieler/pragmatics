@@ -16,7 +16,7 @@ class ContextExpandAllAction extends AbstractVisualizationContextChangingAction 
      */
     public static val String ID = ContextExpandAllAction.name
     
-    override protected <M extends EObject> IVisualizationContext<?>
+    override <M extends EObject> IVisualizationContext<?>
     changeVisualization(IVisualizationContext<M> modelVisualizationContext, ActionContext actionContext) {
         // This action will always be performed on an IOverviewVisualizationContext.
         if (!(modelVisualizationContext instanceof IOverviewVisualizationContext)) {

@@ -93,7 +93,7 @@ abstract class AbstractVisualizationContextChangingAction implements IAction {
      * @return The new main visualization context that will be used for the next synthesis or {@code null} if the
      * visualization focus does not change.
      */
-    protected abstract def <M extends EObject> IVisualizationContext<?> changeVisualization(
+    public abstract def <M extends EObject> IVisualizationContext<?> changeVisualization(
         IVisualizationContext<M> modelVisualizationContext, ActionContext actionContext)
     
     /**

@@ -16,7 +16,7 @@ class ContextCollapseExpandAction extends AbstractVisualizationContextChangingAc
      */
     public static val String ID = ContextCollapseExpandAction.name
     
-    override protected <M extends EObject> IVisualizationContext<?>
+    override <M extends EObject> IVisualizationContext<?>
     changeVisualization(IVisualizationContext<M> modelVisualizationContext, ActionContext actionContext) {
         // This action will always be performed on a child visualization context of a IOverviewVisualizationContext.
         val overviewVisContext = modelVisualizationContext.parentVisualizationContext

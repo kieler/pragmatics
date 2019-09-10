@@ -20,7 +20,7 @@ import org.eclipse.emf.ecore.EObject
  */
 abstract class AbstractRevealServiceInterfacesAction extends AbstractVisualizationContextChangingAction {
     
-    override protected <M extends EObject> IVisualizationContext<?>
+    override <M extends EObject> IVisualizationContext<?>
     changeVisualization(IVisualizationContext<M> modelVisualizationContext, ActionContext actionContext) {
         // The ServiceComponentContext element for the element that was clicked on.
         val serviceComponentContext = modelVisualizationContext as ServiceComponentContext

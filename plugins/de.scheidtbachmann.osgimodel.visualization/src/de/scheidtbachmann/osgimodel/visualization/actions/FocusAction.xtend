@@ -14,7 +14,7 @@ class FocusAction extends AbstractVisualizationContextChangingAction {
      */
     public static val String ID = FocusAction.name
     
-    override protected <M extends EObject> changeVisualization(IVisualizationContext<M> modelVisualizationContext, ActionContext actionContext) {
+    override <M extends EObject> changeVisualization(IVisualizationContext<M> modelVisualizationContext, ActionContext actionContext) {
         // Changing the focus element is exactly what returning a non-null visualization context to the
         // AbstractVisualizationContextChangingAction does, so just return the given context.
         return modelVisualizationContext

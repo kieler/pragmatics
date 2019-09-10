@@ -20,7 +20,7 @@ class RevealRequiredBundlesAction extends AbstractVisualizationContextChangingAc
      */
     public static val String ID = RevealRequiredBundlesAction.name
     
-    override protected <M extends EObject> IVisualizationContext<?>
+    override <M extends EObject> IVisualizationContext<?>
     changeVisualization(IVisualizationContext<M> modelVisualizationContext, ActionContext actionContext) {
         // The BundleContext element for the element that was clicked on.
         val bundleContext = modelVisualizationContext as BundleContext
@@ -46,15 +46,15 @@ class RevealRequiredBundlesAction extends AbstractVisualizationContextChangingAc
         ].toList
         
         // If all bundles are already connected, remove them all. Otherwise, connect them all.
-        if (ContextUtils.allConnected(bundleContext, requiredBundleContexts, bundleOverviewContext, true)) {
-            requiredBundleContexts.forEach [ requiredBundleContext |
-                ContextUtils.removeRequiredBundleEdge(bundleContext, requiredBundleContext as BundleContext)
-            ]
-        } else {
+//        if (ContextUtils.allConnected(bundleContext, requiredBundleContexts, bundleOverviewContext, true)) {
+//            requiredBundleContexts.forEach [ requiredBundleContext |
+//                ContextUtils.removeRequiredBundleEdge(bundleContext, requiredBundleContext as BundleContext)
+//            ]
+//        } else {
             requiredBundleContexts.forEach [ requiredBundleContext |
                 ContextUtils.addRequiredBundleEdge(bundleContext, requiredBundleContext as BundleContext)
             ]
-        }
+//        }
         return null
     }
     

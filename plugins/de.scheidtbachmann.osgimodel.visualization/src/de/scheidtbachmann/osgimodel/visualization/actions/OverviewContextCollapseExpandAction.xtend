@@ -15,7 +15,7 @@ class OverviewContextCollapseExpandAction extends AbstractVisualizationContextCh
      */
     public static val String ID = OverviewContextCollapseExpandAction.name 
     
-    override protected <M extends EObject> IVisualizationContext<?>
+    override <M extends EObject> IVisualizationContext<?>
     changeVisualization(IVisualizationContext<M> modelVisualizationContext, ActionContext actionContext) {
         if (!(modelVisualizationContext instanceof IOverviewVisualizationContext)) {
             throw new IllegalArgumentException("This action can only be called on a IOverviewVisualizationContext. "
