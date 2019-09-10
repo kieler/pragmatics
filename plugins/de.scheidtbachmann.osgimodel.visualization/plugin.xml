@@ -47,6 +47,10 @@
             id="de.scheidtbachmann.osgimodel.visualization.actions.OverviewContextCollapseExpandAction">
       </action>
       <action
+            class="de.scheidtbachmann.osgimodel.visualization.actions.ConnectAllAction"
+            id="de.scheidtbachmann.osgimodel.visualization.actions.ConnectAllAction">
+      </action>
+      <action
             class="de.scheidtbachmann.osgimodel.visualization.actions.RevealRequiredBundlesAction"
             id="de.scheidtbachmann.osgimodel.visualization.actions.RevealRequiredBundlesAction">
       </action>

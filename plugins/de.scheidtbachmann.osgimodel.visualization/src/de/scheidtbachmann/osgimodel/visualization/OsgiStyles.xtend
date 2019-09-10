@@ -29,6 +29,7 @@ import de.scheidtbachmann.osgimodel.Product
 import de.scheidtbachmann.osgimodel.Reference
 import de.scheidtbachmann.osgimodel.ServiceComponent
 import de.scheidtbachmann.osgimodel.ServiceInterface
+import de.scheidtbachmann.osgimodel.visualization.actions.ConnectAllAction
 import de.scheidtbachmann.osgimodel.visualization.actions.ContextCollapseExpandAction
 import de.scheidtbachmann.osgimodel.visualization.actions.ContextExpandAllAction
 import de.scheidtbachmann.osgimodel.visualization.actions.ContextRemoveAction
@@ -126,7 +127,7 @@ class OsgiStyles {
             setGridPlacement(1)
             addDoubleClickAction(OverviewContextCollapseExpandAction.ID)
             addRectangle => [
-                setGridPlacement(7)
+                setGridPlacement(9)
                 invisible = true
                 addRectangle => [
                     invisible = true
@@ -136,6 +137,8 @@ class OsgiStyles {
                 addFocusButton
                 addVerticalLine
                 addExpandAllButton
+                addVerticalLine
+                addConnectAllButton
                 addVerticalLine
                 addOverviewContextCollapseExpandButton(false)
             ]
@@ -152,14 +155,12 @@ class OsgiStyles {
             setGridPlacement(1)
             addDoubleClickAction(OverviewContextCollapseExpandAction.ID)
             addRectangle => [
-                setGridPlacement(5)
+                setGridPlacement(3)
                 invisible = true
                 addRectangle => [
                     invisible = true
                     addSimpleLabel(headlineText)
                 ]
-                addVerticalLine
-                addFocusButton
                 addVerticalLine
                 addOverviewContextCollapseExpandButton(true)
             ]
@@ -237,6 +238,21 @@ class OsgiStyles {
             ]
             lineWidth = 0
             tooltip = "Expand all elements in this overview."
+        ]
+    }
+    
+    /**
+     * Adds a button in a grid placement rendering that causes the {@link ConnectAllAction} to be called.
+     * 
+     * @param container The parent rendering this button should be added to.
+     */
+    def KRectangle addConnectAllButton(KContainerRendering container) {
+        return container.addButton("Connect all", ConnectAllAction::ID) => [
+            setGridPlacementData => [
+                flexibleWidth = false
+            ]
+            lineWidth = 0
+            tooltip = "Connects all elements in this overview."
         ]
     }
     

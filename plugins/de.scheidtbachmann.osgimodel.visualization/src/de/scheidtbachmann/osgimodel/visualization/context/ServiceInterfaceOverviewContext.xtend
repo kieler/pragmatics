@@ -109,8 +109,12 @@ class ServiceInterfaceOverviewContext implements IOverviewVisualizationContext<S
     }
     
     override getChildContexts() {
-        return ImmutableList.copyOf(detailedServiceInterfaceContexts + collapsedServiceInterfaceContexts +
-            implementingOrReferencingServiceComponentContexts +  referencedBundleContexts)
+        var children = detailedServiceInterfaceContexts + collapsedServiceInterfaceContexts +
+            implementingOrReferencingServiceComponentContexts
+        if (referencedBundleContexts !== null) {
+            children = children + referencedBundleContexts
+        }
+        return ImmutableList.copyOf(children)
     }
     
     override getModelElement() {
