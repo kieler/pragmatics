@@ -1,8 +1,9 @@
 package de.scheidtbachmann.osgimodel.visualization.actions
 
-import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
+import de.scheidtbachmann.osgimodel.ServiceComponent
 import de.scheidtbachmann.osgimodel.visualization.context.BundleContext
 import de.scheidtbachmann.osgimodel.visualization.context.ContextUtils
+import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceComponentContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceComponentOverviewContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceContext
@@ -60,7 +61,7 @@ class RevealImplementingServiceComponentsAction extends AbstractRevealServiceCom
             serviceComponentOverviewContext.expanded = true
             var implementingServiceComponentContext = serviceComponentOverviewContext.childContexts.findFirst [
                 return it.modelElement === serviceComponent
-            ]
+            ] as IVisualizationContext<ServiceComponent>
             if (implementingServiceComponentContext === null) {
                 throw new IllegalStateException("The bundle context does not contain all its service components as "
                     + "own contexts!")
@@ -106,7 +107,7 @@ class RevealImplementingServiceComponentsAction extends AbstractRevealServiceCom
             // ----- Expand the service components in the context for the PLAIN view -----
             var implementingServiceComponentContextPlain = serviceComponentOverviewContext.childContexts.findFirst [
                 modelElement === serviceComponent
-            ]
+            ] as IVisualizationContext<ServiceComponent>
             ContextUtils.makeDetailed(serviceComponentOverviewContext, implementingServiceComponentContextPlain)
             ContextUtils.addImplementingServiceComponentEdgePlain(serviceInterfaceContext,
                 implementingServiceComponentContextPlain as ServiceComponentContext)
@@ -136,7 +137,7 @@ class RevealImplementingServiceComponentsAction extends AbstractRevealServiceCom
             var implementingServiceComponentContextInBundles = innerServiceComponentOverviewContext
                 .childContexts.findFirst [
                     modelElement === serviceComponent
-                ]
+                ] as IVisualizationContext<ServiceComponent>
             if (implementingServiceComponentContextInBundles === null) {
                 throw new IllegalStateException("The bundle context does not contain all its service components as "
                     + "own contexts!")

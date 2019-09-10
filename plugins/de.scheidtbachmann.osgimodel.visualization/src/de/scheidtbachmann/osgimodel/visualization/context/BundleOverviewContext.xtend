@@ -80,7 +80,7 @@ class BundleOverviewContext implements IOverviewVisualizationContext<Bundle> {
     }
     
     override getChildContexts() {
-        return ImmutableList.copyOf(detailedBundleContexts + collapsedBundleContexts) // TODO: + usedPackageContexts
+        return ImmutableList.copyOf(detailedBundleContexts + collapsedBundleContexts + usedPackageContexts)
     }
     
     override getModelElement() {

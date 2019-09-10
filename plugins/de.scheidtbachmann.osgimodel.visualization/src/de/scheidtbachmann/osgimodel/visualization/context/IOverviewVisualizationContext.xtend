@@ -33,7 +33,7 @@ interface IOverviewVisualizationContext<M extends EObject> extends IVisualizatio
      */
     def void setExpanded(boolean newExpanded)
     
-    override List<? extends IVisualizationContext<M>> getChildContexts()
+    override List<? extends IVisualizationContext<?>> getChildContexts()
     
     /**
      * A descriptive text about what is contained in this overview visualization.

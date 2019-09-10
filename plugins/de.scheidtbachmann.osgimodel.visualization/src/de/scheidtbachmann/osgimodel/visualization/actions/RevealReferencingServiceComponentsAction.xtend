@@ -3,6 +3,7 @@ package de.scheidtbachmann.osgimodel.visualization.actions
 import de.scheidtbachmann.osgimodel.ServiceComponent
 import de.scheidtbachmann.osgimodel.visualization.context.BundleContext
 import de.scheidtbachmann.osgimodel.visualization.context.ContextUtils
+import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceComponentContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceComponentOverviewContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceContext
@@ -61,7 +62,7 @@ class RevealReferencingServiceComponentsAction extends AbstractRevealServiceComp
             serviceComponentOverviewContext.expanded = true
             var referencingServiceComponentContext = serviceComponentOverviewContext.childContexts.findFirst [
                 return it.modelElement === serviceComponent
-            ]
+            ] as IVisualizationContext<ServiceComponent>
             if (referencingServiceComponentContext === null) {
                 throw new IllegalStateException("The bundle context does not contain all its service components as "
                     + "own contexts!")
@@ -112,7 +113,7 @@ class RevealReferencingServiceComponentsAction extends AbstractRevealServiceComp
             // ----- Expand the service components in the context for the PLAIN view. -----
             var referencingServiceComponentContextPlain = serviceComponentOverviewContext.childContexts.findFirst [
                 modelElement === serviceComponent
-            ]
+            ] as IVisualizationContext<ServiceComponent>
             ContextUtils.makeDetailed(serviceComponentOverviewContext, referencingServiceComponentContextPlain)
             ContextUtils.addReferencedServiceInterfaceEdgePlain(
                 referencingServiceComponentContextPlain as ServiceComponentContext, serviceInterfaceContext, reference)
@@ -143,7 +144,7 @@ class RevealReferencingServiceComponentsAction extends AbstractRevealServiceComp
             var referencingServiceComponentContextInBundles = innerServiceComponentOverviewContext.childContexts
                 .findFirst [
                     modelElement === serviceComponent
-                ]
+                ] as IVisualizationContext<ServiceComponent>
             if (referencingServiceComponentContextInBundles === null) {
                 throw new IllegalStateException("The bundle context does not contain all its service components as "
                     + "own contexts!")

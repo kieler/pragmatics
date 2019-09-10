@@ -7,6 +7,7 @@ import de.scheidtbachmann.osgimodel.visualization.context.ServiceComponentContex
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceComponentOverviewContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceContext
 import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceOverviewContext
+import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
 
 /**
  * Puts the service interfaces implemented by this service component next to this service component and connects them 
@@ -114,7 +115,7 @@ class RevealImplementedServiceInterfacesAction extends AbstractRevealServiceInte
         
         // ----- Find the service component in the context for the PLAIN view and expand it if necessary. -----
         val serviceComponentContextPlain = serviceComponentOverviewContext.childContexts
-            .findFirst [ return modelElement === serviceComponent ]
+            .findFirst [ return modelElement === serviceComponent ] as IVisualizationContext<ServiceComponent>
         ContextUtils.makeDetailed(serviceComponentOverviewContext, serviceComponentContextPlain)
         
         // ----- Find/put the service component and the bundle in the context for the IN_BUNDLES view. -----
