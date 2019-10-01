@@ -1,6 +1,7 @@
 package de.scheidtbachmann.osgimodel.visualization.actions
 
 import de.cau.cs.kieler.klighd.IAction
+import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil
 import de.scheidtbachmann.osgimodel.visualization.OsgiSynthesisProperties
 import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
 import de.scheidtbachmann.osgimodel.visualization.context.ContextUtils
@@ -66,7 +67,7 @@ abstract class AbstractVisualizationContextChangingAction implements IAction {
             visualizationContexts.add(index + 1, newContext)
             context.viewContext.setProperty(OsgiSynthesisProperties.CURRENT_VISUALIZATION_CONTEXT_INDEX, index + 1)
             
-            return getActionResult
+            return getActionResult(context)
             
         } catch (Exception e) {
             // Put an error model in the context and show that. // TODO.
@@ -82,7 +83,7 @@ abstract class AbstractVisualizationContextChangingAction implements IAction {
                 "Please view the error log and send the stack trace and the way to " +
                 "reproduce this error to the developer.", e), 
                 StatusManager.SHOW.bitwiseOr(StatusManager.LOG));
-            return getActionResult
+            return getActionResult(context)
         }
     }
     
@@ -100,8 +101,9 @@ abstract class AbstractVisualizationContextChangingAction implements IAction {
      * Returns a new {@link ActionResult} this action will return when executed. Should be overriden by individual
      * actions, if additional layout or animation settings need to be set.
      */
-    protected def ActionResult getActionResult() {
-        return ActionResult.createResult(true).doSynthesis
+    protected def ActionResult getActionResult(ActionContext context) {
+        return ActionResult.createResult(true).doSynthesis.doZoomToStay(
+            KGraphUtil.getAbsolute(context.KGraphElement), context.KGraphElement)
     }
     
 }
