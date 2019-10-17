@@ -6,4 +6,5 @@ xtend-gen/
 target/
 *.pdf
 build/workspace
+build/docs
 *.java._trace

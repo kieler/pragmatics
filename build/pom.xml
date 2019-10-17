@@ -198,6 +198,27 @@
           </environments>
         </configuration>
       </plugin>
+
+      <!-- Plugin to automatically generate an osgi model file and html documentation for this project. -->
+      <plugin>
+        <groupId>de.scheidtbachmann.common.osgimodel</groupId>
+        <artifactId>generate.htmldoku</artifactId>
+        <version>1.0.18</version>
+        <inherited>false</inherited>
+        <configuration>
+          <projectNames>
+            <pragmatics>Pragmatics</pragmatics>
+          </projectNames>
+          <projectPaths>
+            <pragmatics>${project.basedir}/..</pragmatics>
+          </projectPaths>
+          <projectJavadocUrls>
+          </projectJavadocUrls>
+          <documentationDirectory>
+            ${project.basedir}/docs/osgidocu
+          </documentationDirectory>
+        </configuration>
+      </plugin>
     </plugins>
 
     <pluginManagement>
