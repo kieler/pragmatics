@@ -33,7 +33,7 @@
 
     <!-- definitions of our repositories -->
     <kieler.pragmatics.nightly>
-      http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/
+      http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/semantics-integration-new-features/pragmatics/
     </kieler.pragmatics.nightly>
   </properties>
 
