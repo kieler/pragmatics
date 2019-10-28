@@ -20,6 +20,7 @@
     <module>../test</module>
     <module>de.cau.cs.kieler.formats.kgraph</module>
     <module>de.cau.cs.kieler.graphs.klighd</module>
+    <module>de.cau.cs.kieler.kgraph.language.server</module>
     <module>de.cau.cs.kieler.kgraph.text</module>
     <module>de.cau.cs.kieler.kgraph.text.ide</module>
     <module>de.cau.cs.kieler.kgraph.text.ui</module>
