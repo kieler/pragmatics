@@ -87,5 +87,6 @@
 
    <bundle id="de.cau.cs.kieler.klighd.lsp" version="0.1.0.qualifier"/>
    <bundle id="org.eclipse.sprotty" version="0.7.0.qualifier"/>
+   <bundle id="de.cau.cs.kieler.kgraph.language.server" version="0.1.0.qualifier"/>
 
 </site>
