@@ -53,6 +53,7 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.LineAttributes;
 import org.eclipse.swt.graphics.Path;
 import org.eclipse.swt.graphics.Pattern;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.TextLayout;
@@ -80,7 +81,9 @@ import edu.umd.cs.piccolox.swt.SWTShapeManager;
  */
 public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphicsEx {
 
-    // SUPPRESS CHECKSTYLE NEXT 35 Visibility
+    private static float DEFAULT_DISPLAY_DPI = KlighdConstants.DEFAULT_DISPLAY_DPI;
+
+    // SUPPRESS CHECKSTYLE NEXT 40 Visibility
 
     /** The {@link Device} to draw on. */
     protected Device device;
@@ -91,6 +94,12 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
 
     /** The {@link GC} to draw on. */
     protected GC gc;
+
+    /** The resolution of the drawing device, used for compensating the display zoom when drawing text. */
+    protected Point2D.Float dpiScale;
+
+    /** Internal flag for easy determination whether text size compensation is needed. */
+    protected boolean doDisplayScaleCompensation = true;
 
     /** An internal SWT {@link Rectangle} used for clip handling computations. */
     protected Transform swtTransform;
@@ -213,6 +222,7 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
         this.textLayout = tl;
         this.transform = new AffineTransform();
 
+        this.initializeDotDensityScale();
         this.initializeTransform();
     }
 
@@ -227,6 +237,28 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
             this.swtTransform.getElements(elements);
             this.transform.setTransform(new AffineTransform(elements));
         }
+    }
+
+    /**
+     * Initializes the cached display {@link #dpiScale} value and {@link #doDisplayScaleCompensation}
+     * flag.
+     */
+    private void initializeDotDensityScale() {
+        this.dpiScale = gc == null ? new Point2D.Float(1, 1)
+                : getDefaultDPIdevidedBy(gc.getDevice().getDPI());
+        this.doDisplayScaleCompensation =
+                !KlighdPlugin.isSuppressDisplayScaleCompensationWhileHandlingText()
+                        && (this.dpiScale.x != 1f || this.dpiScale.y != 1f);
+    }
+
+    private Point2D.Float getDefaultDPIdevidedBy(final Point point) {
+        // For some reason we don't need to care about 'DPIUtil#deviceZoom' here,
+        //  which is applied to coordinates by the 'autoScale...' methods of 'DPIUtil'.
+        // Experiments on windows showed that reverting the 'autoScale'-based adjustment
+        //  in 'gc.getDevice().getDPI()' leads to wrong text drawings.
+        // Hence, the 'autoScale' adjustment must be applied to the font size in native code,
+        //  as I couldn't spot any place in the (win32 specific) Java implementation.
+        return new Point2D.Float(DEFAULT_DISPLAY_DPI / point.x, DEFAULT_DISPLAY_DPI / point.y);
     }
 
     /**
@@ -257,6 +289,7 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
         this.gc = theGc;
         this.gc.setAntialias(SWT.ON);
 
+        this.initializeDotDensityScale();
         this.initializeTransform();
     }
 
@@ -644,6 +677,9 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
     public void drawText(final String text) {
         if (!useTextStyle) {
             gc.setFont(curFont);
+            if (doDisplayScaleCompensation) {
+                swtTransform.scale(dpiScale.x, dpiScale.y);
+            }
             gc.setTransform(swtTransform);
             gc.getGCData().state |= 1 << DRAW_OFFSET_BIT;
 
@@ -653,6 +689,9 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
             textLayout.setText(text);
             textLayout.setStyle(curTextStyle, 0, text.length() - 1);
             textLayout.setWidth(textLineWidth);
+            if (doDisplayScaleCompensation) {
+                swtTransform.scale(dpiScale.x, dpiScale.y);
+            }
             gc.setTransform(swtTransform);
             gc.getGCData().state |= 1 << DRAW_OFFSET_BIT;
 
