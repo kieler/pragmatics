@@ -24,7 +24,6 @@ import javax.inject.Singleton
 import org.eclipse.elk.alg.layered.options.LayeredOptions
 import org.eclipse.elk.graph.ElkNode
 import org.eclipse.elk.graph.properties.IProperty
-import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtext.ide.server.ILanguageServerAccess
 import org.eclipse.xtext.ide.server.ILanguageServerExtension
@@ -104,11 +103,7 @@ class ConstraintsLanguageServerExtension implements ILanguageServerExtension {
             changedNodes.add(new ConstraintProperty(kNode, LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT, newPosCons))
             changedNodes.add(new ConstraintProperty(kNode, LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT, newLayerCons))
             // Update source code of the model
-            val resource = ConstraintsUtils.getResourceFromUri(uri, injector)
-            for (entry : changedNodes) {
-                updateSourceCode(resource, entry)
-            }
-            resource.save(emptyMap)
+            refreshModelInEditor(changedNodes, uri)
 
         }
     }
@@ -117,10 +112,9 @@ class ConstraintsLanguageServerExtension implements ILanguageServerExtension {
         val uri = diagramState.getURIString(clientId)
         val kNode = getKNode(uri, dc.id)
         if (kNode !== null) {
-            val resource = ConstraintsUtils.getResourceFromUri(uri, injector)
-            updateSourceCode(resource, new ConstraintProperty(kNode, LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT, null))
-            updateSourceCode(resource, new ConstraintProperty(kNode, LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT, null))
-            resource.save(emptyMap)
+            val changedNodes = #[new ConstraintProperty(kNode, LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT, null),
+                new ConstraintProperty(kNode, LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT, null)]
+            refreshModelInEditor(changedNodes, uri)
 
         }
     }
@@ -129,9 +123,8 @@ class ConstraintsLanguageServerExtension implements ILanguageServerExtension {
         val uri = diagramState.getURIString(clientId)
         val kNode = getKNode(uri, dc.id)
         if (kNode !== null) {
-            val resource = ConstraintsUtils.getResourceFromUri(uri, injector)
-            updateSourceCode(resource, new ConstraintProperty(kNode, LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT, null))
-            resource.save(emptyMap)
+            val changedNodes = #[new ConstraintProperty(kNode, LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT, null)]
+            refreshModelInEditor(changedNodes, uri)
         }
     }
 
@@ -139,9 +132,8 @@ class ConstraintsLanguageServerExtension implements ILanguageServerExtension {
         val uri = diagramState.getURIString(clientId)
         val kNode = getKNode(uri, dc.id)
         if (kNode !== null) {
-            val resource = ConstraintsUtils.getResourceFromUri(uri, injector)
-            updateSourceCode(resource, new ConstraintProperty(kNode, LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT, null))
-            resource.save(emptyMap)
+            val changedNodes = #[new ConstraintProperty(kNode, LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT, null)]
+            refreshModelInEditor(changedNodes, uri)
         }
     }
 
@@ -173,10 +165,7 @@ class ConstraintsLanguageServerExtension implements ILanguageServerExtension {
             
             var changedNodes = reval.changedNodes
             changedNodes.add(new ConstraintProperty(kNode, property, valueCons))
-            val resource = ConstraintsUtils.getResourceFromUri(uri, injector)
-            for (entry : changedNodes) {
-                updateSourceCode(resource, entry)
-            }
+            refreshModelInEditor(changedNodes, uri)
         }
     }
 
@@ -236,15 +225,32 @@ class ConstraintsLanguageServerExtension implements ILanguageServerExtension {
     }
     
     /**
-     * Searches for node specified by ConstraintProperty and sets the desired property
+     * Changes property changes defined by changedNodes to the resource
+     * @param changedNodes list of all changes to nodes
+     * @param uri uri of resource
+     * TODO use some kind of updateDocument mechanism and do not just modify the contents of the resource directly
      */
-    private def updateSourceCode(Resource resource, ConstraintProperty entry) {
-        val elkNode = entry.KNode.getProperty(KlighdInternalProperties.MODEL_ELEMEMT) as ElkNode
-        
-        val resourceElement = (resource.contents.head as ElkNode).children.filter[child |
-            return child.identifier == elkNode.identifier
-        ].head
-        resourceElement.setProperty(entry.property, entry.value)
-        resource.save(emptyMap())
+    def refreshModelInEditor(List<ConstraintProperty> changedNodes, String uri) {
+        val resource = ConstraintsUtils.getResourceFromUri(uri, injector)
+            
+        for (entry : changedNodes) {
+            // set Property of corresponding elkNode 
+            val kNode = entry.KNode
+            val elkNode = kNode.getProperty(KlighdInternalProperties.MODEL_ELEMEMT)
+            
+            if (elkNode instanceof ElkNode) {
+                kNode.setProperty(entry.property, entry.value)
+                ConstraintsUtils.copyAllConstraints(elkNode, kNode)
+            }
+        }
+
+        val elkNode = changedNodes.head.KNode.getProperty(KlighdInternalProperties.MODEL_ELEMEMT)
+        if (elkNode instanceof ElkNode) {
+            val elkGraph = ConstraintsUtils.getRootNodeOf(elkNode)
+            resource.contents.clear
+            resource.contents += elkGraph
+            resource.save(emptyMap)
+        }
+
     }
 }
