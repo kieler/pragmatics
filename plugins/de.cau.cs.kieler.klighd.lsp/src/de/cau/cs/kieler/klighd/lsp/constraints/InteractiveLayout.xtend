@@ -55,9 +55,13 @@ class InteractiveLayout {
         val root = viewContext.viewModel
         if (root.getProperty(LayeredOptions.INTERACTIVE_LAYOUT)) {
 
+            root.setProperty(LayeredOptions.SEPARATE_CONNECTED_COMPONENTS, false)
+            root.setProperty(LayeredOptions.LAYERING_STRATEGY, LayeringStrategy.NETWORK_SIMPLEX)
+            root.setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY, CycleBreakingStrategy.DEPTH_FIRST)
+            root.setProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY, CrossingMinimizationStrategy.LAYER_SWEEP)
+            setSeparateConnectedComponentsOnChildren(root)
             // initial layout
             layoutE.onlyLayoutOnKGraph(id)
-            root.setProperty(LayeredOptions.SEPARATE_CONNECTED_COMPONENTS, false)
             setStandardStrats(root)
 
             prepareParentsForFirstLayout(root)
@@ -69,6 +73,20 @@ class InteractiveLayout {
             layoutE.onlyLayoutOnKGraph(id)
 
         }
+    }
+    
+    private def void setSeparateConnectedComponentsOnChildren(KNode root) {
+        for (n : root.children) {
+            val nestedNodes = n.children
+            if (!nestedNodes.empty) {
+                n.setProperty(LayeredOptions.SEPARATE_CONNECTED_COMPONENTS, false)
+                n.setProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY, CrossingMinimizationStrategy.LAYER_SWEEP)
+                n.setProperty(LayeredOptions.LAYERING_STRATEGY, LayeringStrategy.NETWORK_SIMPLEX)
+                n.setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY, CycleBreakingStrategy.DEPTH_FIRST)
+                setSeparateConnectedComponentsOnChildren(n)
+            }
+        }
+        return
     }
 
     /**
@@ -85,6 +103,8 @@ class InteractiveLayout {
                 setCoordinatesOrthogonalToLayoutDirection(layer, direction)
             }
         }
+//        println(layers.get(1).get(1) + ", ")
+        return
     }
 
     /**
@@ -215,7 +235,9 @@ class InteractiveLayout {
             var layer = node.getProperty(LayeredOptions.LAYERING_LAYER_I_D)
             if (layer > currentLayer) {
                 // node is in a new layer
-                layerNodes.add(nodesOfLayer)
+                if (!nodesOfLayer.isEmpty) {
+                    layerNodes.add(nodesOfLayer)
+                }
                 nodesOfLayer = newArrayList()
                 currentLayer = layer
             }
@@ -229,95 +251,64 @@ class InteractiveLayout {
             // add the last layer
             layerNodes.add(nodesOfLayer)
         }
-        // the first node is added to the second layer
-        // thats why the first layer must be removed
-        layerNodes.remove(0)
         return layerNodes
     }
 
     /**
      * Sets the x coordinates of the nodes in {@code layers} according to their layer.
+     * TODO remove magic constants
+     * FIXME The problem is that the height and width of a node are determined by the height and width before the layout with constraints.
+     *      They are therefore potentially wrong
      *  
-     * @param layers The layers containing the associated nodes.
+     * @param layers The layers containing the associated nodes, already sorted regarding layers
      */
     private def setCoordinateInLayoutDirection(ArrayList<ArrayList<KNode>> layers, Direction direction) {
         var float position = 0
         var float nextPosition = 0
-        // nodes in the same layer get the same x/y coordinate
+        // Assign x (RIGHT, LEFT)/y (UP, DOWN) coordinate such that all nodes get a pseudo position that assigns them to 
+        // the correct layer when using interactive mode
         for (nodesOfLayer : layers) {
             for (node : nodesOfLayer) {
                 switch (direction) {
                     case UNDEFINED, case RIGHT: {
                         node.xpos = position
                         if (position + node.width >= nextPosition) {
-                            nextPosition = position + node.width
+                            nextPosition = position + node.width + 100000
                         }
                     }
                     case LEFT:  {
-                        node.xpos = position
-                        if (position <= nextPosition) {
-                            nextPosition = position - node.width
+                        node.xpos = position - node.width
+                        if (node.xpos <= nextPosition) {
+                            nextPosition = node.xpos - 100000
                         }
                     }                    
                     case DOWN: {
                         node.ypos = position
                         if (position + node.height >= nextPosition) {
-                            nextPosition = position + node.height
+                            nextPosition = position + node.height + 100000
                         }
                     }
                     case UP: {
-                        node.ypos = position
-                        if (position <= nextPosition) {
-                            nextPosition = position - node.height
+                        node.ypos = position - node.height
+                        if (node.ypos <= nextPosition) {
+                            nextPosition = node.ypos - 100000
                         }
                     }
                 }
             }
-            // nodes in different layer should not overlap horizontally 
-            if (direction.equals(Direction.UNDEFINED) || direction.equals(Direction.RIGHT) || direction.equals(Direction.DOWN)) {
-                position = nextPosition + 1
-            } else {
-                position = nextPosition - 1
-            }
+            position = nextPosition
                
         }
-
-        // adjust the width of the parent of the nodes in the layers
-        if (!layers.empty && !layers.get(0).empty) {
-            var node = layers.get(0).get(0)
-            var padding = node.getProperty(LayeredOptions.PADDING)
-            switch (direction) {
-                case UNDEFINED, case RIGHT: {
-                    node.parent.width = (padding.left + padding.right + position - node.xpos +
-                    node.getProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS) * (layers.length - 1)
-                            ) as float
-                }
-                case LEFT:  {
-                    node.parent.width = (padding.left + padding.right + node.xpos + node.width - position +
-                    node.getProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS) * (layers.length - 1)
-                            ) as float
-                }                    
-                case DOWN: {
-                    node.parent.width = (padding.left + padding.right + position - node.ypos +
-                    node.getProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS) * (layers.length - 1)
-                            ) as float
-                }
-                case UP: {
-                    node.parent.width = (padding.left + padding.right + node.ypos + node.height - position +
-                    node.getProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS) * (layers.length - 1)
-                            ) as float
-                }
-            }
-        }
+        return
     }
 
     /**
      * Sets the positions of the nodes in {@code nodesOfLayer}.
+     * TODO remove magic constants
      * 
      * @param nodesOfLayer The list containing nodes that are in the same layer. 
      */
     private def setCoordinatesOrthogonalToLayoutDirection(List<KNode> nodesOfLayer, Direction direction) {
-
         // separate node with and without position constraint
         val List<KNode> nodesWithPositionConstraint = newArrayList()
         val List<KNode> nodes = newArrayList()
@@ -342,16 +333,27 @@ class InteractiveLayout {
         }
 
         // set the y positions according to the order of the nodes
-        var yPos = nodes.get(0).ypos
-        for (node : nodes) {
-            node.setProperty(LayeredOptions.POSITION, new KVector(node.xpos, yPos))
-            yPos = yPos + node.height + 1
+        switch (direction) {
+            case UNDEFINED, case RIGHT, case LEFT: {
+                var yPos = nodes.get(0).ypos
+                for (node : nodes) {
+                    node.setProperty(LayeredOptions.POSITION, new KVector(node.xpos, yPos))
+                    yPos = yPos + node.height + 100000
+                }
+            }                   
+            case DOWN, case UP: {
+                var xPos = nodes.get(0).xpos
+                for (node : nodes) {
+                    node.setProperty(LayeredOptions.POSITION, new KVector(xPos, node.ypos))
+                    xPos = xPos + node.width + 100000
+                }
+            }
         }
     }
 
     /**
      * Sorts the {@code propNodes} according their position constraint 
-     * and {@code nodes} according to their y coordinate.
+     * and {@code nodes} according to relevant coordinate (y for left, right, x for up, down).
      * 
      * @param propNodes The nodes which position constraint is set
      * @param nodes The nodes without position constraints
@@ -398,7 +400,6 @@ class InteractiveLayout {
             val nestedNodes = n.children
             if (!nestedNodes.empty) {
                 n.setProperty(LayeredOptions.INTERACTIVE_LAYOUT, true)
-                n.setProperty(LayeredOptions.SEPARATE_CONNECTED_COMPONENTS, false)
                 setStandardStrats(n)
                 prepareParentsForFirstLayout(n)
             }

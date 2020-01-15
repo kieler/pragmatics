@@ -315,9 +315,10 @@ public class KGraphDiagramGenerator implements IDiagramGenerator {
         findSpecialRenderings(filteredData)
         
         var parent = node
-        while (parent.parent !== null) {
-            parent = parent.parent
+        if (node.parent !== null) {
+            parent = node.parent
         }
+        // The client expects every node to know whether it is layouted interactively and what its direction is
         nodeElement.interactiveLayout = parent.getProperty(LayeredOptions.INTERACTIVE_LAYOUT);
         nodeElement.direction = parent.getProperty(LayeredOptions.DIRECTION)
         
