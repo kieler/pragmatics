@@ -271,25 +271,25 @@ class InteractiveLayout {
             for (node : nodesOfLayer) {
                 switch (direction) {
                     case UNDEFINED, case RIGHT: {
-                        node.xpos = position
-                        if (position + node.width >= nextPosition) {
-                            nextPosition = position + node.width + 100000
+                        node.xpos = position;
+                        if (position + node.width / 2 >= nextPosition) {
+                            nextPosition = node.xpos + node.width + 100000
                         }
                     }
                     case LEFT:  {
-                        node.xpos = position - node.width
+                        node.xpos = position
                         if (node.xpos <= nextPosition) {
                             nextPosition = node.xpos - 100000
                         }
                     }                    
                     case DOWN: {
-                        node.ypos = position
+                        node.ypos = position;
                         if (position + node.height >= nextPosition) {
-                            nextPosition = position + node.height + 100000
+                            nextPosition = node.ypos + node.height + 100000
                         }
                     }
                     case UP: {
-                        node.ypos = position - node.height
+                        node.ypos = position
                         if (node.ypos <= nextPosition) {
                             nextPosition = node.ypos - 100000
                         }
