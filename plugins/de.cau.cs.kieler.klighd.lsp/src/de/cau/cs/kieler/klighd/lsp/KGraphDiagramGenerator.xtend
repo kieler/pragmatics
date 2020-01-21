@@ -311,6 +311,7 @@ public class KGraphDiagramGenerator implements IDiagramGenerator {
         nodeElement.posId = node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_I_D)
         nodeElement.layerCons = node.getProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT)
         nodeElement.posCons = node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT)
+        nodeElement.interactiveLayout = node.getProperty(LayeredOptions.INTERACTIVE_LAYOUT)
         
         findSpecialRenderings(filteredData)
         
@@ -318,8 +319,8 @@ public class KGraphDiagramGenerator implements IDiagramGenerator {
         if (node.parent !== null) {
             parent = node.parent
         }
-        // The client expects every node to know whether it is layouted interactively and what its direction is
-        nodeElement.interactiveLayout = parent.getProperty(LayeredOptions.INTERACTIVE_LAYOUT);
+        // FIXME this is bad
+        // The client expects every node to know what its direction is
         nodeElement.direction = parent.getProperty(LayeredOptions.DIRECTION)
         
         

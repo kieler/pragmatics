@@ -10,16 +10,19 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  */
-package de.cau.cs.kieler.klighd.lsp.constraints
+package de.cau.cs.kieler.klighd.lsp.interactive
 
-import org.eclipse.lsp4j.jsonrpc.services.JsonSegment
-import org.eclipse.lsp4j.services.LanguageClient
+import org.eclipse.xtend.lib.annotations.Data
+import org.eclipse.elk.graph.properties.IProperty
+import de.cau.cs.kieler.klighd.kgraph.KNode
 
 /**
- * @author jet, cos
+ * @author sdo
  *
  */
- @JsonSegment("keith/constraintsLC")
-interface ConstraintsLanguageClient extends LanguageClient {
-    
+@Data
+class ConstraintProperty {
+    KNode kNode
+    IProperty<Integer> property
+    Integer value
 }

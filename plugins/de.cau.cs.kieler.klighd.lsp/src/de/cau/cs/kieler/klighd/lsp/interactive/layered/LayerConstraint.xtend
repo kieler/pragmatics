@@ -10,7 +10,7 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  */
-package de.cau.cs.kieler.klighd.lsp.constraints
+package de.cau.cs.kieler.klighd.lsp.interactive.layered
 
 import org.eclipse.xtend.lib.annotations.Data
 
@@ -19,24 +19,8 @@ import org.eclipse.xtend.lib.annotations.Data
  * 
  */
 @Data
-class StaticConstraint {
-
-    /**
-     * Id of the target node
-     */
+class LayerConstraint {
     String id
-
-    /**
-     * Value for the layer constraint
-     */
     int layer
-
-    /**
-     * Value for the positional constraint
-     */
-    int position
-    
-    int posCons
-    
     int layerCons
 }

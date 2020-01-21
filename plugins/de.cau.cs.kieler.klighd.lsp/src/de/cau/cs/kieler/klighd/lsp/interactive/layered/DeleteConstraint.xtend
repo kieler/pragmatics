@@ -10,7 +10,7 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  */
-package de.cau.cs.kieler.klighd.lsp.constraints
+package de.cau.cs.kieler.klighd.lsp.interactive.layered
 
 import org.eclipse.xtend.lib.annotations.Data
 
