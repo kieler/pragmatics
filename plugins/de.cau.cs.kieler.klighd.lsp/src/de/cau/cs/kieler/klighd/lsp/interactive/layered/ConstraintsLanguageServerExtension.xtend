@@ -67,8 +67,7 @@ class ConstraintsLanguageServerExtension implements ILanguageServerExtension {
      */
     def setStaticConstraint(StaticConstraint sc, String clientId) {
         val uri = diagramState.getURIString(clientId)
-        val root = LSPUtil.getRoot(diagramState, uri)
-        val kNode = LSPUtil.getKNode(diagramState, uri, sc.id, root, LayeredOptions.INTERACTIVE_LAYOUT)
+        val kNode = LSPUtil.getKNode(diagramState, uri, sc.id)
         val parentOfNode = kNode.parent
 
         // In case that the interactive mode is active, the viewContext is not null 
@@ -151,8 +150,7 @@ class ConstraintsLanguageServerExtension implements ILanguageServerExtension {
      * @param value Either the id of the position or the id of the layer.
      */
     private def setConstraint(IProperty<Integer> property, String uri, String targetID, int valueId, int valueCons) {
-        val root = LSPUtil.getRoot(diagramState, uri)
-        val kNode = LSPUtil.getKNode(diagramState, uri, targetID, root, LayeredOptions.INTERACTIVE_LAYOUT)
+        val kNode = LSPUtil.getKNode(diagramState, uri, targetID)
         val parentOfNode = kNode.parent
 
         if (kNode !== null && parentOfNode !== null) {
@@ -183,8 +181,7 @@ class ConstraintsLanguageServerExtension implements ILanguageServerExtension {
      * @param ID The Id of the requested KNode
      */
     private def getKNode(String uri, String ID) {
-        val root = LSPUtil.getRoot(diagramState, uri)
-        return LSPUtil.getKNode(diagramState, uri, ID, root, LayeredOptions.INTERACTIVE_LAYOUT)
+        return LSPUtil.getKNode(diagramState, uri, ID)
     }
     
     /**

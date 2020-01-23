@@ -21,6 +21,8 @@ import org.eclipse.elk.graph.ElkNode
 import org.eclipse.elk.graph.properties.IProperty
 import org.eclipse.emf.common.util.URI
 import org.eclipse.xtext.resource.XtextResourceSet
+import org.eclipse.elk.core.options.CoreOptions
+import org.eclipse.elk.alg.packing.rectangles.options.RectPackingOptions
 
 /**
  * @author sdo
@@ -93,17 +95,25 @@ class InteractiveUtil {
     }
 
     /**
-     * Copies all constraint properties (two at the moment) from kNode to elkNode 
+     * Copies constraint properties depending on the algorithm from kNode to elkNode 
      * by using {@code copyConstraintProp()}.
      * 
      * @param elkNode The target ElkNode
      * @param kNode The source KNode of the property
      */
     static def copyAllConstraints(ElkNode elkNode, KNode kNode) {
-        val props = #[
-            LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT,
-            LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT
-        ]
+        val algorithm = kNode.parent.getProperty(CoreOptions.ALGORITHM)
+        var props = #[]
+        if(algorithm == null || algorithm == 'layered') {
+            props = #[
+                LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT,
+                LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT
+            ]
+        } else if ("rectPacking".equals(algorithm)) {
+            props = #[
+                RectPackingOptions.DESIRED_POSITION
+            ]
+        }
         for (prop : props) {
             copyConstraintProp(elkNode, kNode, prop)
         }

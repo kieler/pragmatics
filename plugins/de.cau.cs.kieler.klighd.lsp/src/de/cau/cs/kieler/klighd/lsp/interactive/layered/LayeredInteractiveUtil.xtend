@@ -23,6 +23,7 @@ import org.eclipse.elk.alg.layered.options.LayeringStrategy
 import org.eclipse.elk.core.math.KVector
 import org.eclipse.elk.core.options.Direction
 import org.eclipse.emf.common.util.EList
+import de.cau.cs.kieler.klighd.lsp.interactive.InteractiveLayout
 
 /**
  * @author sdo
@@ -38,7 +39,7 @@ class LayeredInteractiveUtil {
     public static def void setCoordinatesDepthFirst(KNode root) {
         for (n : root.children) {
             if (!n.children.empty) {
-                setCoordinatesDepthFirst(n)
+                InteractiveLayout.setRequiredInteractiveOptions(n)
             }
         }
         if (!root.children.empty && root.getProperty(LayeredOptions.INTERACTIVE_LAYOUT)) {

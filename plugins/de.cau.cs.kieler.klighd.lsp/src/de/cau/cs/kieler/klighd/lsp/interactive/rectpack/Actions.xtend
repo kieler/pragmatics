@@ -26,14 +26,14 @@ import org.eclipse.xtend.lib.annotations.ToString
 @Accessors
 @EqualsHashCode
 @ToString(skipNulls = true)
-public class RectPackSetOrderConstraintAction implements Action {
+public class RectPackSetPositionConstraintAction implements Action {
     public static val KIND = 'rectPackSetPositionConstraint'
     String kind = KIND
     
-    RectPackSetOrderConstraint constraint
+    RectPackSetPositionConstraint constraint
     
     new() {}
-    new(Consumer<RectPackSetOrderConstraintAction> initializer) {
+    new(Consumer<RectPackSetPositionConstraintAction> initializer) {
         initializer.accept(this)
     }
 }
@@ -46,14 +46,14 @@ public class RectPackSetOrderConstraintAction implements Action {
 @Accessors
 @EqualsHashCode
 @ToString(skipNulls = true)
-public class RectPackDeleteOrderConstraintAction implements Action {
+public class RectPackDeletePositionConstraintAction implements Action {
     public static val KIND = 'rectPackDeletePositionConstraint'
     String kind = KIND
     
-    RectPackDeleteOrderConstraint constraint
+    RectPackDeletePositionConstraint constraint
     
     new() {}
-    new(Consumer<RectPackDeleteOrderConstraintAction> initializer) {
+    new(Consumer<RectPackDeletePositionConstraintAction> initializer) {
         initializer.accept(this)
     }
 }

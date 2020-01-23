@@ -1,6 +1,6 @@
 /*
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
- *
+ * 
  * http://rtsys.informatik.uni-kiel.de/kieler
  * 
  * Copyright 2020 by
@@ -19,10 +19,9 @@ import de.cau.cs.kieler.klighd.lsp.utils.KGraphElementIDGenerator
 
 /**
  * @author sdo
- *
+ * 
  */
 class LSPUtil {
-    
 
     /**
      * Returns the root node of the resource's model behind a given {@cods uri}.
@@ -46,22 +45,18 @@ class LSPUtil {
      * Returns the {@code KNode of the node described by {@code ID}.
      * Returns null if the {@code ViewContext} of the resource described by {@code uri} is null.
      * Returns null if the element behind the ID is no kNode.
-     * Returns null if the {@code INTERACTIVE_LAYOUT} IProperty is not set on the root of the resource.
      */
-    public static def getKNode(KGraphDiagramState diagramState, String uri, String ID, KNode root, IProperty<Boolean> desiredProperty) {
+    public static def getKNode(KGraphDiagramState diagramState, String uri, String ID) {
 
-        if (root?.getProperty(desiredProperty)) {
-            val mapKToS = diagramState.getKGraphToSModelElementMap(uri)
+        val mapKToS = diagramState.getKGraphToSModelElementMap(uri)
 
-            // KGraphElement which corresponding SNode has the correct ID
-            val kGraphElement = KGraphElementIDGenerator.findElementById(mapKToS, ID)
+        // KGraphElement which corresponding SNode has the correct ID
+        val kGraphElement = KGraphElementIDGenerator.findElementById(mapKToS, ID)
 
-            if (kGraphElement instanceof KNode) {
-                return kGraphElement as KNode
-            } else {
-                return null
-            }
+        if (kGraphElement instanceof KNode) {
+            return kGraphElement as KNode
+        } else {
+            return null
         }
-
     }
 }

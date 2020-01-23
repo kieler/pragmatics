@@ -18,19 +18,17 @@ import de.cau.cs.kieler.klighd.ViewContext
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.lsp.KGraphDiagramState
 import de.cau.cs.kieler.klighd.lsp.KGraphLayoutEngine
+import de.cau.cs.kieler.klighd.lsp.interactive.layered.LayeredInteractiveUtil
+import de.cau.cs.kieler.klighd.lsp.interactive.rectpack.RectPackInteractiveUtil
 import org.eclipse.elk.alg.layered.options.CrossingMinimizationStrategy
 import org.eclipse.elk.alg.layered.options.CycleBreakingStrategy
 import org.eclipse.elk.alg.layered.options.LayeredOptions
 import org.eclipse.elk.alg.layered.options.LayeringStrategy
 import org.eclipse.elk.alg.packing.rectangles.options.RectPackingOptions
 import org.eclipse.elk.core.options.CoreOptions
-import org.eclipse.elk.graph.properties.IProperty
-import de.cau.cs.kieler.klighd.lsp.interactive.layered.LayeredInteractiveUtil
-import java.util.Map
-import java.util.HashMap
 
 /**
- * @author jet, cos
+ * @author sdo, jet, cos
  * 
  */
 @Singleton
@@ -52,34 +50,53 @@ class InteractiveLayout {
             viewContext = diagramState.getKGraphContext(id)
         }
         val root = viewContext.viewModel
-        if (root.getProperty(LayeredOptions.INTERACTIVE_LAYOUT) || root.getProperty(RectPackingOptions.INTERACTIVE)) {
+        if (root.getProperty(CoreOptions.INTERACTIVE_LAYOUT)) {
             // FIXME check for interactive mode in general to interactive layout from layered alg
-            root.setRequiredInteractiveOptions
+            root.setRequiredNonInteractiveOptions
             // Initial layout
             layoutE.onlyLayoutOnKGraph(id)
-            // Set coordinates for 
-            LayeredInteractiveUtil.setCoordinatesDepthFirst(root)
-    
+
+            root.setRequiredInteractiveOptions
+            
             layoutE.onlyLayoutOnKGraph(id)
         }
     }
     
-    private def void setRequiredInteractiveOptions(KNode root) {
+    /**
+     * Sets the required options for the non interactive layout run.
+     */
+    private def void setRequiredNonInteractiveOptions(KNode root) {
         val algorithm = root.getProperty(CoreOptions.ALGORITHM)
-        if (("layered".equals(algorithm) || algorithm === null) && root.getProperty(LayeredOptions.INTERACTIVE_LAYOUT) && !root.children.empty) {
+        if (("layered".equals(algorithm) || algorithm === null) && !root.children.empty) {
             root.setProperty(LayeredOptions.SEPARATE_CONNECTED_COMPONENTS, false)
             root.setProperty(LayeredOptions.LAYERING_STRATEGY, LayeringStrategy.NETWORK_SIMPLEX)
             root.setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY, CycleBreakingStrategy.DEPTH_FIRST)
             root.setProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY, CrossingMinimizationStrategy.LAYER_SWEEP)
+        } else if ("rectPacking".equals(algorithm) && !root.children.empty) {
+            root.setProperty(RectPackingOptions.INTERACTIVE, false)
         } else {
             // Add more cases for different algorithms
         }
         for (n : root.children) {
             if (!n.children.empty) {
-                setRequiredInteractiveOptions(n)
+                setRequiredNonInteractiveOptions(n)
             }
         }
         return
+    }
+    
+    /**
+     * Sets interactive options recursiely for a root node.
+     */
+    public static def void setRequiredInteractiveOptions(KNode root) {
+        val algorithm = root.getProperty(CoreOptions.ALGORITHM)
+        if (("layered".equals(algorithm) || algorithm === null) && !root.children.empty) {
+            LayeredInteractiveUtil.setCoordinatesDepthFirst(root)
+        } else if ("rectPacking".equals(algorithm) && !root.children.empty) {
+            RectPackInteractiveUtil.setRequiredInteractiveOptions(root)
+        } else {
+            // Add more cases for different algorithms
+        }
     }
     
 

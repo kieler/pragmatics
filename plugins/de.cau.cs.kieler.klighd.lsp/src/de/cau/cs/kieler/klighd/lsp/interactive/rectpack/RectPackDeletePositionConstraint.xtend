@@ -22,6 +22,6 @@ import org.eclipse.xtend.lib.annotations.Data
  * 
  */
 @Data
-class RectPackDeleteOrderConstraint {
+class RectPackDeletePositionConstraint {
     String id
 }

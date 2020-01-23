@@ -63,6 +63,7 @@ import org.eclipse.sprotty.xtext.IDiagramGenerator
 import org.eclipse.sprotty.xtext.tracing.ITraceProvider
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtext.util.CancelIndicator
+import org.eclipse.elk.alg.packing.rectangles.options.RectPackingOptions
 
 /**
  * A diagram generator that can create Sprotty {@link SGraph} from any {@link EObject} that has a registered view
@@ -163,8 +164,6 @@ public class KGraphDiagramGenerator implements IDiagramGenerator {
      * @param cancelIndicator Indicates, if the action requesting this translation has already been canceled.
      */
     public def SGraph toSGraph(KNode parentNode, String identifier, CancelIndicator cancelIndicator) {
-//        println("Starting SGraph generation!")
-//        val startTime = System.currentTimeMillis
         LOG.info("Generating diagram for input: '" + identifier + "'")
 
         kGraphToSModelElementMap = new HashMap
@@ -185,8 +184,6 @@ public class KGraphDiagramGenerator implements IDiagramGenerator {
         // Do post processing.
         postProcess()
 
-//        val endTime = System.currentTimeMillis
-//        println("SGraph generation finished after " + (endTime - startTime) + "ms.")
         return if (cancelIndicator.canceled) 
                null 
            else 
@@ -306,12 +303,14 @@ public class KGraphDiagramGenerator implements IDiagramGenerator {
         ].toList
 
         nodeElement.data = node.data.filter[KRenderingLibrary.isAssignableFrom(it.class)].toList
-
-        nodeElement.layerId = node.getProperty(LayeredOptions.LAYERING_LAYER_I_D)
-        nodeElement.posId = node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_I_D)
-        nodeElement.layerCons = node.getProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT)
-        nodeElement.posCons = node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT)
-        nodeElement.interactiveLayout = node.getProperty(LayeredOptions.INTERACTIVE_LAYOUT)
+        nodeElement.properties.put("layerId", node.getProperty(LayeredOptions.LAYERING_LAYER_I_D))
+        nodeElement.properties.put("positionId", node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_I_D))
+        nodeElement.properties.put("layerConstraint", node.getProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT))
+        nodeElement.properties.put("positionConstraint", node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT))
+        nodeElement.properties.put("interactiveLayout", node.getProperty(CoreOptions.INTERACTIVE_LAYOUT))
+        nodeElement.properties.put("algorithm", node.getProperty(CoreOptions.ALGORITHM))
+        nodeElement.properties.put("desiredPosition", node.getProperty(RectPackingOptions.DESIRED_POSITION))
+        nodeElement.properties.put("currentPosition", node.getProperty(RectPackingOptions.CURRENT_POSITION))
         
         findSpecialRenderings(filteredData)
         

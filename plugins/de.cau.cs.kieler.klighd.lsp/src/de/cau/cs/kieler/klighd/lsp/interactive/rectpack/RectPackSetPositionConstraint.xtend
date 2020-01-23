@@ -19,7 +19,7 @@ import org.eclipse.xtend.lib.annotations.Data
  * 
  */
 @Data
-class RectPackSetOrderConstraint {
+class RectPackSetPositionConstraint {
     String id
     int order
 }

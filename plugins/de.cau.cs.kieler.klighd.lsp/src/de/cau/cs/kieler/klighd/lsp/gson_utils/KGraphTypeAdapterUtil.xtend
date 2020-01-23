@@ -20,8 +20,8 @@ import de.cau.cs.kieler.klighd.lsp.interactive.layered.DeleteStaticConstraintAct
 import de.cau.cs.kieler.klighd.lsp.interactive.layered.SetLayerConstraintAction
 import de.cau.cs.kieler.klighd.lsp.interactive.layered.SetPositionConstraintAction
 import de.cau.cs.kieler.klighd.lsp.interactive.layered.SetStaticConstraintAction
-import de.cau.cs.kieler.klighd.lsp.interactive.rectpack.RectPackDeleteOrderConstraintAction
-import de.cau.cs.kieler.klighd.lsp.interactive.rectpack.RectPackSetOrderConstraintAction
+import de.cau.cs.kieler.klighd.lsp.interactive.rectpack.RectPackDeletePositionConstraintAction
+import de.cau.cs.kieler.klighd.lsp.interactive.rectpack.RectPackSetPositionConstraintAction
 import de.cau.cs.kieler.klighd.lsp.model.CheckedImagesAction
 import de.cau.cs.kieler.klighd.lsp.model.ComputedTextBoundsAction
 import de.cau.cs.kieler.klighd.lsp.model.PerformActionAction
@@ -52,8 +52,8 @@ public class KGraphTypeAdapterUtil {
                 addActionKind(DeleteStaticConstraintAction.KIND, DeleteStaticConstraintAction)
                 addActionKind(DeletePositionConstraintAction.KIND, DeletePositionConstraintAction)
                 addActionKind(DeleteLayerConstraintAction.KIND, DeleteLayerConstraintAction)
-                addActionKind(RectPackSetOrderConstraintAction.KIND, RectPackSetOrderConstraintAction)
-                addActionKind(RectPackDeleteOrderConstraintAction.KIND, RectPackDeleteOrderConstraintAction)
+                addActionKind(RectPackSetPositionConstraintAction.KIND, RectPackSetPositionConstraintAction)
+                addActionKind(RectPackDeletePositionConstraintAction.KIND, RectPackDeletePositionConstraintAction)
             ]
         )
         .registerTypeAdapter(Point2D, new Point2DTypeAdapter)
