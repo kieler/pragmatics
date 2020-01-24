@@ -19,6 +19,8 @@ import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.lsp.KGraphDiagramState
 import de.cau.cs.kieler.klighd.lsp.LSPUtil
 import de.cau.cs.kieler.klighd.lsp.interactive.InteractiveUtil
+import java.util.Arrays
+import java.util.List
 import javax.inject.Singleton
 import org.eclipse.elk.alg.packing.rectangles.options.RectPackingOptions
 import org.eclipse.elk.core.options.CoreOptions
@@ -30,7 +32,6 @@ import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtext.ide.server.ILanguageServerAccess
 import org.eclipse.xtext.ide.server.ILanguageServerExtension
 import org.eclipse.xtext.resource.XtextResourceSet
-import java.util.List
 
 /**
  * @author sdo
@@ -63,23 +64,27 @@ class RectPackInterativeLanguageServerExtension implements ILanguageServerExtens
         val parent = kNode.parent;
         val List<KNode> changedNodes = newArrayList(kNode)
         if (parent.getProperty(CoreOptions.INTERACTIVE_LAYOUT)) {
+            // Sort all nodes regarding their actual position
+            val KNode[] clonedChildren = parent.children.clone()
+            Arrays.sort(clonedChildren, [a,b |
+                return Integer.compare(a.getProperty(RectPackingOptions.CURRENT_POSITION), b.getProperty(RectPackingOptions.CURRENT_POSITION))
+            ])
+
+            // Get previous and new position of node
             val desiredPosition = constraint.order
-            // Determine current position of node
-            var originalPosition = kNode.getProperty(RectPackingOptions.DESIRED_POSITION)
-            if (originalPosition === -1) {
-                originalPosition = parent.children.indexOf(kNode)
+            var previousPosition = kNode.getProperty(RectPackingOptions.DESIRED_POSITION)
+            if (previousPosition === -1) {
+                previousPosition = kNode.getProperty(RectPackingOptions.CURRENT_POSITION)
             }
-            for (var i = 0; i < parent.children.indexOf(kNode); i++) {
-                if (parent.children.get(i).getProperty(RectPackingOptions.DESIRED_POSITION) > originalPosition) {
-                    originalPosition--;
-                }
-            }
-            val modifier = originalPosition < desiredPosition ? 1 : -1
-            for (node : parent.children) {
+
+            // Change desired position of nodes that are influenced by the movement
+            val modifier = previousPosition < desiredPosition ? 1 : -1
+            for (var int position = previousPosition; position != desiredPosition + modifier; position += modifier) {
+                val node = clonedChildren.get(position)
                 if (node.hasProperty(RectPackingOptions.DESIRED_POSITION)) {
-                    val position = node.getProperty(RectPackingOptions.DESIRED_POSITION)
-                    if ((originalPosition < position && position <= desiredPosition) || 
-                        (originalPosition > position && position >= desiredPosition)) {
+                    val nodePosition = node.getProperty(RectPackingOptions.DESIRED_POSITION)
+                    if ((previousPosition < nodePosition && nodePosition <= desiredPosition) || 
+                        (previousPosition > nodePosition && nodePosition >= desiredPosition)) {
                         node.setProperty(
                             RectPackingOptions.DESIRED_POSITION,
                             position - modifier)
@@ -99,14 +104,24 @@ class RectPackInterativeLanguageServerExtension implements ILanguageServerExtens
         val parent = kNode.parent
         val List<KNode> changedNodes = newArrayList(kNode)
         if (parent.getProperty(CoreOptions.INTERACTIVE_LAYOUT)) {
-            val originalPosition = parent.children.indexOf(kNode)
-            val int targetPosition = kNode.getProperty(RectPackingOptions.DESIRED_POSITION)
-            val modifier = originalPosition < targetPosition ? -1 : 1
-            for (node : parent.children) {
+            // Sort all nodes regarding their actual position
+            val KNode[] clonedChildren = parent.children.clone()
+            Arrays.sort(clonedChildren, [a,b |
+                return Integer.compare(a.getProperty(RectPackingOptions.CURRENT_POSITION), b.getProperty(RectPackingOptions.CURRENT_POSITION))
+            ])
+
+            // Get previous and new position of node
+            val desiredPosition = parent.children.indexOf(kNode)
+            val int previousPosition = kNode.getProperty(RectPackingOptions.CURRENT_POSITION)
+
+            // Change desired position of nodes that are influenced by the movement
+            val modifier = previousPosition < desiredPosition ? 1 : -1
+            for (var int position = previousPosition; position != desiredPosition; position += modifier) {
+                val node = clonedChildren.get(position)
                 if (node.hasProperty(RectPackingOptions.DESIRED_POSITION)) {
-                    val position = node.getProperty(RectPackingOptions.DESIRED_POSITION)
-                    if ((originalPosition <= position && targetPosition > position) ||
-                        (originalPosition >= position && targetPosition < position)) {
+                    val nodePosition = node.getProperty(RectPackingOptions.DESIRED_POSITION)
+                    if ((previousPosition < nodePosition && nodePosition <= desiredPosition) || 
+                        (previousPosition > nodePosition && nodePosition >= desiredPosition)) {
                         node.setProperty(
                             RectPackingOptions.DESIRED_POSITION,
                             position - modifier)

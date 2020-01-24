@@ -310,8 +310,8 @@ public class KGraphDiagramGenerator implements IDiagramGenerator {
         nodeElement.properties.put("interactiveLayout", node.getProperty(CoreOptions.INTERACTIVE_LAYOUT))
         nodeElement.properties.put("algorithm", node.getProperty(CoreOptions.ALGORITHM))
         nodeElement.properties.put("desiredPosition", node.getProperty(RectPackingOptions.DESIRED_POSITION))
-        nodeElement.properties.put("currentPosition", node.getProperty(RectPackingOptions.CURRENT_POSITION))
-        
+        val currentPosition = node.getProperty(RectPackingOptions.CURRENT_POSITION)
+        nodeElement.properties.put("currentPosition", currentPosition)
         findSpecialRenderings(filteredData)
         
         var parent = node

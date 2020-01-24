@@ -17,8 +17,8 @@ import de.cau.cs.kieler.klighd.kgraph.KGraphData
 import de.cau.cs.kieler.klighd.kgraph.KLabel
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.kgraph.KPort
+import java.util.HashMap
 import java.util.List
-import java.util.Map
 import org.eclipse.elk.core.math.KVectorChain
 import org.eclipse.elk.core.options.Direction
 import org.eclipse.sprotty.SEdge
@@ -35,7 +35,7 @@ import org.eclipse.xtend.lib.annotations.Accessors
 @Accessors
 public class SKNode extends SNode {
     private List<KGraphData> data
-    private Map<String, Object> properties = newHashMap
+    private HashMap<String, Object> properties = newHashMap
     private int layerId
     private int posId
     private int layerCons
