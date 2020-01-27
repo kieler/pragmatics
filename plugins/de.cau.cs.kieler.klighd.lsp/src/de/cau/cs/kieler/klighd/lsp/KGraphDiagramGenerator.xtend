@@ -312,6 +312,7 @@ public class KGraphDiagramGenerator implements IDiagramGenerator {
         nodeElement.properties.put("desiredPosition", node.getProperty(RectPackingOptions.DESIRED_POSITION))
         val currentPosition = node.getProperty(RectPackingOptions.CURRENT_POSITION)
         nodeElement.properties.put("currentPosition", currentPosition)
+        nodeElement.properties.put("aspectRatio", node.getProperty(RectPackingOptions.ASPECT_RATIO))
         findSpecialRenderings(filteredData)
         
         var parent = node

@@ -30,7 +30,8 @@ class RectPackActionHandler extends AbstractActionHandler {
     new() {
         this.supportedMessages = newHashMap(
         RectPackSetPositionConstraintAction.KIND -> RectPackSetPositionConstraintAction,
-        RectPackDeletePositionConstraintAction.KIND -> RectPackDeletePositionConstraintAction)
+        RectPackDeletePositionConstraintAction.KIND -> RectPackDeletePositionConstraintAction,
+        SetAspectRatioAction.KIND -> SetAspectRatioAction)
     }
     
     override handle(Action action, String clientId, LanguageAwareDiagramServer server) {
@@ -41,6 +42,10 @@ class RectPackActionHandler extends AbstractActionHandler {
         } else if (action instanceof RectPackDeletePositionConstraintAction) {
             synchronized((server as KGraphDiagramServer).modelLock) {
                 lsExtension.deletePositionConstraint(action.constraint, clientId)
+            }
+        } else if (action instanceof SetAspectRatioAction) {
+            synchronized((server as KGraphDiagramServer).modelLock) {
+                lsExtension.setAspectRatio(action.constraint, clientId)
             }
         } else {
             throw new IllegalArgumentException("Action " + action.kind + " not supported by handler " + this.class.simpleName)

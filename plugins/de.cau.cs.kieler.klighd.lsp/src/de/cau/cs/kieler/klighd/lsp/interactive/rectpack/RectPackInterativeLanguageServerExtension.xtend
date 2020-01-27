@@ -134,6 +134,22 @@ class RectPackInterativeLanguageServerExtension implements ILanguageServerExtens
 
         }
     }
+    
+    /**
+     * Sets the aspect ratio.
+     */
+    def setAspectRatio(SetAspectRatio constraint, String clientId) {
+        val uri = diagramState.getURIString(clientId)
+        val kNode = LSPUtil.getKNode(diagramState, uri, constraint.id)
+        kNode.setProperty(RectPackingOptions.ASPECT_RATIO, constraint.aspectRatio)
+        val resource = injector.getInstance(XtextResourceSet).getResource(URI.createURI(uri), true)
+        val elkNode = resource.contents.head as ElkNode
+        elkNode.setProperty(RectPackingOptions.ASPECT_RATIO, constraint.aspectRatio)
+        val elkGraph = EcoreUtil.getRootContainer(elkNode)
+        resource.contents.clear
+        resource.contents += elkGraph
+        resource.save(emptyMap)
+    }
 
     /**
      * Changes property changes defined by changedNodes to the resource

@@ -57,3 +57,23 @@ public class RectPackDeletePositionConstraintAction implements Action {
         initializer.accept(this)
     }
 }
+
+/**
+ * Deletes the constraint on the node that is identified by the given id.
+ * 
+ * @author sdo
+ */
+@Accessors
+@EqualsHashCode
+@ToString(skipNulls = true)
+public class SetAspectRatioAction implements Action {
+    public static val KIND = 'setAspectRatio'
+    String kind = KIND
+    
+    SetAspectRatio constraint
+    
+    new() {}
+    new(Consumer<SetAspectRatioAction> initializer) {
+        initializer.accept(this)
+    }
+}

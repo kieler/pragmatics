@@ -30,6 +30,7 @@ import de.cau.cs.kieler.klighd.lsp.model.SetSynthesisAction
 import java.awt.geom.Point2D
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.sprotty.server.json.ActionTypeAdapter
+import de.cau.cs.kieler.klighd.lsp.interactive.rectpack.SetAspectRatioAction
 
 /**
  * Static util class to configure needed gson type adapters for KGraph serialization.
@@ -54,6 +55,7 @@ public class KGraphTypeAdapterUtil {
                 addActionKind(DeleteLayerConstraintAction.KIND, DeleteLayerConstraintAction)
                 addActionKind(RectPackSetPositionConstraintAction.KIND, RectPackSetPositionConstraintAction)
                 addActionKind(RectPackDeletePositionConstraintAction.KIND, RectPackDeletePositionConstraintAction)
+                addActionKind(SetAspectRatioAction.KIND, SetAspectRatioAction)
             ]
         )
         .registerTypeAdapter(Point2D, new Point2DTypeAdapter)

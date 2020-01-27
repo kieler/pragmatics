@@ -103,7 +103,7 @@ class InteractiveUtil {
      */
     static def copyAllConstraints(ElkNode elkNode, KNode kNode) {
         val algorithm = kNode.parent.getProperty(CoreOptions.ALGORITHM)
-        var props = #[]
+        var List<IProperty<?>> props = #[]
         if(algorithm == null || algorithm == 'layered') {
             props = #[
                 LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT,
