@@ -128,7 +128,8 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
     
     override transform(ElkNode elkGraph) {
         // Transform everything (don't use 'elkGraph.transform' :))
-        val KNode result = exporter.transform(elkGraph)
+        val KNode result = exporter.transform(elkGraph);
+        result.associateWith(elkGraph);
 
         // Enable label management
         addLabelManager(result);

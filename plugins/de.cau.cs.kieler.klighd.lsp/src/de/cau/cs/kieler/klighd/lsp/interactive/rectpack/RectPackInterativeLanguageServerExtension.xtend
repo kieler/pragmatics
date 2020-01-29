@@ -143,12 +143,14 @@ class RectPackInterativeLanguageServerExtension implements ILanguageServerExtens
         val kNode = LSPUtil.getKNode(diagramState, uri, constraint.id)
         kNode.setProperty(RectPackingOptions.ASPECT_RATIO, constraint.aspectRatio)
         val resource = injector.getInstance(XtextResourceSet).getResource(URI.createURI(uri), true)
-        val elkNode = resource.contents.head as ElkNode
-        elkNode.setProperty(RectPackingOptions.ASPECT_RATIO, constraint.aspectRatio)
-        val elkGraph = EcoreUtil.getRootContainer(elkNode)
-        resource.contents.clear
-        resource.contents += elkGraph
-        resource.save(emptyMap)
+        val elkNode = kNode.getProperty(KlighdInternalProperties.MODEL_ELEMEMT)
+        if (elkNode instanceof ElkNode) {
+            elkNode.setProperty(RectPackingOptions.ASPECT_RATIO, constraint.aspectRatio)
+            val elkGraph = EcoreUtil.getRootContainer(elkNode)
+            resource.contents.clear
+            resource.contents += elkGraph
+            resource.save(emptyMap)
+        }
     }
 
     /**

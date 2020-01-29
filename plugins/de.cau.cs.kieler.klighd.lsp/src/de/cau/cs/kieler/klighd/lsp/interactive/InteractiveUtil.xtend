@@ -111,7 +111,8 @@ class InteractiveUtil {
             ]
         } else if ("rectPacking".equals(algorithm)) {
             props = #[
-                RectPackingOptions.DESIRED_POSITION
+                RectPackingOptions.DESIRED_POSITION,
+                RectPackingOptions.ASPECT_RATIO
             ]
         }
         for (prop : props) {
