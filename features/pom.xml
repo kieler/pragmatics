@@ -25,7 +25,6 @@
     <module>de.cau.cs.kieler.klighd.sdk.feature</module>
     <module>de.cau.cs.kieler.klighd.view.feature</module>
     <module>net.ogdf.bin.feature</module>
-    <module>../../pragmatics-libraries/features/org.adaptagrams.libavoid.feature</module>
   </modules>
 
   <!-- customization of the feature build sub process: incorporate

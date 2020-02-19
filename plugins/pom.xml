@@ -52,7 +52,6 @@
     <module>edu.umd.cs.piccolo</module>
     <module>net.ogdf.bin</module>
     <module>net.ogdf.ogml</module>
-    <module>../../pragmatics-libraries/plugins/org.adaptagrams.libavoid</module>
     <module>org.graphdrawing.graphml</module>
   </modules>
 
