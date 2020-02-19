@@ -17,7 +17,6 @@
   <!-- all features are listed as modules -->
   <modules>
     <module>de.cau.cs.kieler.kgraph.feature</module>
-    <module>de.cau.cs.kieler.kiml.libavoid.feature</module>
     <module>de.cau.cs.kieler.kiml.ogdf.feature</module>
     <module>de.cau.cs.kieler.klighd.feature</module>
     <module>de.cau.cs.kieler.klighd.draw2d.feature</module>
