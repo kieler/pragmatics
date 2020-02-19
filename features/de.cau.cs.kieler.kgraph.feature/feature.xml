@@ -4,7 +4,7 @@
       label="KIELER KGraph Editing and Visualization"
       version="0.45.0.qualifier"
       provider-name="Kiel University"
-      plugin="de.cau.cs.kieler.klighd.kgraph">
+      plugin="de.cau.cs.kieler.graphs.klighd">
 
    <description url="http://www.informatik.uni-kiel.de/rtsys/kieler">
       Textual editing of KGraphs and visualization using KLighD technology. This feature is all you need to start developing layout algorithms.
@@ -286,34 +286,6 @@ litigation.
 
    <plugin
          id="de.cau.cs.kieler.formats.ogml"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.klighd.ui.contrib3x"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kgraph.text"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kgraph.text.ide"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kgraph.text.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"

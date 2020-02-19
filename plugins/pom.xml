@@ -20,9 +20,6 @@
     <module>../test</module>
     <module>de.cau.cs.kieler.formats.kgraph</module>
     <module>de.cau.cs.kieler.graphs.klighd</module>
-    <module>de.cau.cs.kieler.kgraph.text</module>
-    <module>de.cau.cs.kieler.kgraph.text.ide</module>
-    <module>de.cau.cs.kieler.kgraph.text.ui</module>
     <module>de.cau.cs.kieler.kiml.export</module>
     <module>de.cau.cs.kieler.formats</module>
     <module>de.cau.cs.kieler.formats.dot</module>
@@ -35,21 +32,7 @@
     <!-- <module>de.cau.cs.kieler.grana.text</module> -->
     <!-- <module>de.cau.cs.kieler.grana.text.ui</module> -->
     <module>de.cau.cs.kieler.kiml.ogdf</module>
-    <module>de.cau.cs.kieler.klighd</module>
-    <module>de.cau.cs.kieler.klighd.incremental</module>
-    <module>de.cau.cs.kieler.klighd.kgraph</module>
-    <module>de.cau.cs.kieler.klighd.krendering</module>
-    <module>de.cau.cs.kieler.klighd.krendering.extensions</module>
-    <module>de.cau.cs.kieler.klighd.piccolo</module>
-    <module>de.cau.cs.kieler.klighd.piccolo.batik</module>
-    <module>de.cau.cs.kieler.klighd.piccolo.draw2d</module>
-    <module>de.cau.cs.kieler.klighd.piccolo.freehep</module>
-    <module>de.cau.cs.kieler.klighd.ui</module>
-    <module>de.cau.cs.kieler.klighd.ui.contrib3x</module>
-    <module>de.cau.cs.kieler.klighd.ui.emf</module>
-    <module>de.cau.cs.kieler.klighd.ui.view</module>
-    <module>de.cau.cs.kieler.klighd.ui.wizard</module>
-    <module>edu.umd.cs.piccolo</module>
+    <!-- <module>edu.umd.cs.piccolo</module> -->
     <module>net.ogdf.bin</module>
     <module>net.ogdf.ogml</module>
     <module>org.graphdrawing.graphml</module>

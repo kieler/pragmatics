@@ -11,11 +11,6 @@
          KIELER (Kiel Integrated Environment for Layout Eclipse RichClient) components for the automatic layout of diagrams.
       </description>
    </category-def>
-   <category-def name="kieler-klighd" label="KIELER Lightweight Diagrams">
-      <description>
-         KIELER (Kiel Integrated Environment for Layout Eclipse RichClient) components for generation and displayal of transient, lightweight diagrams.
-      </description>
-   </category-def>
    <category-def name="kieler-editors" label="KIELER Editors">
       <description>
          KIELER (Kiel Integrated Environment for Layout Eclipse RichClient) components for editing diagrams and models.
@@ -45,43 +40,6 @@
       <category name="kieler-layout"/>
    </feature>
    <feature url="features/de.cau.cs.kieler.kgraph.source_0.45.0.qualifier.jar" id="de.cau.cs.kieler.kgraph.feature.source" version="0.45.0.qualifier">
-      <category name="kieler-sources"/>
-   </feature>
-
-   <!-- LIGHTWEIGHT DIAGRAMS -->
-
-   <feature url="features/de.cau.cs.kieler.klighd.feature_0.45.0.qualifier.jar" id="de.cau.cs.kieler.klighd.feature" version="0.45.0.qualifier">
-      <category name="kieler-klighd"/>
-   </feature>
-   <feature url="features/de.cau.cs.kieler.klighd.feature.source_0.45.0.qualifier.jar" id="de.cau.cs.kieler.klighd.feature.source" version="0.45.0.qualifier">
-      <category name="kieler-sources"/>
-   </feature>
-
-   <feature url="features/de.cau.cs.kieler.klighd.freehep.feature_0.45.0.qualifier.jar" id="de.cau.cs.kieler.klighd.freehep.feature" version="0.45.0.qualifier">
-      <category name="kieler-klighd"/>
-   </feature>
-   <feature url="features/de.cau.cs.kieler.klighd.freehep.feature.source_0.45.0.qualifier.jar" id="de.cau.cs.kieler.klighd.freehep.feature.source" version="0.45.0.qualifier">
-      <category name="kieler-sources"/>
-   </feature>
-
-   <feature url="features/de.cau.cs.kieler.klighd.draw2d.feature_0.45.0.qualifier.jar" id="de.cau.cs.kieler.klighd.draw2d.feature" version="0.45.0.qualifier">
-      <category name="kieler-klighd"/>
-   </feature>
-   <feature url="features/de.cau.cs.kieler.klighd.draw2d.feature.source_0.45.0.qualifier.jar" id="de.cau.cs.kieler.klighd.draw2d.feature.source" version="0.45.0.qualifier">
-      <category name="kieler-sources"/>
-   </feature>
-
-   <feature url="features/de.cau.cs.kieler.klighd.sdk.feature_0.45.0.qualifier.jar" id="de.cau.cs.kieler.klighd.sdk.feature" version="0.45.0.qualifier">
-      <category name="kieler-klighd"/>
-   </feature>
-   <feature url="features/de.cau.cs.kieler.klighd.sdk.feature.source_0.45.0.qualifier.jar" id="de.cau.cs.kieler.klighd.sdk.feature.source" version="0.45.0.qualifier">
-      <category name="kieler-sources"/>
-   </feature>
-
-   <feature url="features/de.cau.cs.kieler.klighd.view.feature_0.45.0.qualifier.jar" id="de.cau.cs.kieler.klighd.view.feature" version="0.45.0.qualifier">
-      <category name="kieler-klighd"/>
-   </feature>
-   <feature url="features/de.cau.cs.kieler.klighd.view.feature.source_0.45.0.qualifier.jar" id="de.cau.cs.kieler.klighd.view.feature.source" version="0.45.0.qualifier">
       <category name="kieler-sources"/>
    </feature>
 

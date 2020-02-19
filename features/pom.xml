@@ -18,12 +18,6 @@
   <modules>
     <module>de.cau.cs.kieler.kgraph.feature</module>
     <module>de.cau.cs.kieler.kiml.ogdf.feature</module>
-    <module>de.cau.cs.kieler.klighd.feature</module>
-    <module>de.cau.cs.kieler.klighd.draw2d.feature</module>
-    <module>de.cau.cs.kieler.klighd.batik.feature</module>
-    <module>de.cau.cs.kieler.klighd.freehep.feature</module>
-    <module>de.cau.cs.kieler.klighd.sdk.feature</module>
-    <module>de.cau.cs.kieler.klighd.view.feature</module>
     <module>net.ogdf.bin.feature</module>
   </modules>
 
@@ -53,7 +47,6 @@
                 <!-- the following bundles are excluded in the source feature generation process
                       as they don't contribute any classes and, thus,
                       no related source bundles exist -->
-                <plugin id="de.cau.cs.kieler.klighd.ui.contrib3x" />
                 <plugin id="org.eclipse.emf" />
                 <plugin id="org.eclipse.swt" />
 
