@@ -25,7 +25,6 @@
     <module>de.cau.cs.kieler.klighd.freehep.feature</module>
     <module>de.cau.cs.kieler.klighd.sdk.feature</module>
     <module>de.cau.cs.kieler.klighd.view.feature</module>
-    <!-- <module>de.cau.cs.kieler.kwebs.server.feature</module> -->
     <module>net.ogdf.bin.feature</module>
     <module>../../pragmatics-libraries/features/org.adaptagrams.libavoid.feature</module>
   </modules>
@@ -52,7 +51,6 @@
               <labelSuffix>${sourceFeatureLabelSuffix}</labelSuffix>
               <excludes>
                 <feature id="net.ogdf.bin.feature"/>
-                <feature id="de.cau.cs.kieler.kwebs.server.feature"/>
 
                 <!-- the following bundles are excluded in the source feature generation process
                       as they don't contribute any classes and, thus,

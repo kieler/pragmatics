@@ -61,27 +61,6 @@
       </modules>
     </profile>
 
-    <!-- The KWebS product. -->
-    <profile>
-      <id>kwebs</id>
-
-      <repositories>
-        <!-- kieler pragmatics runtime -->
-        <repository>
-          <id>p2.nightly_pragmatics</id>
-          <layout>p2</layout>
-          <url>${kieler.pragmatics.nightly}</url>
-        </repository>
-      </repositories>
-
-      <modules>
-        <module>de.cau.cs.kieler.pragmatics.targetplatform</module>
-        <module>../plugins/de.cau.cs.kieler.kwebs.server</module>
-        <module>../features/de.cau.cs.kieler.kwebs.server.feature</module>
-        <module>de.cau.cs.kieler.kwebs.repository</module>
-      </modules>
-    </profile>
-
     <profile>
       <id>os-macosx</id>
       <activation>

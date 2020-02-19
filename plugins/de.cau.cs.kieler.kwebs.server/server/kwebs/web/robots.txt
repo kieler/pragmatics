@@ -1,4 +1,0 @@
-# Dummy robots
-
-User-agent: *
-Disallow: /
