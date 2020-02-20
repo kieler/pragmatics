@@ -19,8 +19,8 @@
   <properties>
     <update.site.name>KIELER Pragmatics</update.site.name>
     <update.site.description>Nightly</update.site.description>
-    <update.site.version>2018-06</update.site.version>
-    <target.eclipse.version>4.6 (Neon)</target.eclipse.version>
+    <update.site.version>2020-02</update.site.version>
+    <target.eclipse.version>2019-12</target.eclipse.version>
   </properties>
 
   <build>
@@ -43,20 +43,15 @@
             <configuration>
               <associateSites>
                 <!-- Eclipse -->
-                <associateSite>http://download.eclipse.org/releases/mars</associateSite>
+                <associateSite>http://download.eclipse.org/releases/2019-12</associateSite>
                 <!-- Eclipse Layout Kernel -->
                 <associateSite>http://build.eclipse.org/modeling/elk/updates/nightly/</associateSite>
-                <!-- <associateSite>http://download.eclipse.org/elk/updates/releases/0.1.0/</associateSite> -->
-                <!-- Eclipse Orbit for Apache Batik -->
-                <associateSite>http://download.eclipse.org/tools/orbit/downloads/drops/R20140114142710/repository/</associateSite>
-                <!-- Google Guava -->
-                <associateSite>http://guava-osgi.googlecode.com/svn/trunk/repository/</associateSite>
-                <!-- Graphiti -->
-                <associateSite>http://download.eclipse.org/graphiti/updates/0.10.2</associateSite>
+                <!-- Eclipse Orbit -->
+                <associateSite>http://download.eclipse.org/tools/orbit/downloads/drops/R20191126223242/repository/</associateSite>
                 <!-- Xtext repository for new versions -->
                 <associateSite>http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/</associateSite>
-                <!-- Our Ptolemy library -->
-                <associateSite>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/ptolemy</associateSite>
+                <!-- KLighD -->
+                <associateSite>http://services.typefox.io/open-source/jenkins/job/KLighD/job/releases-2020-02-1.0.0/lastSuccessfulBuild/artifact/updatesite/</associateSite>
               </associateSites>
               <siteTemplateFolder>siteTemplate</siteTemplateFolder>
               <symbols>

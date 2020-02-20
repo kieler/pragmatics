@@ -218,6 +218,9 @@ litigation.
    </url>
 
    <requires>
+      <import plugin="de.cau.cs.kieler.kgraph.text"/>
+      <import plugin="de.cau.cs.kieler.kgraph.text.ide"/>
+      <import plugin="de.cau.cs.kieler.kgraph.text.ui"/>
       <import plugin="org.antlr.runtime"/>
       <import plugin="org.apache.log4j"/>
       <import feature="org.eclipse.emf" version="2.6.0" match="greaterOrEqual"/>
