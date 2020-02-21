@@ -96,6 +96,11 @@
     </pluginRepository>
   </pluginRepositories>
 
+  <scm>        
+    <connection>scm:git:https://git.rtsys.informatik.uni-kiel.de/scm/kieler/pragmatics.git</connection>
+    <developerConnection>scm:git:https://git.rtsys.informatik.uni-kiel.de/scm/kieler/pragmatics.git</developerConnection>
+  </scm>
+
 
   <!-- Modify the build process to add Tycho and configure some utility plug-ins. -->
   <build>
