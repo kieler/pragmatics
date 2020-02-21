@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Textual Layout Configuration IDE Plugin
 Bundle-Vendor: Kiel University
-Bundle-Version: 0.45.0.qualifier
+Bundle-Version: 0.46.0.qualifier
 Bundle-SymbolicName: de.cau.cs.kieler.config.text.ide; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: de.cau.cs.kieler.config.text,

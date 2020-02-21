@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Graph Analysis Text UI Plugin
 Bundle-Vendor: Kiel University
-Bundle-Version: 0.45.0.qualifier
+Bundle-Version: 0.46.0.qualifier
 Bundle-SymbolicName: de.cau.cs.kieler.grana.text.ui; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: de.cau.cs.kieler.grana.text,
