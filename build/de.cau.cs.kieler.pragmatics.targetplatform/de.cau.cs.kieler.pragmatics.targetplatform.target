@@ -43,7 +43,7 @@
       <unit id="de.cau.cs.kieler.kgraph.text" version="0.0.0"/>
       <unit id="de.cau.cs.kieler.kgraph.text.ide" version="0.0.0"/>
       <unit id="de.cau.cs.kieler.kgraph.text.ui" version="0.0.0"/>
-      <repository location="http://services.typefox.io/open-source/jenkins/job/KLighD/job/releases-2020-02-1.0.0/lastSuccessfulBuild/artifact/updatesite/"/>
+      <repository location="https://openkieler.github.io/KLighD/v1.0.0/"/>
     </location>
   </locations>
 </target>
