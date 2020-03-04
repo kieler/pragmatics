@@ -22,14 +22,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.UnsupportedGraphException;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
@@ -46,8 +47,7 @@ import de.cau.cs.kieler.grana.IAnalysis;
  * <li>merging all overlapping segments to one</li>
  * <li>counting intersections while ignoring those with a junction point on them</li>
  * </ol>
- * 
- * @author alan
+ * This analysis should at some point be extended to support proper hyperedges as well.
  */
 public class OrthogonalCrossingsAnalysis implements IAnalysis {
 
@@ -69,12 +69,10 @@ public class OrthogonalCrossingsAnalysis implements IAnalysis {
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public Object doAnalysis(final KNode parent, final AnalysisContext context,
+    public Object doAnalysis(final ElkNode parent, final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
+        
         progressMonitor.begin("Orthogonal crossings analysis", 1);
         
         junctionPoints.clear();
@@ -88,35 +86,45 @@ public class OrthogonalCrossingsAnalysis implements IAnalysis {
         }
     }
 
-    public int countCrossings(final KNode parent) { 
-        collectSegmentsAndJunctionPoints(parent.getChildren(), new KVector(0, 0));
+    /**
+     * Counts crossings between all edges in the subgraph with the given root.
+     * 
+     * @param root the root node of the subgraph.
+     * @return number of edge crossings.
+     */
+    public int countCrossings(final ElkNode root) { 
+        collectSegmentsAndJunctionPoints(root, new KVector(0, 0));
         mergeOverlappingSegments();
         return count();
     }
 
-    private void collectSegmentsAndJunctionPoints(final List<KNode> nodes,
-            final KVector offset) {
-        for (KNode node : nodes) {
-            addJunctionPointsOnEdgesConnectedTo(node, new KVector(offset));
-            addSegments(offset, node);
-            if (hasChildren(node)) {
-                KVector childrenOffset = copyPositionOf(node).add(offset);
-                collectSegmentsAndJunctionPoints(node.getChildren(), new KVector(childrenOffset));
+    private void collectSegmentsAndJunctionPoints(final ElkNode root, final KVector offset) {
+        addJunctionPointsOnEdgesContainedIn(root, new KVector(offset));
+        addSegments(offset, root);
+        
+        if (!root.getChildren().isEmpty()) {
+            KVector childrenOffset = copyPositionOf(root).add(offset);
+            for (ElkNode child : root.getChildren()) {
+                collectSegmentsAndJunctionPoints(child, childrenOffset);
             }
         }
     }
 
-    private void addSegments(final KVector offset, final KNode node) {
-        for (KEdge edge : node.getOutgoingEdges()) {
-            if (!edge.getData(KEdgeLayout.class).getProperty(CoreOptions.NO_LAYOUT)) {
+    private void addSegments(final KVector offset, final ElkNode node) {
+        for (ElkEdge edge : node.getContainedEdges()) {
+            if (!edge.getProperty(CoreOptions.NO_LAYOUT)) {
+                if (edge.isHyperedge()) {
+                    throw new UnsupportedGraphException("Hyperedges are not supported yet");
+                }
+                
                 KVector edgeOffset = targetsChildOf(edge, node) ? copyPositionOf(node).add(offset) : offset;
                 addSegmentsOf(edge, edgeOffset);
             }
         }
     }
 
-    private boolean targetsChildOf(final KEdge e, final KNode n) {
-        return n.getChildren().contains(e.getTarget());
+    private boolean targetsChildOf(final ElkEdge e, final ElkNode n) {
+        return n.getChildren().contains(ElkGraphUtil.connectableShapeToNode(e.getTargets().get(0)));
     }
 
     private void mergeOverlappingSegments() {
@@ -156,34 +164,37 @@ public class OrthogonalCrossingsAnalysis implements IAnalysis {
         return crossings;
     }
 
-    private void addSegmentsOf(final KEdge edge, final KVector offset) {
-        KVectorChain chain = new KVectorChain(edge.getData(KEdgeLayout.class).createVectorChain());
-        KVectorChain copy = new KVectorChain();
-        for (KVector kVector : chain) {
-            copy.add(new KVector(kVector));
-        }
-        copy.offset(offset);
-        Iterator<KVector> iterator = copy.iterator();
-        KVector start = iterator.next();
-        while (iterator.hasNext()) {
-            KVector end = iterator.next();
-            Line2D line = new Line2D.Double(start.x, start.y, end.x, end.y);
-            if (start.x != end.x && start.y != end.y) {
-                throw new UnsupportedOperationException("Not orthogonal");
+    private void addSegmentsOf(final ElkEdge edge, final KVector offset) {
+        for (ElkEdgeSection section : edge.getSections()) {
+            // Add all points of the section to a vector chain
+            KVectorChain chain = new KVectorChain();
+            chain.add(new KVector(section.getStartX(), section.getStartY()));
+            section.getBendPoints().stream().forEach(bp -> chain.add(new KVector(bp.getX(), bp.getY())));
+            chain.add(new KVector(section.getEndX(), section.getEndY()));
+            
+            chain.offset(offset);
+            
+            Iterator<KVector> iterator = chain.iterator();
+            KVector start = iterator.next();
+            while (iterator.hasNext()) {
+                KVector end = iterator.next();
+                Line2D line = new Line2D.Double(start.x, start.y, end.x, end.y);
+                if (start.x != end.x && start.y != end.y) {
+                    throw new UnsupportedOperationException("Not orthogonal");
+                }
+                segments.add(line);
+                start = end;
             }
-            segments.add(line);
-            start = end;
         }
     }
 
-    private void addJunctionPointsOnEdgesConnectedTo(final KNode node, final KVector parentOffset) {
-        for (KEdge edge : node.getOutgoingEdges()) {
-            // We must copy the junctions, otherwise we change the offset in the graph we are
-            // analyzing.
-            KVector offset = targetsChildOf(edge, node) ? copyPositionOf(node).add(parentOffset)
+    private void addJunctionPointsOnEdgesContainedIn(final ElkNode node, final KVector parentOffset) {
+        for (ElkEdge edge : node.getContainedEdges()) {
+            // We must copy the junctions, otherwise we change the offset in the graph we are analyzing.
+            KVector offset = targetsChildOf(edge, node)
+                    ? copyPositionOf(node).add(parentOffset)
                     : parentOffset;
-            KVectorChain junctions =
-                    edge.getData(KEdgeLayout.class).getProperty(CoreOptions.JUNCTION_POINTS);
+            KVectorChain junctions = edge.getProperty(CoreOptions.JUNCTION_POINTS);
             List<KVector> offsettedJunctions = new ArrayList<>();
             junctions.forEach(v -> offsettedJunctions.add(new KVector(v).add(offset)));
             junctionPoints.addAll(offsettedJunctions);
@@ -273,12 +284,8 @@ public class OrthogonalCrossingsAnalysis implements IAnalysis {
         return line1.intersectsLine(line2) && !areNotParallel(line1, line2);
     }
 
-    private boolean hasChildren(final KNode node) {
-        return !node.getChildren().isEmpty();
-    }
-
-    private KVector copyPositionOf(final KNode parent) {
-        return new KVector(parent.getData(KShapeLayout.class).createVector());
+    private KVector copyPositionOf(final ElkNode parent) {
+        return new KVector(parent.getX(), parent.getY());
     }
 
 }

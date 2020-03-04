@@ -19,15 +19,15 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.eclipse.elk.core.GraphIssue;
 import org.eclipse.elk.core.LayoutConfigurator;
-import org.eclipse.elk.core.LayoutOptionValidator;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.ui.AlgorithmSelectionDialog;
 import org.eclipse.elk.core.ui.ElkUiPlugin;
 import org.eclipse.elk.core.util.Pair;
+import org.eclipse.elk.core.validation.GraphIssue;
+import org.eclipse.elk.core.validation.LayoutOptionValidator;
 import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
