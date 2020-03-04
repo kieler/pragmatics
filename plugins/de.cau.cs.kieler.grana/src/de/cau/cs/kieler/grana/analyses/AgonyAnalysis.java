@@ -26,7 +26,6 @@ import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
-import org.w3c.dom.Node;
 
 import com.google.common.collect.Lists;
 
