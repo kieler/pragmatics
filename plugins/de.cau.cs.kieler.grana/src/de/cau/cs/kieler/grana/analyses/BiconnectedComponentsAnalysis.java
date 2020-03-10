@@ -16,10 +16,10 @@ package de.cau.cs.kieler.grana.analyses;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import com.google.common.collect.Iterables;
 
@@ -30,39 +30,34 @@ import de.cau.cs.kieler.grana.IAnalysis;
 /**
  * A graph analysis that finds the number of biconnected components in a graph. Returns
  * a single-component result of type integer.
- * 
- * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class BiconnectedComponentsAnalysis implements IAnalysis {
+    
+    /** next DFS number to assign. */
+    private int nextDfsnum;
+    /** map of DFS numbers. */
+    private Map<ElkNode, Integer> dfsMap = new HashMap<ElkNode, Integer>();
+    /** lowest point numbers. */
+    private int[] lowpt;
+    /** parent node numbers. */
+    private int[] parent;
 
-    /**
-     * {@inheritDoc}
-     */
-    public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
+    @Override
+    public Object doAnalysis(final ElkNode parentNode, final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
+        
         progressMonitor.begin("Biconnected Components Analysis", 1);
         
-        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
-                AnalysisOptions.ANALYZE_HIERARCHY);
+        boolean hierarchy = parentNode.getProperty(AnalysisOptions.ANALYZE_HIERARCHY);
         int count = findComponents(parentNode, hierarchy);
         
         dfsMap.clear();
         lowpt = null;
         parent = null;
+        
         progressMonitor.done();
         return count;
     }
-
-    /** next DFS number to assign. */
-    private int nextDfsnum;
-    /** map of DFS numbers. */
-    private Map<KNode, Integer> dfsMap = new HashMap<KNode, Integer>();
-    /** lowest point numbers. */
-    private int[] lowpt;
-    /** parent node numbers. */
-    private int[] parent;
 
     /**
      * Calculates the biconnected components of the given graph. The input graph
@@ -72,13 +67,13 @@ public class BiconnectedComponentsAnalysis implements IAnalysis {
      * @param hierarchy whether the whole hierarchy shall be processed
      * @return number of biconnected components
      */
-    public int findComponents(final KNode graph, final boolean hierarchy) {
+    public int findComponents(final ElkNode graph, final boolean hierarchy) {
         nextDfsnum = 1;
         int graphSize = graph.getChildren().size();
         lowpt = new int[graphSize + 1];
         parent = new int[graphSize + 1];
         int count = 0;
-        for (KNode node : graph.getChildren()) {
+        for (ElkNode node : graph.getChildren()) {
             if (dfsMap.get(node) == null) {
                 count += dfsVisit(node);
             }
@@ -86,7 +81,7 @@ public class BiconnectedComponentsAnalysis implements IAnalysis {
         
         // find components in the nested subgraphs
         if (hierarchy) {
-            for (KNode node : graph.getChildren()) {
+            for (ElkNode node : graph.getChildren()) {
                 if (!node.getChildren().isEmpty()) {
                     count += findComponents(node, true);
                 }
@@ -101,15 +96,18 @@ public class BiconnectedComponentsAnalysis implements IAnalysis {
      * @param node node to visit
      * @param the number of biconnected components that were found
      */
-    private int dfsVisit(final KNode node) {
+    private int dfsVisit(final ElkNode node) {
         int dfsNum = nextDfsnum++;
         dfsMap.put(node, dfsNum);
         lowpt[dfsNum] = dfsNum;
         int count = 0;
         
         // follow the outgoing and incoming edges
-        for (KEdge edge : Iterables.concat(node.getOutgoingEdges(), node.getIncomingEdges())) {
-            KNode endpoint = edge.getSource() == node ? edge.getTarget() : edge.getSource();
+        for (ElkEdge edge : Iterables.concat(node.getOutgoingEdges(), node.getIncomingEdges())) {
+            ElkNode sourceNode = ElkGraphUtil.connectableShapeToNode(edge.getSources().get(0));
+            ElkNode targetNode = ElkGraphUtil.connectableShapeToNode(edge.getTargets().get(0));
+            ElkNode endpoint = sourceNode == node ? targetNode : sourceNode;
+            
             if (endpoint.getParent() == node.getParent()) {
                 Integer endpointNum = dfsMap.get(endpoint);
                 if (endpointNum == null) {

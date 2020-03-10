@@ -17,13 +17,13 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KPoint;
 import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkBendPoint;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkNode;
 
 import com.google.common.collect.Lists;
 
@@ -32,8 +32,6 @@ import de.cau.cs.kieler.grana.IAnalysis;
 
 /**
  * Analysis the length of spline edges.
- * 
- * @author ybl
  */
 public class SplineLengthAnalysis implements IAnalysis {
 
@@ -44,10 +42,8 @@ public class SplineLengthAnalysis implements IAnalysis {
     /** How many coordinates make up one segment of a spline edge. */
     private static final int ARRAY_SIZE = 4;
 
-    /**
-     * {@inheritDoc}
-     */
-    public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
+    @Override
+    public Object doAnalysis(final ElkNode parentNode, final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
         
         progressMonitor.begin("Edge length analysis", 1);
@@ -58,14 +54,14 @@ public class SplineLengthAnalysis implements IAnalysis {
         double maxEdgeLength = Double.MIN_VALUE;
         List<Double> edgeLengths = Lists.newLinkedList();
 
-        LinkedList<KNode> nodeQueue = new LinkedList<KNode>();
+        LinkedList<ElkNode> nodeQueue = new LinkedList<ElkNode>();
         nodeQueue.addAll(parentNode.getChildren());
 
         while (!nodeQueue.isEmpty()) {
-            KNode node = nodeQueue.pop();
+            ElkNode node = nodeQueue.pop();
 
             // compute edge length for all outgoing edges
-            for (KEdge edge : node.getOutgoingEdges()) {
+            for (ElkEdge edge : node.getContainedEdges()) {
                 double currEdgeLength = computeEdgeLength(edge);
                 
                 numberOfEdges++;
@@ -101,28 +97,31 @@ public class SplineLengthAnalysis implements IAnalysis {
      *            the edge
      * @return the length
      */
-    public static double computeEdgeLength(final KEdge edge) {
-        KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-
+    public static double computeEdgeLength(final ElkEdge edge) {
         KVector[] vectors = new KVector[ARRAY_SIZE];
+        
+        // we only accept single-section edges
+        if (edge.getSections().size() > 0) {
+            return 0;
+        }
+        
+        ElkEdgeSection section = edge.getSections().get(0);
 
         // startPoint
-        KVector helpVector = new KVector(
-                edgeLayout.getSourcePoint().getX(), edgeLayout.getSourcePoint().getY());
+        KVector helpVector = new KVector(section.getStartX(), section.getStartY());
         vectors[0] = helpVector;
 
         List<KVector[]> vectorList = new ArrayList<KVector[]>();
-        List<KPoint> points = edgeLayout.getBendPoints();
+        List<ElkBendPoint> points = section.getBendPoints();
 
-        // put each 5 Values into a seperate array
+        // put each 5 Values into a separate array
         for (int pointNum = 1; pointNum < points.size(); pointNum++) {
             if (pointNum % ARRAY_SIZE == 0) {
                 vectorList.add(vectors);
                 vectors = new KVector[ARRAY_SIZE];
                 vectors[pointNum % ARRAY_SIZE] = helpVector;
             } else {
-                helpVector = new KVector(
-                        points.get(pointNum - 1).getX(), points.get(pointNum - 1).getY());
+                helpVector = new KVector(points.get(pointNum - 1).getX(), points.get(pointNum - 1).getY());
                 vectors[pointNum % ARRAY_SIZE] = helpVector;
             }
         }
@@ -145,8 +144,7 @@ public class SplineLengthAnalysis implements IAnalysis {
                 newVector[i] = vectors[i];
             }
             // endPoint
-            helpVector = new KVector(
-                    edgeLayout.getTargetPoint().getX(), edgeLayout.getTargetPoint().getY());
+            helpVector = new KVector(section.getEndX(), section.getEndY());
             vectors[index + 1] = helpVector;
         }
 

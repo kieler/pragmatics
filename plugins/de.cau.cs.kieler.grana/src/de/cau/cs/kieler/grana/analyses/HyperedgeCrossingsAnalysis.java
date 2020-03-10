@@ -21,8 +21,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.UnsupportedGraphException;
 import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
@@ -30,9 +29,9 @@ import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -49,21 +48,17 @@ import de.cau.cs.kieler.grana.IAnalysis;
  * belonging to the same hyperedge. Crossings between edges that belong to the same hyperedge are
  * not counted by this analysis.</p>
  * 
- * @author msp
- * @author cds
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow 2012-07-10 msp
+ * <p>This doesn't work on real hyperedges and multi-section edges yet.</p>
  */
 public class HyperedgeCrossingsAnalysis implements IAnalysis {
     
     /** tolerance for double equality. */
     private static final double TOLERANCE = 1e-4;
     
-    /**
-     * {@inheritDoc}
-     */
-    public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
+    @Override
+    public Object doAnalysis(final ElkNode parentNode, final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
+        
         progressMonitor.begin("Hyperedge crossings analysis", 1);
         
         // Collect all hyperedge segments, merge them and count crossings
@@ -89,45 +84,45 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
      * @param parentNode the parent node of the graph
      * @return the collected hyperedges
      */
-    private Hyperedge[] collectHyperedges(final KNode parentNode) {
-        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
-                AnalysisOptions.ANALYZE_HIERARCHY);
+    private Hyperedge[] collectHyperedges(final ElkNode parentNode) {
+        boolean hierarchy = parentNode.getProperty(AnalysisOptions.ANALYZE_HIERARCHY);
         
         // collect all edges and translate their coordinates to absolute
-        LinkedList<KNode> nodeQueue = new LinkedList<KNode>();
-        List<KVectorChain> chains = new ArrayList<KVectorChain>();
+        LinkedList<ElkNode> nodeQueue = new LinkedList<>();
+        List<KVectorChain> chains = new ArrayList<>();
         Set<Hyperedge> hyperedges = Sets.newHashSet();
-        Map<KPort, Hyperedge> port2HyperedgeMap = Maps.newHashMap();
-        nodeQueue.addAll(parentNode.getChildren());
+        Map<ElkPort, Hyperedge> port2HyperedgeMap = Maps.newHashMap();
+        
+        nodeQueue.add(parentNode);
         while (!nodeQueue.isEmpty()) {
             // poll the first element
-            KNode node = nodeQueue.poll();
+            ElkNode node = nodeQueue.poll();
             
-            // collect the outgoing edges
-            for (KEdge edge : node.getOutgoingEdges()) {
-                if (!hierarchy && edge.getTarget().getParent() != parentNode) {
+            // collect the edges
+            for (ElkEdge edge : node.getContainedEdges()) {
+                if (edge.isHyperedge()) {
+                    throw new UnsupportedGraphException("No true hyperedges supported yet.");
+                } else if (edge.getSections().size() != 1) {
+                    throw new UnsupportedGraphException("Only single-section edges supported.");
+                } else if (!(edge.getSources().get(0) instanceof ElkPort && edge.getTargets().get(0) instanceof ElkPort)) {
+                    throw new UnsupportedGraphException("Only edges connected to ports .");
+                } else if (!hierarchy && edge.isHierarchical()) {
                     continue;
                 }
-                KVectorChain chain = edge.getData(KEdgeLayout.class).createVectorChain();
+                
+                KVectorChain chain = ElkUtil.createVectorChain(edge.getSections().get(0));
                 
                 // translate the bend point coordinates to absolute
-                KNode parent = node;
-                if (!ElkUtil.isDescendant(edge.getTarget(), parent)) {
-                    parent = node.getParent();
-                }
-                KVector referencePoint = new KVector();
-                ElkUtil.toAbsolute(referencePoint, parent);
-                chain.offset(referencePoint);
+                chain.offset(ElkUtil.absolutePosition(node));
                 
                 // transform spline control points to approximated bend points
-                if (edge.getData(KEdgeLayout.class).getProperty(CoreOptions.EDGE_ROUTING)
-                        == EdgeRouting.SPLINES) {
+                if (edge.getProperty(CoreOptions.EDGE_ROUTING) == EdgeRouting.SPLINES) {
                     chain = ElkMath.approximateBezierSpline(chain);
                 }
                 
                 chains.add(chain);
-                KPort sourcePort = edge.getSourcePort();
-                KPort targetPort = edge.getTargetPort();
+                ElkPort sourcePort = (ElkPort) edge.getSources().get(0);
+                ElkPort targetPort = (ElkPort) edge.getTargets().get(0);
                 Hyperedge sourceHE = port2HyperedgeMap.get(sourcePort);
                 Hyperedge targetHE = port2HyperedgeMap.get(targetPort);
                 if (sourceHE == null && targetHE == null) {
@@ -151,7 +146,7 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
                 } else {
                     sourceHE.chains.add(chain);
                     hyperedges.remove(targetHE);
-                    for (KPort p : targetHE.ports) {
+                    for (ElkPort p : targetHE.ports) {
                         port2HyperedgeMap.put(p, sourceHE);
                     }
                     sourceHE.chains.addAll(targetHE.chains);
@@ -344,15 +339,12 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
      */
     private static class Hyperedge {
         /** the edges that are part of this hyperedge, represented by vector chains. */
-        private final List<KVectorChain> chains = Lists.newLinkedList();
+        private final List<KVectorChain> chains = Lists.newArrayList();
         /** the ports to which the edges of this hyperedge are connected. */
-        private final List<KPort> ports = Lists.newLinkedList();
+        private final List<ElkPort> ports = Lists.newArrayList();
         /** the line segments derived from the vector chains. */
-        private final List<Line> segments = Lists.newLinkedList();
+        private final List<Line> segments = Lists.newArrayList();
         
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return "Chains: " + chains.toString() + ", Ports: " + ports.toString();
@@ -378,9 +370,6 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
             super(x1, y1, x2, y2);
         }
         
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return "(" + x1 + "," + y1 + ")->(" + x2 + "," + y2 + ")";

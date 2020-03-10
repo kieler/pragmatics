@@ -13,67 +13,63 @@
  */
 package de.cau.cs.kieler.grana.analyses;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KPoint;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.math.ElkMath;
+import org.eclipse.elk.core.math.ElkRectangle;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.math.KVectorChain;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import de.cau.cs.kieler.grana.AnalysisContext;
 import de.cau.cs.kieler.grana.AnalysisOptions;
 import de.cau.cs.kieler.grana.IAnalysis;
 
 /**
- * A graph analysis that computes the number of edge-node overlaps. It assumes
- * that the edge bend points describe polylines (splines are not supported).<br/>
+ * A graph analysis that computes the number of edge-node overlaps. It assumes that the edge bend
+ * points describe polylines (splines are not supported).<br/>
  * The algorithm used is based on the Cohen-Sutherland algorithm.
- * 
- * @author mri
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class NodeEdgeOverlapsAnalysis implements IAnalysis {
-    
+
     /**
      * Identifier of the node-edge overlaps analysis.
      */
     public static final String ID = "de.cau.cs.kieler.grana.nodeEdgeOverlaps";
 
-    /**
-     * Returns whether two line segments have an intersection.
-     * 
-     * @param p1
-     *            start point of the first line segment
-     * @param p2
-     *            end point of the first line segment
-     * @param x1
-     *            the x-coordinate of the start point of the second line segment
-     * @param y1
-     *            the y-coordinate of the start point of the second line segment
-     * @param x2
-     *            the x-coordinate of the end point of the second line segment
-     * @param y2
-     *            the y-coordinate of the end point of the second line segment
-     * @return true if the line segments intersect else false
-     */
-    private static boolean hasIntersection(final KPoint p1, final KPoint p2,
-            final float x1, final float y1, final float x2, final float y2) {
-        float s = (y2 - y1) * (p2.getX() - p1.getX()) - (x2 - x1) * (p2.getY() - p1.getY());
-        // are the line segments parallel?
-        if (s == 0) {
-            return false;
+    @Override
+    public Object doAnalysis(final ElkNode parentNode, final AnalysisContext context,
+            final IElkProgressMonitor progressMonitor) {
+
+        progressMonitor.begin("Node Crossings analysis", 1);
+
+        boolean hierarchy = parentNode.getProperty(AnalysisOptions.ANALYZE_HIERARCHY);
+
+        int overlaps = 0;
+        LinkedList<ElkNode> nodeQueue = new LinkedList<ElkNode>();
+        nodeQueue.add(parentNode);
+        while (nodeQueue.size() > 0) {
+            // get first element
+            ElkNode node = nodeQueue.pop();
+            // compute intersections of all edge segments with all nodes on the same hierarchy
+            for (ElkNode child : node.getChildren()) {
+                overlaps += computeNumberOfOverlaps(child, node.getContainedEdges());
+            }
+
+            if (hierarchy) {
+                nodeQueue.addAll(node.getChildren());
+            }
         }
-        float a1 = (x2 - x1) * (p1.getY() - y1) - (y2 - y1) * (p1.getX() - x1);
-        float a2 = (p2.getX() - p1.getX()) * (p1.getY() - y1)
-                - (p2.getY() - p1.getY()) * (p1.getX() - x1);
-        float t1 = a1 / s;
-        float t2 = a2 / s;
-        // the line segments intersect when t1 and t2 lie in the interval (0,1)
-        return 0 < t1 && t1 < 1 && 0 < t2 && t2 < 1;
+
+        progressMonitor.done();
+        return overlaps;
     }
 
     /** outcode constants. */
@@ -83,9 +79,8 @@ public class NodeEdgeOverlapsAnalysis implements IAnalysis {
     private static final int TOP = 8;
 
     /**
-     * Compute the outcode for the point and rectangle that is the node's bounding box.
-     * The outcode belongs to the Cohen-Sutherland algorithm and is shown in the
-     * following illustration:<br>
+     * Compute the outcode for the point and rectangle that is the node's bounding box. The outcode
+     * belongs to the Cohen-Sutherland algorithm and is shown in the following illustration:<br>
      * <br>
      * <code>
      * 1001|1000|1010<br>
@@ -102,42 +97,20 @@ public class NodeEdgeOverlapsAnalysis implements IAnalysis {
      *            the node
      * @return the outcode
      */
-    private static int computeOutCode(final KPoint point, final KNode node) {
-        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+    private static int computeOutCode(final KVector point, final ElkNode node) {
         int code = 0;
-        if (point.getY() > nodeLayout.getYpos() + nodeLayout.getHeight()) {
+        if (point.y > node.getY() + node.getHeight()) {
             code |= BOTTOM;
-        } else if (point.getY() < nodeLayout.getYpos()) {
+        } else if (point.y < node.getY()) {
             code |= TOP;
         }
-        if (point.getX() > nodeLayout.getXpos() + nodeLayout.getWidth()) {
+
+        if (point.x > node.getX() + node.getWidth()) {
             code |= RIGHT;
-        } else if (point.getX() < nodeLayout.getXpos()) {
+        } else if (point.x < node.getX()) {
             code |= LEFT;
         }
         return code;
-    }
-
-    /**
-     * Computes the opposite outcode.
-     * 
-     * @param outcode
-     *            the outcode
-     * @return the opposite outcode
-     */
-    private static int computeOppositeOutCode(final int outcode) {
-        int oppOutcode = 0;
-        if ((outcode & LEFT) > 0) {
-            oppOutcode |= RIGHT;
-        } else if ((outcode & RIGHT) > 0) {
-            oppOutcode |= LEFT;
-        }
-        if ((outcode & TOP) > 0) {
-            oppOutcode |= BOTTOM;
-        } else if ((outcode & BOTTOM) > 0) {
-            oppOutcode |= TOP;
-        }
-        return oppOutcode;
     }
 
     /**
@@ -153,119 +126,66 @@ public class NodeEdgeOverlapsAnalysis implements IAnalysis {
      *            whether the line segment is connected to the given node
      * @return true if the line segment intersects the nodes bounding box
      */
-    private static boolean hasIntersection(final KPoint p1, final KPoint p2,
-            final KNode node, final boolean belongsToNode) {
-        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-        float xpos = nodeLayout.getXpos();
-        float ypos = nodeLayout.getYpos();
-        float width = nodeLayout.getWidth();
-        float height = nodeLayout.getHeight();
+    private static boolean hasIntersection(final KVector p1, final KVector p2, final ElkNode node,
+            final boolean belongsToNode) {
+
         int p1OutCode = computeOutCode(p1, node);
         int p2OutCode = computeOutCode(p2, node);
 
         if (p1OutCode == 0 || p2OutCode == 0) {
             // the line segment has start- or endpoint inside the rectangle
             return !belongsToNode;
+
         } else if ((p1OutCode & p2OutCode) > 0) {
             // the line segment lies on one side of the rectangle
             return false;
-        } else if (p1OutCode == computeOppositeOutCode(p2OutCode)) {
-            // the points of the line segment lie on opposite sides
-            if ((p1OutCode & LEFT) != 0
-                    && hasIntersection(p1, p2, xpos, ypos, xpos, ypos + height)) {
-                return true;
-            }
-            if ((p1OutCode & RIGHT) != 0
-                    && hasIntersection(p1, p2, xpos + width, ypos, xpos + width, ypos + height)) {
-                return true;
-            }
-            if ((p1OutCode & TOP) != 0
-                    && hasIntersection(p1, p2, xpos, ypos, xpos + width, ypos)) {
-                return true;
-            }
-            if ((p1OutCode & BOTTOM) != 0
-                    && hasIntersection(p1, p2, xpos, ypos + height, xpos + width, ypos + height)) {
-                return true;
-            }
-            return false;
+
         } else {
-            // take the outcode of a point that is not in a corner
-            int outcode = p1OutCode != TOP && p1OutCode > BOTTOM ? p2OutCode : p1OutCode;
-            if (outcode == LEFT) {
-                return hasIntersection(p1, p2, xpos, ypos, xpos, ypos + height);
-            } else if (outcode == RIGHT) {
-                return hasIntersection(p1, p2, xpos + width, ypos, xpos + width, ypos + height);
-            } else if (outcode == TOP) {
-                return hasIntersection(p1, p2, xpos, ypos, xpos + width, ypos);
-            } else if (outcode == BOTTOM) {
-                return hasIntersection(p1, p2, xpos, ypos + height, xpos + width, ypos + height);
-            }
-            // control should never reach this point
-            throw new IllegalStateException();
+            ElkRectangle nodeRect = new ElkRectangle(node.getX(), node.getY(), node.getWidth(), node.getHeight());
+            return ElkMath.intersects(nodeRect, p1, p2);
         }
     }
 
     /**
-     * Computes the number of overlaps between the second node and edges from the first node.
+     * Computes the number of overlaps between the given edges and the node.
      * 
-     * @param node1
-     *            the first node
-     * @param node2
-     *            the second node
+     * @param node
+     *            the node
+     * @param edges
+     *            the set of edges
      * @return the number of overlaps
      */
-    private int computeNumberOfOverlaps(final KNode node1, final KNode node2) {
+    private int computeNumberOfOverlaps(final ElkNode node, final List<ElkEdge> edges) {
         int overlaps = 0;
-        edgeLoop: for (KEdge edge : node1.getOutgoingEdges()) {
-            KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-            KPoint p1 = edgeLayout.getSourcePoint();
-            for (KPoint p2 : edgeLayout.getBendPoints()) {
-                if (hasIntersection(p1, p2, node2,
-                        p1 == edgeLayout.getSourcePoint() && node1 == node2)) {
-                    ++overlaps;
-                    continue edgeLoop;
+        for (ElkEdge edge : edges) {
+            sectionLoop: for (ElkEdgeSection section : edge.getSections()) {
+                // Find out whether this section connects to our node
+                boolean connectsToNode = false;
+                if (section.getIncomingShape() != null) {
+                    connectsToNode |= ElkGraphUtil.connectableShapeToNode(section.getIncomingShape()) == node;
                 }
-                p1 = p2;
-            }
-            KPoint p2 = edgeLayout.getTargetPoint();
-            if (hasIntersection(p1, p2, node2, edge.getTarget() == node2
-                    || p1 == edgeLayout.getSourcePoint() && node1 == node2)) {
-                ++overlaps;
-            }
-        }
-        return overlaps;
-    }
 
-    /**
-     * {@inheritDoc}
-     */
-    public Object doAnalysis(final KNode parentNode,
-            final AnalysisContext context,
-            final IElkProgressMonitor progressMonitor) {
-        progressMonitor.begin("Node Crossings analysis", 1);
-        
-        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
-                AnalysisOptions.ANALYZE_HIERARCHY);
-        
-        int overlaps = 0;
-        List<KNode> nodeQueue = new LinkedList<KNode>();
-        nodeQueue.add(parentNode);
-        while (nodeQueue.size() > 0) {
-            // get first element
-            KNode node = nodeQueue.remove(0);
-            // compute intersections of all edge segments with all nodes on the same hierarchy
-            for (KNode node1 : node.getChildren()) {
-                for (KNode node2 : node.getChildren()) {
-                    // count overlaps between the second node and edges of the first node
-                    overlaps += computeNumberOfOverlaps(node1, node2);
+                if (section.getOutgoingShape() != null) {
+                    connectsToNode |= ElkGraphUtil.connectableShapeToNode(section.getOutgoingShape()) == node;
+                }
+
+                // Walk the vector chain
+                KVectorChain chain = ElkUtil.createVectorChain(section);
+                Iterator<KVector> iter = chain.iterator();
+                KVector last = iter.next();
+
+                while (iter.hasNext()) {
+                    KVector next = iter.next();
+
+                    if (hasIntersection(last, next, node, connectsToNode)) {
+                        ++overlaps;
+                        continue sectionLoop;
+                    }
+
+                    last = next;
                 }
             }
-            if (hierarchy) {
-                nodeQueue.addAll(node.getChildren());
-            }
         }
-
-        progressMonitor.done();
         return overlaps;
     }
 }
