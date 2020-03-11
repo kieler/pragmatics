@@ -23,7 +23,6 @@
     <!-- these tests require files from the models repository -->
     <!-- module>de.cau.cs.kieler.klay.codaflow.test</module -->
     <!-- <module>de.cau.cs.kieler.grana.test</module> -->
-    <!-- <module>de.cau.cs.kieler.klay.layered.test</module> -->
     <!-- <module>de.cau.cs.kieler.klay.test</module> -->
     <module>de.cau.cs.kieler.pragmatics.test.common</module>
   </modules>
