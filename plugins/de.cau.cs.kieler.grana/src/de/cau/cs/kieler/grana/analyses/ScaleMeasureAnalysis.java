@@ -67,6 +67,6 @@ public class ScaleMeasureAnalysis implements IAnalysis {
         double dar = parentNode.getProperty(CoreOptions.ASPECT_RATIO);
         
         
-        return new Object[] {dar, Math.min(1d / width, (1d / dar) / height)};
+        return new Object[] {dar, Math.min(dar / width, 1d / height)};
     }
 }

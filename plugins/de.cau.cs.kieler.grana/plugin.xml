@@ -859,7 +859,7 @@
                weak="false">
          </dependency>
          <component
-               name="Linear">
+               name="DAR">
          </component>
          <component
                name="Scale Measure">
