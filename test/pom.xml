@@ -7,7 +7,6 @@
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-
   <parent>
     <groupId>de.cau.cs.kieler</groupId>
     <artifactId>parent</artifactId>
@@ -15,16 +14,8 @@
     <relativePath>../build/pom.xml</relativePath>
   </parent>
 
-
   <!-- all plugins need to be listed as module -->
   <modules>
-    <module>de.cau.cs.kieler.core.test</module>
-
-    <!-- these tests require files from the models repository -->
-    <!-- module>de.cau.cs.kieler.klay.codaflow.test</module -->
-    <!-- <module>de.cau.cs.kieler.grana.test</module> -->
-    <!-- <module>de.cau.cs.kieler.klay.test</module> -->
-    <module>de.cau.cs.kieler.pragmatics.test.common</module>
   </modules>
 
 </project>
