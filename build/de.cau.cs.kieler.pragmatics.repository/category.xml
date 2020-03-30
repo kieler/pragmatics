@@ -43,4 +43,6 @@
       <category name="kieler-sources"/>
    </feature>
 
+   <repository-reference location="https://kieler.github.io/KLighD/v1.1.0/" enabled="true" />
+
 </site>
