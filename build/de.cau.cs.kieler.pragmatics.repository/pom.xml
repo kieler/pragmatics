@@ -18,7 +18,7 @@
   <properties>
     <update.site.name>KIELER Pragmatics</update.site.name>
     <update.site.description>Release</update.site.description>
-    <update.site.version>2020-02</update.site.version>
+    <update.site.version>2020-03</update.site.version>
     <target.eclipse.version>2019-12</target.eclipse.version>
   </properties>
 
@@ -50,7 +50,7 @@
                 <!-- Xtext repository for new versions -->
                 <associateSite>http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/</associateSite>
                 <!-- KLighD -->
-                <associateSite>https://openkieler.github.io/KLighD/v1.0.0/</associateSite>
+                <associateSite>https://openkieler.github.io/KLighD/v1.1.0/</associateSite>
               </associateSites>
               <siteTemplateFolder>siteTemplate</siteTemplateFolder>
               <symbols>
