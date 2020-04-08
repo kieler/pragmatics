@@ -86,14 +86,14 @@ class KGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<KNode> {
      * Synthesis option specifying whether default values should be used. Default values are, eg, node
      * size if not specified and port ids as labels if no labels exist.
      */
-    private static val SynthesisOption DEFAULTS = SynthesisOption::createChoiceOption("Default Values",
+    private static val SynthesisOption DEFAULTS = SynthesisOption::createChoiceOption("kgraph.defaults", "Default Values",
         ImmutableList::of(DEFAULTS_AS_IN_MODEL, DEFAULTS_ON, DEFAULTS_OFF), DEFAULTS_AS_IN_MODEL)
 
     /**
      * Synthesis option to allow edge adjustment by default
      */
     private static val SynthesisOption SUPPRESSEDGEADJUSTMENT = SynthesisOption::createCheckOption(
-        "Suppress Edge Adjustement", true)
+        "kgraph.supressEdgeAdjustment", "Suppress Edge Adjustement", true)
 
     /**
      * {@inheritDoc} 

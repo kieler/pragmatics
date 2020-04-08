@@ -69,6 +69,7 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
     private static val STYLE_SPONGEBOB = "Spongebob";
     /** The style to be used when drawing the KGraphs. */
     private static val SynthesisOption STYLE = SynthesisOption::createChoiceOption(
+        "abstractStyled.style",
         "Style",
         ImmutableList::of(STYLE_BORING, STYLE_STYLISH, STYLE_HELLO_KITTY, STYLE_SPONGEBOB),
         STYLE_STYLISH);
@@ -78,6 +79,7 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
     private static val LABELS_SOFT_WORD_WRAP = "Soft Word Wrapping";
     private static val LABELS_FULL = "Full Labels";
     private static val SynthesisOption LABEL_SHORTENING_STRATEGY = SynthesisOption.createChoiceOption(
+        "abstractStyled.labelShorteningStrategy",
         "Label Shortening Strategy",
         ImmutableList::of(LABELS_NO_LABELS, LABELS_TRUNCATE, LABELS_SOFT_WORD_WRAP, LABELS_FULL),
         LABELS_FULL);

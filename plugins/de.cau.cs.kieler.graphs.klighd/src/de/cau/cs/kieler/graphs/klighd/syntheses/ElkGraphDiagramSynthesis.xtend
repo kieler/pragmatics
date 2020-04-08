@@ -52,14 +52,14 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
     /* Synthesis options specifying whether several default values should be used or not. Default values are, eg, node
      * size if not specified and port ids as labels if no labels exist.
      */
-    public static val SynthesisOption DEFAULT_NODE_SIZES = SynthesisOption.createCheckOption("Node Sizes", false)
-    public static val SynthesisOption DEFAULT_NODE_LABELS = SynthesisOption.createCheckOption("Node Labels", false)
-    public static val SynthesisOption DEFAULT_PORT_SIZES = SynthesisOption.createCheckOption("Port Sizes", false)
-    public static val SynthesisOption DEFAULT_PORT_LABELS = SynthesisOption.createCheckOption("Port Labels", false)
-    public static val SynthesisOption DEFAULT_EDGE_DIRECTIONS = SynthesisOption.createCheckOption("Edge Directions", true)
+    public static val SynthesisOption DEFAULT_NODE_SIZES = SynthesisOption.createCheckOption("elk.defaultNodeSize", "Node Sizes", false)
+    public static val SynthesisOption DEFAULT_NODE_LABELS = SynthesisOption.createCheckOption("elk.defaultNodeLabels", "Node Labels", false)
+    public static val SynthesisOption DEFAULT_PORT_SIZES = SynthesisOption.createCheckOption("elk.defaultPortSize", "Port Sizes", false)
+    public static val SynthesisOption DEFAULT_PORT_LABELS = SynthesisOption.createCheckOption("elk.defaultPortLabels", "Port Labels", false)
+    public static val SynthesisOption DEFAULT_EDGE_DIRECTIONS = SynthesisOption.createCheckOption("elk.defaultEdgeDirections", "Edge Directions", true)
     
     // An advanced category for... well... advanced options and experimental things
-    public static val SynthesisOption LABEL_DECORATIONS_CATEGORY = SynthesisOption.createCategory("Edge Labels", false);
+    public static val SynthesisOption LABEL_DECORATIONS_CATEGORY = SynthesisOption.createCategory("elk.labelDecorationsCategory", "Edge Labels", false);
     
     public static val LABEL_DECORATIONS_SIMPLE = "Simple";
     public static val LABEL_DECORATIONS_LINES = "Lines";
@@ -68,6 +68,7 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
     public static val SynthesisOption LABEL_DECORATIONS = {
         // We're using a block expression here because we need to set the category on the option
         val option = SynthesisOption.createChoiceOption(
+            "elk.labelDecorations",
             "Label Decorations",
             ImmutableList::of(LABEL_DECORATIONS_SIMPLE, LABEL_DECORATIONS_LINES, LABEL_DECORATIONS_BRACKETS,
                               LABEL_DECORATIONS_RECTS),
@@ -82,6 +83,7 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
     public static val SynthesisOption COLOR_MODE = {
         // We're using a block expression here because we need to set the category on the option
         val option = SynthesisOption.createChoiceOption(
+            "elk.colorMode",
             "Color Mode",
             ImmutableList::of(COLOR_MODE_SOLID, COLOR_MODE_TRANSLUCENT, COLOR_MODE_BAD_DESIGN),
             COLOR_MODE_TRANSLUCENT);
@@ -90,13 +92,13 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
     };
     
     public static val SynthesisOption INLINE_LABELS = {
-        val option = SynthesisOption.createCheckOption("Inline Labels", false);
+        val option = SynthesisOption.createCheckOption("elk.inlineLabels", "Inline Labels", false);
         option.category = LABEL_DECORATIONS_CATEGORY;
         option;
     };
     
     public static val SynthesisOption DIRECTIONAL_DECORATORS = {
-        val option = SynthesisOption.createCheckOption("Direction Hints", false);
+        val option = SynthesisOption.createCheckOption("elk.directionalDecorators", "Direction Hints", false);
         option.category = LABEL_DECORATIONS_CATEGORY;
         option;
     };
