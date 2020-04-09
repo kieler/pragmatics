@@ -129,7 +129,10 @@ final class GranaTextToBatchJob {
         monitor.begin("Initializing jobs ...", 1)
         
         // collect requested analyses
-        val analyses = job.analyses.map[AnalysisService.instance.getAnalysis(it.name)]
+        val analyses = job.analyses
+            .map[AnalysisService.instance.getAnalysis(it.name)]
+            .filter[it !== null]
+            .toList
         
         // the 'batch' is merely the container that holds the actual jobs.
         // The actual jobs know how to execute themselves
