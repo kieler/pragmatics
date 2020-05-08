@@ -848,6 +848,23 @@
                name="relative_rotation">
          </component>
       </analysis>
+      <analysis
+            category="de.cau.cs.kieler.grana.drawing"
+            class="de.cau.cs.kieler.grana.analyses.ScaleMeasureAnalysis"
+            description="The area a graph drawing occupies."
+            id="de.cau.cs.kieler.grana.scalemeasure"
+            name="Scale Measure">
+         <dependency
+               analysis="de.cau.cs.kieler.grana.area"
+               weak="false">
+         </dependency>
+         <component
+               name="Linear">
+         </component>
+         <component
+               name="Scale Measure">
+         </component>
+      </analysis>
    </extension>
 
 </plugin>
