@@ -12,6 +12,7 @@
  */
 package de.cau.cs.kieler.config.text.ide.contentassist
 
+import org.eclipse.elk.core.data.LayoutOptionData
 import org.eclipse.elk.graph.ElkNode
 import org.eclipse.elk.graph.text.ide.contentassist.ElkGraphProposalProvider
 import org.eclipse.xtext.ide.editor.contentassist.ContentAssistContext
@@ -25,7 +26,12 @@ class LayoutConfigProposalProvider extends ElkGraphProposalProvider {
     override protected completePropertyKey(ContentAssistContext context, IIdeContentProposalAcceptor acceptor) {
         val model = context.currentModel
         switch model {
-            ElkNode: proposeProperties(model, null /* any layout alg */, null /* any target */, context, acceptor)
+            ElkNode: proposeProperties(
+                model,
+                null /* any layout alg */,
+                null as LayoutOptionData.Target /* any target */,
+                context,
+                acceptor)
         } 
     }
     

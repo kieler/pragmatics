@@ -48,8 +48,18 @@ class GranaIdeProposalProvider extends ElkGraphProposalProvider {
     override protected completePropertyKey(ContentAssistContext context, IIdeContentProposalAcceptor acceptor) {
         var model = context.currentModel
         switch model {
-            ElkNode: proposeProperties(model, null /* any layout alg */, null /* any target */, context, acceptor)
-            Job: proposeProperties(null /* any element */, null /* any layout alg */, null /* any target */, context, acceptor)
+            ElkNode: proposeProperties(
+                model,
+                null /* any layout alg */,
+                null as LayoutOptionData.Target /* any target */,
+                context,
+                acceptor)
+            Job: proposeProperties(
+                null /* any element */,
+                null /* any layout alg */,
+                null as LayoutOptionData.Target /* any target */,
+                context,
+                acceptor)
         } 
     }
     
