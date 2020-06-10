@@ -35,7 +35,7 @@ public class GraphsPlugin extends AbstractUIPlugin {
     /**
      * The plug-in ID.
      */
-    public static final String PLUGIN_ID = "de.cau.cs.kieler.graphs.klighd"; //$NON-NLS-1$
+    public static final String PLUGIN_ID = "de.cau.cs.kieler.graphs.klighd.ui"; //$NON-NLS-1$
 
     // The shared instance
     private static GraphsPlugin plugin;

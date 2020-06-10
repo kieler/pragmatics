@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: KIELER Diagram Syntheses For Graphs 
+Bundle-Name: KIELER Diagram for General Graphs
 Bundle-SymbolicName: de.cau.cs.kieler.graphs.klighd.ui;singleton:=true
 Bundle-Version: 0.47.0.qualifier
 Bundle-Activator: de.cau.cs.kieler.graphs.klighd.ui.GraphsPlugin

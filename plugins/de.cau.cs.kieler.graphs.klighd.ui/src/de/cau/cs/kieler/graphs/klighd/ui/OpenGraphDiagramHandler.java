@@ -40,7 +40,7 @@ public class OpenGraphDiagramHandler extends AbstractHandler {
     /**
      * This plugin's id.
      */
-    public static final String PLUGIN_ID = "de.cau.cs.kieler.graphs.klighd";
+    public static final String PLUGIN_ID = "de.cau.cs.kieler.graphs.klighd.ui";
 
     /**
      * {@inheritDoc}
