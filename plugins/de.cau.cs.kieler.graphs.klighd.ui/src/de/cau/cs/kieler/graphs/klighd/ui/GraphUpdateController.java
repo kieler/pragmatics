@@ -10,7 +10,7 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  */
-package de.cau.cs.kieler.graphs.klighd;
+package de.cau.cs.kieler.graphs.klighd.ui;
 
 import java.io.IOException;
 
@@ -22,9 +22,9 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 
 import de.cau.cs.kieler.formats.GraphFormatsService;
+import de.cau.cs.kieler.klighd.ide.model.ErrorModel;
 import de.cau.cs.kieler.klighd.ui.view.controller.AbstractViewUpdateController;
 import de.cau.cs.kieler.klighd.ui.view.controllers.EditorSaveAdapter;
-import de.cau.cs.kieler.klighd.ui.view.model.ErrorModel;
 
 /**
  * {@link de.cau.cs.kieler.klighd.ui.view.DiagramView DiagramView} controller for opening general

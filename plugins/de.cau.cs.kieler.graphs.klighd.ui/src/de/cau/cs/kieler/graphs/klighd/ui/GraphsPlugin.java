@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.graphs.klighd;
+package de.cau.cs.kieler.graphs.klighd.ui;
 
 import org.eclipse.elk.core.util.Maybe;
 import org.eclipse.ui.IEditorPart;
@@ -35,7 +35,7 @@ public class GraphsPlugin extends AbstractUIPlugin {
     /**
      * The plug-in ID.
      */
-    public static final String PLUGIN_ID = "de.cau.cs.kieler.graphs.klighd"; //$NON-NLS-1$
+    public static final String PLUGIN_ID = "de.cau.cs.kieler.graphs.klighd.ui"; //$NON-NLS-1$
 
     // The shared instance
     private static GraphsPlugin plugin;
