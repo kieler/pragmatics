@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.klighd.ui.view.editor">
+      <editor
+            controllerID="de.cau.cs.kieler.klighd.ui.view.controllers.XtextChangeUpdateController"
+            editorID="de.cau.cs.kieler.kgraph.text.KGraph">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.cau.cs.kieler.graphs.klighd.ui.OpenGraphDiagramHandler"
+            id="de.cau.cs.kieler.graphs.klighd.graphDiagram"
+            name="Open General Graph Diagram">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.ui.popup.any?before=additions">
+         <command
+               commandId="de.cau.cs.kieler.graphs.klighd.graphDiagram"
+               label="Open General Graph Diagram"
+               style="push"
+               tooltip="Opens a generic visualization of the graph&apos;s structure.">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate>
+                  <or>
+                     <and>
+                        <instanceof
+                              value="org.eclipse.core.resources.IFile">
+                        </instanceof>
+                        <test
+                              property="de.cau.cs.kieler.graphs.klighd.graphFormatIsSupported">
+                        </test>
+                     </and>
+                  </or>
+               </iterate>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="de.cau.cs.kieler.graphs.klighd.ui.SupportedGraphFormatPropertyTester"
+            id="de.cau.cs.kieler.graphs.klighd.SupportedGraphFormatPropertyTester"
+            namespace="de.cau.cs.kieler.graphs.klighd"
+            properties="graphFormatIsSupported"
+            type="org.eclipse.core.resources.IFile">
+      </propertyTester>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.klighd.ui.view.editor">
+      <editor
+            editorID="org.eclipse.ui.DefaultTextEditor"
+            controllerID="de.cau.cs.kieler.klighd.ui.view.controllers.GraphUpdateController">
+      </editor>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.klighd.ui.view.controller">
+      <controller
+            class="de.cau.cs.kieler.graphs.klighd.ui.GraphUpdateController">
+      </controller>
+   </extension>
+
+</plugin>
