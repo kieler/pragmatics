@@ -17,6 +17,7 @@ import com.google.inject.Inject
 import de.cau.cs.kieler.formats.kgraph.KGraphExporter
 import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.klighd.SynthesisOption
+import de.cau.cs.kieler.klighd.ViewContext
 import de.cau.cs.kieler.klighd.actions.FocusAndContextAction
 import de.cau.cs.kieler.klighd.kgraph.KEdge
 import de.cau.cs.kieler.klighd.kgraph.KLabel
@@ -33,6 +34,12 @@ import de.cau.cs.kieler.klighd.labels.decoration.LabelDecorationConfigurator.Lay
 import de.cau.cs.kieler.klighd.labels.decoration.LinesDecorator
 import de.cau.cs.kieler.klighd.labels.decoration.RectangleDecorator
 import java.awt.Color
+import java.util.List
+import org.eclipse.elk.alg.layered.InteractiveLayeredGraphVisitor
+import org.eclipse.elk.alg.rectpacking.InteractiveRectPackingGraphVisitor
+import org.eclipse.elk.core.options.CoreOptions
+import org.eclipse.elk.core.service.util.CompoundGraphElementVisitor
+import org.eclipse.elk.core.util.IGraphElementVisitor
 import org.eclipse.elk.graph.ElkEdge
 import org.eclipse.elk.graph.ElkGraphElement
 import org.eclipse.elk.graph.ElkLabel
@@ -291,4 +298,14 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
         return rendering;
     }
     
+    public override List<? extends IGraphElementVisitor> getAdditionalLayoutConfigs(KNode viewModel) {
+        val List<IGraphElementVisitor> additionalLayoutRuns = newArrayList
+        // Add interactive Layout run.
+        if (viewModel.getProperty(CoreOptions.INTERACTIVE_LAYOUT)) {
+            additionalLayoutRuns.add(new CompoundGraphElementVisitor(
+                    new InteractiveRectPackingGraphVisitor(),
+                    new InteractiveLayeredGraphVisitor()));
+        }
+        return additionalLayoutRuns;
+    }
 }

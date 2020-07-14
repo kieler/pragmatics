@@ -18,7 +18,10 @@ Require-Bundle: org.eclipse.ui.ide;bundle-version="3.8.0",
  de.cau.cs.kieler.formats.gml,
  de.cau.cs.kieler.formats.kgraph,
  org.eclipse.core.expressions,
- org.eclipse.elk.core
+ org.eclipse.elk.core,
+ org.eclipse.elk.core.service,
+ org.eclipse.elk.alg.layered,
+ org.eclipse.elk.alg.rectpacking
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: de.cau.cs.kieler.graphs.klighd,
