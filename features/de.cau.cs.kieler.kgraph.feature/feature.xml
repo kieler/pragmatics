@@ -230,6 +230,8 @@ litigation.
 
    <plugin id="de.cau.cs.kieler.graphs.klighd" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
 
+   <plugin id="de.cau.cs.kieler.graphs.klighd.ui" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
+
    <plugin id="de.cau.cs.kieler.kiml.export" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
 
    <plugin id="de.cau.cs.kieler.formats.gml" download-size="0" install-size="0" version="0.0.0" unpack="false"/>

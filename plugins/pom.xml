@@ -20,6 +20,7 @@
     <module>../test</module>
     <module>de.cau.cs.kieler.formats.kgraph</module>
     <module>de.cau.cs.kieler.graphs.klighd</module>
+    <module>de.cau.cs.kieler.graphs.klighd.ui</module>
     <module>de.cau.cs.kieler.kiml.export</module>
     <module>de.cau.cs.kieler.formats</module>
     <module>de.cau.cs.kieler.formats.dot</module>
