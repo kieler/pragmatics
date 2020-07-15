@@ -50,7 +50,7 @@ class GraphCleaner {
         PORT_LABELS_PLACEMENT,
         POSITION,
         
-        LayeredOptions.NORTH_OR_SOUTH_PORT
+        LayeredOptions.ALLOW_NON_FLOW_PORTS_TO_SWITCH_SIDES
     )
     
     val Set<IProperty<?>> WHITELIST_LABEL = newHashSet(
