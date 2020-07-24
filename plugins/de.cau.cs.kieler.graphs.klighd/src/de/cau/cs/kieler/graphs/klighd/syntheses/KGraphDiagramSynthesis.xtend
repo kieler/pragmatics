@@ -232,11 +232,6 @@ class KGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<KNode> {
     protected def override void enrichEdgeRendering(KEdge edge) {
         // We always want a rendering for edges, apparently
         super.enrichEdgeRendering(edge);
-
-        // If defaults are switched off, don't bother
-        if (defaultsEnabled()) {
-            KGraphUtil.configureWithDefaultValues(edge);
-        }
     }
 
 
