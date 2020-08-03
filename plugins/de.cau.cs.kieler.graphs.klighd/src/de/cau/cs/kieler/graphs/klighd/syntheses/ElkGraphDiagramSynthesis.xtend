@@ -211,7 +211,6 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
      */
     protected def override void enrichEdgeRendering(KEdge edge) {
         super.enrichEdgeRendering(edge, DEFAULT_EDGE_DIRECTIONS.booleanValue);
-        KGraphUtil.configureWithDefaultValues(edge);
     }
     
     /**
