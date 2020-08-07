@@ -157,8 +157,7 @@ public class EdgeLabelCenterednessAnalysis implements IAnalysis {
     private ElkLabel findCenterLabel(final ElkEdge edge) {
         for (ElkLabel label : edge.getLabels()) {
             EdgeLabelPlacement placement = label.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
-            if (placement == EdgeLabelPlacement.UNDEFINED
-                    || placement == EdgeLabelPlacement.CENTER) {
+            if (placement == EdgeLabelPlacement.CENTER) {
                 
                 return label;
             }
