@@ -43,7 +43,7 @@
       <category name="kieler-sources"/>
    </feature>
 
-   <bundle id="de.cau.cs.pragmatics.language.server" version="0.47.0.qualifier"/>
+   <bundle id="de.cau.cs.kieler.pragmatics.language.server" version="0.47.0.qualifier"/>
 
    <repository-reference location="https://kieler.github.io/KLighD/v1.1.0/" enabled="true" />
 
