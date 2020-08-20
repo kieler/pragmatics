@@ -12,10 +12,10 @@
  */
 package de.cau.cs.kieler.pragmatics.language.server
 
-import de.cau.cs.kieler.klighd.lsp.interactive.layered.ConstraintsLanguageServerExtension
-import de.cau.cs.kieler.klighd.lsp.interactive.rectpack.RectPackInterativeLanguageServerExtension
-import de.cau.cs.kieler.klighd.lsp.launch.AbstractLsCreator
 import de.cau.cs.kieler.klighd.lsp.KGraphLanguageClient
+import de.cau.cs.kieler.klighd.lsp.interactive.layered.LayeredInteractiveLanguageServerExtension
+import de.cau.cs.kieler.klighd.lsp.interactive.rectpacking.RectpackingInteractiveLanguageServerExtension
+import de.cau.cs.kieler.klighd.lsp.launch.AbstractLsCreator
 
 /** 
  * Provides methods to create a LS.
@@ -25,13 +25,13 @@ import de.cau.cs.kieler.klighd.lsp.KGraphLanguageClient
  */
 class PragmaticsLsCreator extends AbstractLsCreator {
     
-    ConstraintsLanguageServerExtension constraints
+    LayeredInteractiveLanguageServerExtension constraints
     
-    RectPackInterativeLanguageServerExtension rectPack
+    RectpackingInteractiveLanguageServerExtension rectPack
     
     override getLanguageServerExtensions() {
-        constraints = injector.getInstance(ConstraintsLanguageServerExtension)
-        rectPack = injector.getInstance(RectPackInterativeLanguageServerExtension)
+        constraints = injector.getInstance(LayeredInteractiveLanguageServerExtension)
+        rectPack = injector.getInstance(RectpackingInteractiveLanguageServerExtension)
         val iLanguageServerExtensions = newArrayList(
             injector.getInstance(PragmaticsRegistrationLanguageServerExtension), constraints, rectPack
         )
