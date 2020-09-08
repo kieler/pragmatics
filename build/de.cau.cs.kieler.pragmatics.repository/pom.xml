@@ -19,7 +19,7 @@
     <update.site.name>KIELER Pragmatics</update.site.name>
     <update.site.description>Nightly</update.site.description>
     <update.site.version>2020-02</update.site.version>
-    <target.eclipse.version>2019-12</target.eclipse.version>
+    <target.eclipse.version>2020-06</target.eclipse.version>
   </properties>
 
   <build>
@@ -42,15 +42,15 @@
             <configuration>
               <associateSites>
                 <!-- Eclipse -->
-                <associateSite>http://download.eclipse.org/releases/2019-12</associateSite>
+                <associateSite>http://download.eclipse.org/releases/2020-06</associateSite>
                 <!-- Eclipse Layout Kernel -->
                 <associateSite>http://build.eclipse.org/modeling/elk/updates/nightly/</associateSite>
                 <!-- Eclipse Orbit -->
-                <associateSite>http://download.eclipse.org/tools/orbit/downloads/drops/R20191126223242/repository/</associateSite>
+                <associateSite>http://download.eclipse.org/tools/orbit/downloads/drops/R20200529191137/repository/</associateSite>
                 <!-- Xtext repository for new versions -->
                 <associateSite>http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/</associateSite>
                 <!-- KLighD -->
-                <associateSite>https://openkieler.github.io/KLighD/v1.0.0/</associateSite>
+                <associateSite>https://openkieler.github.io/KLighD/v1.1.1/</associateSite>
               </associateSites>
               <siteTemplateFolder>siteTemplate</siteTemplateFolder>
               <symbols>
