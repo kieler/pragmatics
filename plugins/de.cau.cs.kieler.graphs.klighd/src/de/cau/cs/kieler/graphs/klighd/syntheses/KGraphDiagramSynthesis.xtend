@@ -16,6 +16,7 @@ package de.cau.cs.kieler.graphs.klighd.syntheses
 import com.google.common.base.Predicate
 import com.google.common.collect.ImmutableList
 import de.cau.cs.kieler.klighd.SynthesisOption
+import de.cau.cs.kieler.klighd.ViewContext
 import de.cau.cs.kieler.klighd.kgraph.EMapPropertyHolder
 import de.cau.cs.kieler.klighd.kgraph.KEdge
 import de.cau.cs.kieler.klighd.kgraph.KGraphData
@@ -25,7 +26,13 @@ import de.cau.cs.kieler.klighd.kgraph.util.KGraphDataUtil
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil
 import de.cau.cs.kieler.klighd.util.KlighdProperties
 import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties
+import java.util.List
+import org.eclipse.elk.alg.layered.InteractiveLayeredGraphVisitor
+import org.eclipse.elk.alg.rectpacking.InteractiveRectPackingGraphVisitor
+import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.EdgeLabelPlacement
+import org.eclipse.elk.core.service.util.CompoundGraphElementVisitor
+import org.eclipse.elk.core.util.IGraphElementVisitor
 import org.eclipse.elk.graph.properties.IProperty
 import org.eclipse.elk.graph.properties.Property
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier
@@ -86,14 +93,14 @@ class KGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<KNode> {
      * Synthesis option specifying whether default values should be used. Default values are, eg, node
      * size if not specified and port ids as labels if no labels exist.
      */
-    private static val SynthesisOption DEFAULTS = SynthesisOption::createChoiceOption("Default Values",
+    private static val SynthesisOption DEFAULTS = SynthesisOption::createChoiceOption(KGraphDiagramSynthesis, "Default Values",
         ImmutableList::of(DEFAULTS_AS_IN_MODEL, DEFAULTS_ON, DEFAULTS_OFF), DEFAULTS_AS_IN_MODEL)
 
     /**
      * Synthesis option to allow edge adjustment by default
      */
     private static val SynthesisOption SUPPRESSEDGEADJUSTMENT = SynthesisOption::createCheckOption(
-        "Suppress Edge Adjustement", true)
+        KGraphDiagramSynthesis, "Suppress Edge Adjustement", true)
 
     /**
      * {@inheritDoc} 
@@ -225,11 +232,6 @@ class KGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<KNode> {
     protected def override void enrichEdgeRendering(KEdge edge) {
         // We always want a rendering for edges, apparently
         super.enrichEdgeRendering(edge);
-
-        // If defaults are switched off, don't bother
-        if (defaultsEnabled()) {
-            KGraphUtil.configureWithDefaultValues(edge);
-        }
     }
 
 
@@ -244,5 +246,16 @@ class KGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<KNode> {
     def private boolean defaultsEnabled() {
         return DEFAULTS.objectValue == DEFAULTS_ON
             || (DEFAULTS.objectValue == DEFAULTS_AS_IN_MODEL && defaults);
+    }
+    
+    public override List<? extends IGraphElementVisitor> getAdditionalLayoutConfigs(KNode viewModel) {
+        val List<IGraphElementVisitor> additionalLayoutRuns = newArrayList
+        // Add interactive Layout run.
+        if (viewModel.getProperty(CoreOptions.INTERACTIVE_LAYOUT)) {
+            additionalLayoutRuns.add(new CompoundGraphElementVisitor(
+                    new InteractiveRectPackingGraphVisitor(),
+                    new InteractiveLayeredGraphVisitor()));
+        }
+        return additionalLayoutRuns;
     }
 }

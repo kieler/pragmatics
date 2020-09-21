@@ -185,7 +185,7 @@ class GeneratorJob extends Job {
                 vc.setProperty(IOffscreenRenderer.OUTPUT_FORMAT, IMAGE_FORMAT);
                 vc.setProperty(IOffscreenRenderer.IMAGE_SCALE, 1)
                 // finally render the diagram and return the result
-                val status = renderer.render(vc, fos, vc)
+                val status = renderer.supplier.get().render(vc, fos, vc)
                 return status
             }
             default: return Status.OK_STATUS 

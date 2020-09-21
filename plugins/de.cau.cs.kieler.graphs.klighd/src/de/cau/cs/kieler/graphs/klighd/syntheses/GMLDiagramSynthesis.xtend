@@ -59,7 +59,7 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GMLModel> {
     val idMap = Maps.<Integer, KNode>newHashMap
     var hasPositions = false
     
-    public static val SynthesisOption SHOW_LABELS = SynthesisOption::createCheckOption(
+    public static val SynthesisOption SHOW_LABELS = SynthesisOption::createCheckOption(GMLDiagramSynthesis,
         "Labels", true)
         
     override getDisplayedSynthesisOptions() {

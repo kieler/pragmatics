@@ -17,6 +17,7 @@ import com.google.inject.Inject
 import de.cau.cs.kieler.formats.kgraph.KGraphExporter
 import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.klighd.SynthesisOption
+import de.cau.cs.kieler.klighd.ViewContext
 import de.cau.cs.kieler.klighd.actions.FocusAndContextAction
 import de.cau.cs.kieler.klighd.kgraph.KEdge
 import de.cau.cs.kieler.klighd.kgraph.KLabel
@@ -33,6 +34,12 @@ import de.cau.cs.kieler.klighd.labels.decoration.LabelDecorationConfigurator.Lay
 import de.cau.cs.kieler.klighd.labels.decoration.LinesDecorator
 import de.cau.cs.kieler.klighd.labels.decoration.RectangleDecorator
 import java.awt.Color
+import java.util.List
+import org.eclipse.elk.alg.layered.InteractiveLayeredGraphVisitor
+import org.eclipse.elk.alg.rectpacking.InteractiveRectPackingGraphVisitor
+import org.eclipse.elk.core.options.CoreOptions
+import org.eclipse.elk.core.service.util.CompoundGraphElementVisitor
+import org.eclipse.elk.core.util.IGraphElementVisitor
 import org.eclipse.elk.graph.ElkEdge
 import org.eclipse.elk.graph.ElkGraphElement
 import org.eclipse.elk.graph.ElkLabel
@@ -52,14 +59,14 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
     /* Synthesis options specifying whether several default values should be used or not. Default values are, eg, node
      * size if not specified and port ids as labels if no labels exist.
      */
-    public static val SynthesisOption DEFAULT_NODE_SIZES = SynthesisOption.createCheckOption("Node Sizes", false)
-    public static val SynthesisOption DEFAULT_NODE_LABELS = SynthesisOption.createCheckOption("Node Labels", false)
-    public static val SynthesisOption DEFAULT_PORT_SIZES = SynthesisOption.createCheckOption("Port Sizes", false)
-    public static val SynthesisOption DEFAULT_PORT_LABELS = SynthesisOption.createCheckOption("Port Labels", false)
-    public static val SynthesisOption DEFAULT_EDGE_DIRECTIONS = SynthesisOption.createCheckOption("Edge Directions", true)
+    public static val SynthesisOption DEFAULT_NODE_SIZES = SynthesisOption.createCheckOption(ElkGraphDiagramSynthesis, "Node Sizes", false)
+    public static val SynthesisOption DEFAULT_NODE_LABELS = SynthesisOption.createCheckOption(ElkGraphDiagramSynthesis, "Node Labels", false)
+    public static val SynthesisOption DEFAULT_PORT_SIZES = SynthesisOption.createCheckOption(ElkGraphDiagramSynthesis, "Port Sizes", false)
+    public static val SynthesisOption DEFAULT_PORT_LABELS = SynthesisOption.createCheckOption(ElkGraphDiagramSynthesis, "Port Labels", false)
+    public static val SynthesisOption DEFAULT_EDGE_DIRECTIONS = SynthesisOption.createCheckOption(ElkGraphDiagramSynthesis, "Edge Directions", true)
     
     // An advanced category for... well... advanced options and experimental things
-    public static val SynthesisOption LABEL_DECORATIONS_CATEGORY = SynthesisOption.createCategory("Edge Labels", false);
+    public static val SynthesisOption LABEL_DECORATIONS_CATEGORY = SynthesisOption.createCategory(ElkGraphDiagramSynthesis, "Edge Labels", false);
     
     public static val LABEL_DECORATIONS_SIMPLE = "Simple";
     public static val LABEL_DECORATIONS_LINES = "Lines";
@@ -68,6 +75,7 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
     public static val SynthesisOption LABEL_DECORATIONS = {
         // We're using a block expression here because we need to set the category on the option
         val option = SynthesisOption.createChoiceOption(
+            ElkGraphDiagramSynthesis,
             "Label Decorations",
             ImmutableList::of(LABEL_DECORATIONS_SIMPLE, LABEL_DECORATIONS_LINES, LABEL_DECORATIONS_BRACKETS,
                               LABEL_DECORATIONS_RECTS),
@@ -82,6 +90,7 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
     public static val SynthesisOption COLOR_MODE = {
         // We're using a block expression here because we need to set the category on the option
         val option = SynthesisOption.createChoiceOption(
+            ElkGraphDiagramSynthesis,
             "Color Mode",
             ImmutableList::of(COLOR_MODE_SOLID, COLOR_MODE_TRANSLUCENT, COLOR_MODE_BAD_DESIGN),
             COLOR_MODE_TRANSLUCENT);
@@ -90,13 +99,13 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
     };
     
     public static val SynthesisOption INLINE_LABELS = {
-        val option = SynthesisOption.createCheckOption("Inline Labels", false);
+        val option = SynthesisOption.createCheckOption(ElkGraphDiagramSynthesis, "Inline Labels", false);
         option.category = LABEL_DECORATIONS_CATEGORY;
         option;
     };
     
     public static val SynthesisOption DIRECTIONAL_DECORATORS = {
-        val option = SynthesisOption.createCheckOption("Direction Hints", false);
+        val option = SynthesisOption.createCheckOption(ElkGraphDiagramSynthesis, "Direction Hints", false);
         option.category = LABEL_DECORATIONS_CATEGORY;
         option;
     };
@@ -202,7 +211,6 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
      */
     protected def override void enrichEdgeRendering(KEdge edge) {
         super.enrichEdgeRendering(edge, DEFAULT_EDGE_DIRECTIONS.booleanValue);
-        KGraphUtil.configureWithDefaultValues(edge);
     }
     
     /**
@@ -289,4 +297,14 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
         return rendering;
     }
     
+    public override List<? extends IGraphElementVisitor> getAdditionalLayoutConfigs(KNode viewModel) {
+        val List<IGraphElementVisitor> additionalLayoutRuns = newArrayList
+        // Add interactive Layout run.
+        if (viewModel.getProperty(CoreOptions.INTERACTIVE_LAYOUT)) {
+            additionalLayoutRuns.add(new CompoundGraphElementVisitor(
+                    new InteractiveRectPackingGraphVisitor(),
+                    new InteractiveLayeredGraphVisitor()));
+        }
+        return additionalLayoutRuns;
+    }
 }

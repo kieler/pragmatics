@@ -18,20 +18,22 @@
   <modules>
     <module>../build/de.cau.cs.kieler.pragmatics.targetplatform</module>
     <module>../test</module>
-    <module>de.cau.cs.kieler.formats.kgraph</module>
-    <module>de.cau.cs.kieler.graphs.klighd</module>
-    <module>de.cau.cs.kieler.kiml.export</module>
     <module>de.cau.cs.kieler.formats</module>
     <module>de.cau.cs.kieler.formats.dot</module>
     <module>de.cau.cs.kieler.formats.gml</module>
     <module>de.cau.cs.kieler.formats.graphml</module>
     <module>de.cau.cs.kieler.formats.json</module>
+    <module>de.cau.cs.kieler.formats.kgraph</module>
     <module>de.cau.cs.kieler.formats.ogml</module>
     <module>de.cau.cs.kieler.formats.svg</module>
     <!-- <module>de.cau.cs.kieler.grana</module> -->
     <!-- <module>de.cau.cs.kieler.grana.text</module> -->
     <!-- <module>de.cau.cs.kieler.grana.text.ui</module> -->
+    <module>de.cau.cs.kieler.graphs.klighd</module>
+    <module>de.cau.cs.kieler.graphs.klighd.ui</module>
+    <module>de.cau.cs.kieler.kiml.export</module>
     <module>de.cau.cs.kieler.kiml.ogdf</module>
+    <module>de.cau.cs.kieler.pragmatics.language.server</module>
     <module>net.ogdf.bin</module>
     <module>net.ogdf.ogml</module>
     <module>org.graphdrawing.graphml</module>
