@@ -43,8 +43,9 @@ class PragmaticsLsCreator extends AbstractLsCreator {
     }
     
     override onConnect() {
-        constraints.client = languageClient as KGraphLanguageClient
-        rectPack.client = languageClient as KGraphLanguageClient
+        super.onConnect()
+        constraints.client = languageClient
+        rectPack.client = languageClient
     }
     
 }
