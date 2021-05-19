@@ -14,4 +14,5 @@ Require-Bundle: com.google.guava,
  de.cau.cs.kieler.formats,
  de.cau.cs.kieler.klighd.kgraph
 Export-Package: de.cau.cs.kieler.formats.kgraph
+Automatic-Module-Name: de.cau.cs.kieler.formats.kgraph
 
