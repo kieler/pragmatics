@@ -209,7 +209,7 @@ litigation.
    </license>
 
    <url>
-      <update label="KIELER Nightly Builds" url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/"/>
+      <update label="KIELER Releases" url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/"/>
    </url>
 
    <includes id="net.ogdf.bin.feature" version="0.0.0"/>

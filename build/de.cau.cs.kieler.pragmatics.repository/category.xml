@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site associateSitesURL="associateSites.xml">
 
-   <description name="KIELER Pragmatics (Nightly Builds)" url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/">
-      Update site for the KIELER Pragmatics project nightly builds.
+   <description name="KIELER Pragmatics Releases" url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/">
+      Update site for the KIELER Pragmatics project builds.
    </description>
 
    <!-- CATEGORY DEFINITIONS -->
@@ -45,6 +45,6 @@
 
    <bundle id="de.cau.cs.kieler.pragmatics.language.server" version="0.48.0.qualifier"/>
 
-   <repository-reference location="http://services.typefox.io/open-source/jenkins/job/KLighD/job/master/lastStableBuild/artifact/updatesite/" enabled="true"/>
+   <repository-reference location="https://kieler.github.io/KLighD/v2.1.0/" enabled="true"/>
 
 </site>
