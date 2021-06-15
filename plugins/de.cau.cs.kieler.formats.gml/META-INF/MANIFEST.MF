@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Support for the GML Format
 Bundle-Vendor: Kiel University
-Bundle-Version: 0.48.0.qualifier
+Bundle-Version: 0.49.0.qualifier
 Bundle-SymbolicName: de.cau.cs.kieler.formats.gml;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtend.lib;bundle-version="2.7.0",

@@ -8,6 +8,6 @@
   </parent>
   <groupId>de.cau.cs.kieler</groupId>
   <artifactId>de.cau.cs.kieler.kiml.ogdf.feature</artifactId>
-  <version>0.48.0-SNAPSHOT</version>
+  <version>0.49.0-SNAPSHOT</version>
   <packaging>eclipse-feature</packaging>
 </project>
