@@ -17,7 +17,6 @@ import com.google.inject.Inject
 import de.cau.cs.kieler.formats.kgraph.KGraphExporter
 import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.klighd.SynthesisOption
-import de.cau.cs.kieler.klighd.ViewContext
 import de.cau.cs.kieler.klighd.actions.FocusAndContextAction
 import de.cau.cs.kieler.klighd.kgraph.KEdge
 import de.cau.cs.kieler.klighd.kgraph.KLabel

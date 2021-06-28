@@ -23,17 +23,13 @@ import de.cau.cs.kieler.klighd.kgraph.KLabel
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.kgraph.KPort
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil
-import de.cau.cs.kieler.klighd.krendering.HorizontalAlignment
 import de.cau.cs.kieler.klighd.krendering.KRendering
 import de.cau.cs.kieler.klighd.krendering.KRenderingFactory
 import de.cau.cs.kieler.klighd.krendering.KRenderingLibrary
-import de.cau.cs.kieler.klighd.krendering.VerticalAlignment
 import de.cau.cs.kieler.klighd.krendering.extensions.KColorExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KLibraryExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
-import de.cau.cs.kieler.klighd.krendering.extensions.PositionReferenceX
-import de.cau.cs.kieler.klighd.krendering.extensions.PositionReferenceY
 import de.cau.cs.kieler.klighd.labels.management.AbstractKlighdLabelManager
 import de.cau.cs.kieler.klighd.labels.management.ConditionLabelManager
 import de.cau.cs.kieler.klighd.labels.management.IdentLabelManager
