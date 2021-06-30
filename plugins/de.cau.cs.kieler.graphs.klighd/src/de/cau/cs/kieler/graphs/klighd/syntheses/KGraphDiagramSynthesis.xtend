@@ -16,7 +16,6 @@ package de.cau.cs.kieler.graphs.klighd.syntheses
 import com.google.common.base.Predicate
 import com.google.common.collect.ImmutableList
 import de.cau.cs.kieler.klighd.SynthesisOption
-import de.cau.cs.kieler.klighd.ViewContext
 import de.cau.cs.kieler.klighd.kgraph.EMapPropertyHolder
 import de.cau.cs.kieler.klighd.kgraph.KEdge
 import de.cau.cs.kieler.klighd.kgraph.KGraphData
