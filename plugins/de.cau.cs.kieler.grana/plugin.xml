@@ -865,6 +865,16 @@
                name="Scale Measure">
          </component>
       </analysis>
+      <analysis
+            category="de.cau.cs.kieler.grana.basic"
+            class="de.cau.cs.kieler.grana.analyses.EndTimeAnalysis"
+            description="Measure the time this processor finishes"
+            id="de.cau.cs.kieler.grana.time"
+            name="Time">
+         <component
+               name="TIme">
+         </component>
+      </analysis>
    </extension>
 
 </plugin>
