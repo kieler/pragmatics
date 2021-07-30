@@ -44,7 +44,7 @@
                 <!-- Eclipse -->
                 <associateSite>http://download.eclipse.org/releases/2020-06</associateSite>
                 <!-- Eclipse Layout Kernel -->
-                <associateSite>http://build.eclipse.org/modeling/elk/updates/nightly/</associateSite>
+                <associateSite>https://download.eclipse.org/elk/updates/nightly/</associateSite>
                 <!-- Eclipse Orbit -->
                 <associateSite>http://download.eclipse.org/tools/orbit/downloads/drops/R20200529191137/repository/</associateSite>
                 <!-- Xtext repository for new versions -->
