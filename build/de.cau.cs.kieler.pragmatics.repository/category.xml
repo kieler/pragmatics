@@ -45,6 +45,6 @@
 
    <bundle id="de.cau.cs.kieler.pragmatics.language.server" version="0.49.0.qualifier"/>
 
-   <repository-reference location="http://services.typefox.io/open-source/jenkins/job/KLighD/job/master/lastStableBuild/artifact/updatesite/" enabled="true"/>
+   <repository-reference location="https://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/klighd/" enabled="true"/>
 
 </site>
