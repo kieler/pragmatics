@@ -211,7 +211,13 @@ final class GranaTextToBatchJob {
 
             if (!resource.path.startsWith("file://")) {
                 // should be workspace relative
-                val p = ResourcesPlugin.workspace.root.projects.findFirst[p|resource.path.contains(p.name)]
+                val p = ResourcesPlugin.workspace.root.projects.findFirst[p|
+                    println(resource.path)
+                    println(p.name)
+                    val bollean = resource.path.contains(p.name)
+                    println(bollean)
+                    return bollean
+                ]
                 val wsloc = p?.findMember(resource.path.replaceFirst(Pattern.quote(p.name), ""))
                 if (p === null || !(wsloc instanceof IContainer)) 
                     throw new IllegalArgumentException("Invalid resource " + resource.path)
@@ -236,7 +242,7 @@ final class GranaTextToBatchJob {
         for (member : container.members) {
             switch member {
                 IContainer case recurse: member.collectJobsEclipse(batch, job, filter, recurse)
-                IFile case filter == null || filter.matcher(member.name).matches: 
+                IFile case filter == null || member.name.contains(filter.pattern): 
                     addBatchJob(batch, job, member.fullPath)
                     //addBatchJob(batch, job, new Path(resource.path + "/" + file.name))
             }

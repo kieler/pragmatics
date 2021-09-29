@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.core.IGraphLayoutEngine;
 import org.eclipse.elk.core.LayoutConfigurator;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
@@ -176,6 +177,7 @@ public class FileElkGraphProvider implements IElkGraphProvider<IPath> {
 
                 } else {
                     // plain layout - no hassle
+                    graph.setProperty(InternalProperties.MODEL_NAME, parameter.toFile().toURI());
                     layoutEngine.layout(graph, monitor.subTask(1));
                 }
             }
