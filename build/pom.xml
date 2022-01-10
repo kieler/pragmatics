@@ -92,7 +92,8 @@
     <pluginRepository>
       <id>eclipse-elk-meta</id>
       <name>ELK Meta Data Language Compiler Maven Repository</name>
-      <url>https://build.eclipse.org/modeling/elk/maven/meta/nightly</url>
+      <!-- Previously we used the nightly repo here for building the .melk files. As the maven information for that does not exist anymore, use the release version for now. -->
+      <url>https://download.eclipse.org/elk/maven/releases/0.7.0</url>
     </pluginRepository>
   </pluginRepositories>
 
