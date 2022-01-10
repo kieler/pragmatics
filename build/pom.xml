@@ -13,7 +13,7 @@
     <tycho-version>1.7.0</tycho-version>
     <targetJdk>1.8</targetJdk>
     <xtext-version>2.22.0</xtext-version>
-    <elk-version>0.7.0</elk-version>
+    <elk-version>0.7.1</elk-version>
 
     <!-- chsch: copied from https://eclipse.googlesource.com/recommenders/org.eclipse.recommenders/+/3dae4575d3370da2da25a1cbce3dfcff198f0611/features/pom.xml -->
     <!-- Non-breakable space, as normal spaces are trimmed. -->
@@ -87,13 +87,6 @@
       <id>jboss-releases</id>
       <name>JBoss Releases Maven Repository</name>
       <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
-    </pluginRepository>
-
-    <pluginRepository>
-      <id>eclipse-elk-meta</id>
-      <name>ELK Meta Data Language Compiler Maven Repository</name>
-      <!-- Previously we used the nightly repo here for building the .melk files. As the maven information for that does not exist anymore, use the release version for now. -->
-      <url>https://download.eclipse.org/elk/maven/releases/0.7.0</url>
     </pluginRepository>
   </pluginRepositories>
 
@@ -218,12 +211,12 @@
             <dependency>
               <groupId>org.eclipse.elk</groupId>
               <artifactId>org.eclipse.elk.graph</artifactId>
-              <version>${elk-version}-SNAPSHOT</version>
+              <version>${elk-version}</version>
             </dependency>
             <dependency>
               <groupId>org.eclipse.elk</groupId>
               <artifactId>org.eclipse.elk.core.meta</artifactId>
-              <version>${elk-version}-SNAPSHOT</version>
+              <version>${elk-version}</version>
             </dependency>
           </dependencies>
         </plugin>
