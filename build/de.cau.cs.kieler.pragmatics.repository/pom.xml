@@ -47,8 +47,8 @@
                 <associateSite>https://download.eclipse.org/elk/updates/nightly/</associateSite>
                 <!-- Eclipse Orbit -->
                 <associateSite>http://download.eclipse.org/tools/orbit/downloads/drops/R20200529191137/repository/</associateSite>
-                <!-- Xtext repository for new versions -->
-                <associateSite>http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/</associateSite>
+                <!-- Xtext repository -->
+                <associateSite>https://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.22.0/</associateSite>
                 <!-- KLighD -->
                 <associateSite>https://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/klighd/</associateSite>
               </associateSites>
