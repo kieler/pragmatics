@@ -29,7 +29,6 @@ import de.cau.cs.kieler.klighd.krendering.KRenderingFactory
 import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.klighd.labels.decoration.DirectionalArrowsDecorator
 import de.cau.cs.kieler.klighd.labels.decoration.LabelDecorationConfigurator
-import de.cau.cs.kieler.klighd.labels.decoration.LabelDecorationConfigurator.LayoutMode
 import de.cau.cs.kieler.klighd.labels.decoration.LinesDecorator
 import de.cau.cs.kieler.klighd.labels.decoration.RectangleDecorator
 import java.awt.Color
@@ -250,9 +249,11 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
         
         // Setup the configurator
         val configurator = LabelDecorationConfigurator.create()
-            .withLayoutMode(LayoutMode.HORIZONTAL)
             .withLabelTextRenderingProvider([ container, label | createTextRendering(container, label) ])
             .withInlineLabels(INLINE_LABELS.booleanValue);
+        if (INLINE_LABELS.booleanValue) {
+            configurator.addDecoratorRenderingProvider(DirectionalArrowsDecorator.create().withColor(foreground))
+        }
         
         val backgroundProvider = RectangleDecorator.create().withBackground(background);
         configurator.addDecoratorRenderingProvider(backgroundProvider);
