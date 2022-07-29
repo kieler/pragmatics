@@ -4,15 +4,20 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.cau.cs.kieler</groupId>
   <artifactId>parent</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.50.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
 
   <!-- Define a few properties used throughout all build profiles. -->
   <properties>
-    <tycho-version>2.5.0</tycho-version>
-    <targetJdk>1.8</targetJdk>
-    <xtext-version>2.22.0</xtext-version>
+    <pragmatics-version>0.50.0-SNAPSHOT</pragmatics-version>
+    <klighd-version>2.2.1-SNAPSHOT</klighd-version>
+    <tycho-version>2.7.3</tycho-version>
+    <targetJdk>11</targetJdk>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+    <xtext-version>2.27.0</xtext-version>
+    <xtend-version>2.27.0</xtend-version>
     <elk-version>0.8.1</elk-version>
 
     <!-- chsch: copied from https://eclipse.googlesource.com/recommenders/org.eclipse.recommenders/+/3dae4575d3370da2da25a1cbce3dfcff198f0611/features/pom.xml -->
@@ -89,6 +94,22 @@
       <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
     </pluginRepository>
   </pluginRepositories>
+
+  <repositories>
+    <!-- FIXME: remove this again when artifacts have found a place on the internet. Temporary Maven repository hosting our artifacts. -->
+    <repository>
+      <id>rtsys</id>
+      <url>https://rtsys.informatik.uni-kiel.de/~kieler/files/repo/</url>
+    </repository>
+  </repositories>
+
+  <!-- while deploying, put the compiled artifact into the following (local) repository -->
+  <distributionManagement>
+    <repository>
+     <id>internal-repo-for-downstream-usage</id>
+     <url>file://pragmatics</url>
+    </repository>
+  </distributionManagement>
 
 
   <!-- Modify the build process to add Tycho and configure some utility plug-ins. -->

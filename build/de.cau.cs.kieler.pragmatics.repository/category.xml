@@ -43,8 +43,6 @@
       <category name="kieler-sources"/>
    </feature>
 
-   <bundle id="de.cau.cs.kieler.pragmatics.language.server" version="0.50.0.qualifier"/>
-
    <repository-reference location="https://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/klighd/" enabled="true"/>
 
 </site>

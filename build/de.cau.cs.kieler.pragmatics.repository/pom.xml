@@ -10,59 +10,29 @@
   <parent>
     <groupId>de.cau.cs.kieler</groupId>
     <artifactId>parent</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.50.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <!-- These are a few properties we use for the small update site index.html that is generated. -->
-  <properties>
-    <update.site.name>KIELER Pragmatics</update.site.name>
-    <update.site.description>Nightly</update.site.description>
-    <update.site.version>2020-09</update.site.version>
-    <target.eclipse.version>2020-06</target.eclipse.version>
-  </properties>
-
   <build>
+    <resources>
+      <resource>
+        <directory>siteTemplate</directory>
+      </resource>
+    </resources>
+
     <plugins>
-      <!-- This plug-in generates a nice index.html for our update site and adds associate update
-           sites, which is at the time of writing not possible with Tycho alone. For how this stuff
-           works, see the bottom two links in comment 6 on this ticket:
-           https://bugs.eclipse.org/bugs/show_bug.cgi?id=391033-->
       <plugin>
-        <groupId>org.jboss.tools.tycho-plugins</groupId>
-        <artifactId>repository-utils</artifactId>
-        <version>2.5.0</version>
-        <executions>
-          <execution>
-            <id>generate-facade</id>
-            <phase>package</phase>
-            <goals>
-              <goal>generate-repository-facade</goal>
-            </goals>
-            <configuration>
-              <associateSites>
-                <!-- Eclipse -->
-                <associateSite>http://download.eclipse.org/releases/2020-06</associateSite>
-                <!-- Eclipse Layout Kernel -->
-                <associateSite>https://download.eclipse.org/elk/updates/nightly/</associateSite>
-                <!-- Eclipse Orbit -->
-                <associateSite>http://download.eclipse.org/tools/orbit/downloads/drops/R20200529191137/repository/</associateSite>
-                <!-- Xtext repository -->
-                <associateSite>https://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.22.0/</associateSite>
-                <!-- KLighD -->
-                <associateSite>https://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/klighd/</associateSite>
-              </associateSites>
-              <siteTemplateFolder>siteTemplate</siteTemplateFolder>
-              <skipBuildInfo>true</skipBuildInfo>
-              <symbols>
-                <update.site.name>${update.site.name}</update.site.name>
-                <update.site.description>${update.site.description}</update.site.description>
-                <update.site.version>${update.site.version}</update.site.version>
-                <target.eclipse.version>${target.eclipse.version}</target.eclipse.version>
-              </symbols>
-            </configuration>
-          </execution>
-        </executions>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-p2-repository-plugin</artifactId>
+        <version>${tycho-version}</version>
+      </plugin>
+      <!-- do not publish this artifact to Maven repositories -->
+      <plugin>
+        <artifactId>maven-deploy-plugin</artifactId>
+          <configuration>
+            <skip>true</skip>
+          </configuration>
       </plugin>
     </plugins>
   </build>
