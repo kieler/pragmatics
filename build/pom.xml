@@ -19,6 +19,9 @@
     <xtext-version>2.27.0</xtext-version>
     <xtend-version>2.27.0</xtend-version>
     <elk-version>0.8.1</elk-version>
+    <gson-version>2.9.0</gson-version>
+    <guice-version>5.1.0</guice-version>
+    <lsp4j-version>0.14.0</lsp4j-version>
 
     <!-- chsch: copied from https://eclipse.googlesource.com/recommenders/org.eclipse.recommenders/+/3dae4575d3370da2da25a1cbce3dfcff198f0611/features/pom.xml -->
     <!-- Non-breakable space, as normal spaces are trimmed. -->
