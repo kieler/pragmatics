@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <version>0.49.0-SNAPSHOT</version>
+  <version>0.50.0-SNAPSHOT</version>
   <artifactId>de.cau.cs.kieler.pragmatics.repository</artifactId>
   <packaging>eclipse-repository</packaging>
   <name>KIELER Pragmatics Repository</name>
@@ -31,7 +31,7 @@
       <plugin>
         <groupId>org.jboss.tools.tycho-plugins</groupId>
         <artifactId>repository-utils</artifactId>
-        <version>1.0.0</version>
+        <version>2.5.0</version>
         <executions>
           <execution>
             <id>generate-facade</id>
@@ -44,15 +44,16 @@
                 <!-- Eclipse -->
                 <associateSite>http://download.eclipse.org/releases/2020-06</associateSite>
                 <!-- Eclipse Layout Kernel -->
-                <associateSite>http://build.eclipse.org/modeling/elk/updates/nightly/</associateSite>
+                <associateSite>https://download.eclipse.org/elk/updates/nightly/</associateSite>
                 <!-- Eclipse Orbit -->
                 <associateSite>http://download.eclipse.org/tools/orbit/downloads/drops/R20200529191137/repository/</associateSite>
-                <!-- Xtext repository for new versions -->
-                <associateSite>http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/</associateSite>
+                <!-- Xtext repository -->
+                <associateSite>https://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.22.0/</associateSite>
                 <!-- KLighD -->
-                <associateSite>http://services.typefox.io/open-source/jenkins/job/KLighD/job/master/lastStableBuild/artifact/updatesite/</associateSite>
+                <associateSite>https://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/klighd/</associateSite>
               </associateSites>
               <siteTemplateFolder>siteTemplate</siteTemplateFolder>
+              <skipBuildInfo>true</skipBuildInfo>
               <symbols>
                 <update.site.name>${update.site.name}</update.site.name>
                 <update.site.description>${update.site.description}</update.site.description>
