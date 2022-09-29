@@ -850,6 +850,30 @@
       </analysis>
       <analysis
             category="de.cau.cs.kieler.grana.drawing"
+            class="de.cau.cs.kieler.grana.analyses.RegionSizeHackAnalysis"
+            description="The area a graph drawing occupies."
+            id="de.cau.cs.kieler.grana.regionsizehack"
+            name="Hack Analysis">
+         <dependency
+               analysis="de.cau.cs.kieler.grana.area"
+               weak="false">
+         </dependency>
+         <component
+               name="DAR">
+         </component>
+         <component
+               name="AAR">
+         </component>
+         <component
+               name="Area">
+         </component>
+         <dependency
+               analysis="de.cau.cs.kieler.grana.scalemeasure"
+               weak="false">
+         </dependency>
+      </analysis>
+      <analysis
+            category="de.cau.cs.kieler.grana.drawing"
             class="de.cau.cs.kieler.grana.analyses.ScaleMeasureAnalysis"
             description="The area a graph drawing occupies."
             id="de.cau.cs.kieler.grana.scalemeasure"

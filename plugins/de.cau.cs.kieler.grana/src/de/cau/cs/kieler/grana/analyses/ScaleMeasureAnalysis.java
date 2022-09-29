@@ -64,8 +64,9 @@ public class ScaleMeasureAnalysis implements IAnalysis {
         Object[] areaResults = (Object[]) o;
         double width = (Double) areaResults[AreaAnalysis.INDEX_WIDTH];
         double height = (Double) areaResults[AreaAnalysis.INDEX_HEIGHT];
-        double dar = parentNode.getProperty(CoreOptions.ASPECT_RATIO);
-        
+        double dar = parentNode.getChildren().get(0).getProperty(CoreOptions.ASPECT_RATIO);  // For SCCharts
+//        double dar = parentNode.getProperty(CoreOptions.ASPECT_RATIO);        
+
         
         return new Object[] {dar, Math.min(dar / width, 1d / height)};
     }
