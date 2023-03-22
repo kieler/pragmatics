@@ -31,7 +31,7 @@
       <plugin>
         <groupId>org.jboss.tools.tycho-plugins</groupId>
         <artifactId>repository-utils</artifactId>
-        <version>2.5.0</version>
+        <version>2.7.5</version>
         <executions>
           <execution>
             <id>generate-facade</id>
@@ -42,13 +42,13 @@
             <configuration>
               <associateSites>
                 <!-- Eclipse -->
-                <associateSite>http://download.eclipse.org/releases/2020-06</associateSite>
+                <associateSite>https://download.eclipse.org/releases/2022-09/</associateSite>
                 <!-- Eclipse Layout Kernel -->
                 <associateSite>https://download.eclipse.org/elk/updates/nightly/</associateSite>
                 <!-- Eclipse Orbit -->
-                <associateSite>http://download.eclipse.org/tools/orbit/downloads/drops/R20200529191137/repository/</associateSite>
+                <associateSite>http://download.eclipse.org/tools/orbit/downloads/drops/R20220830213456/repository/</associateSite>
                 <!-- Xtext repository -->
-                <associateSite>https://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.22.0/</associateSite>
+                <associateSite>https://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.28.0/</associateSite>
                 <!-- KLighD -->
                 <associateSite>https://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/klighd/</associateSite>
               </associateSites>
