@@ -16,6 +16,7 @@ import de.cau.cs.kieler.klighd.lsp.KGraphLanguageClient
 import de.cau.cs.kieler.klighd.lsp.interactive.layered.LayeredInteractiveLanguageServerExtension
 import de.cau.cs.kieler.klighd.lsp.interactive.rectpacking.RectpackingInteractiveLanguageServerExtension
 import de.cau.cs.kieler.klighd.lsp.launch.AbstractLsCreator
+import de.cau.cs.kieler.klighd.lsp.structuredProgramming.sccharts.StructuredProgScchartLanguageServerExtension
 
 /** 
  * Provides methods to create a LS.
@@ -29,11 +30,15 @@ class PragmaticsLsCreator extends AbstractLsCreator {
     
     RectpackingInteractiveLanguageServerExtension rectPack
     
+    StructuredProgScchartLanguageServerExtension structuredProgScchart
+    
     override getLanguageServerExtensions() {
         constraints = injector.getInstance(LayeredInteractiveLanguageServerExtension)
         rectPack = injector.getInstance(RectpackingInteractiveLanguageServerExtension)
+        structuredProgScchart = injector.getInstance(StructuredProgScchartLanguageServerExtension)
+        
         val iLanguageServerExtensions = newArrayList(
-            injector.getInstance(PragmaticsRegistrationLanguageServerExtension), constraints, rectPack
+            injector.getInstance(PragmaticsRegistrationLanguageServerExtension), constraints, rectPack, structuredProgScchart
         )
         return iLanguageServerExtensions
     }
@@ -46,6 +51,7 @@ class PragmaticsLsCreator extends AbstractLsCreator {
         super.onConnect()
         constraints.client = languageClient
         rectPack.client = languageClient
+        structuredProgScchart.client = languageClient
     }
     
 }
