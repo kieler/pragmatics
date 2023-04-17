@@ -12,11 +12,12 @@
  */
 package de.cau.cs.kieler.pragmatics.language.server
 
+import de.cau.cs.kieler.core.services.KielerServiceLoader
 import de.cau.cs.kieler.klighd.lsp.KGraphLanguageClient
 import de.cau.cs.kieler.klighd.lsp.interactive.layered.LayeredInteractiveLanguageServerExtension
 import de.cau.cs.kieler.klighd.lsp.interactive.rectpacking.RectpackingInteractiveLanguageServerExtension
 import de.cau.cs.kieler.klighd.lsp.launch.AbstractLsCreator
-import de.cau.cs.kieler.klighd.lsp.structuredProgramming.sccharts.StructuredProgScchartLanguageServerExtension
+import de.cau.cs.kieler.klighd.lsp.structuredProgramming.IStructuredProgrammingLanguageServerContribution
 
 /** 
  * Provides methods to create a LS.
@@ -30,16 +31,17 @@ class PragmaticsLsCreator extends AbstractLsCreator {
     
     RectpackingInteractiveLanguageServerExtension rectPack
     
-    StructuredProgScchartLanguageServerExtension structuredProgScchart
     
     override getLanguageServerExtensions() {
         constraints = injector.getInstance(LayeredInteractiveLanguageServerExtension)
         rectPack = injector.getInstance(RectpackingInteractiveLanguageServerExtension)
-        structuredProgScchart = injector.getInstance(StructuredProgScchartLanguageServerExtension)
         
         val iLanguageServerExtensions = newArrayList(
-            injector.getInstance(PragmaticsRegistrationLanguageServerExtension), constraints, rectPack, structuredProgScchart
+            injector.getInstance(PragmaticsRegistrationLanguageServerExtension), constraints, rectPack
         )
+        for (lse : KielerServiceLoader.load(IStructuredProgrammingLanguageServerContribution)){
+            iLanguageServerExtensions.add(lse.getLanguageServerExtension(injector))
+        }
         return iLanguageServerExtensions
     }
     
@@ -51,7 +53,6 @@ class PragmaticsLsCreator extends AbstractLsCreator {
         super.onConnect()
         constraints.client = languageClient
         rectPack.client = languageClient
-        structuredProgScchart.client = languageClient
     }
     
 }

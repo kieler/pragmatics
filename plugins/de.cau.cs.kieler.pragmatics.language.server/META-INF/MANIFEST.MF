@@ -27,5 +27,6 @@ Require-Bundle: de.cau.cs.kieler.graphs.klighd,
  org.eclipse.xtend.lib,
  org.eclipse.xtext.ide,
  org.eclipse.xtext.xbase.lib,
- org.aopalliance
+ org.aopalliance,
+ de.cau.cs.kieler.core;bundle-version="1.4.0"
 Export-Package: de.cau.cs.kieler.pragmatics.language.server
