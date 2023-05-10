@@ -8,7 +8,7 @@ Require-Bundle: de.cau.cs.kieler.formats,
  org.eclipse.elk.core,
  org.eclipse.elk.graph,
  org.eclipse.elk.graph.json
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Export-Package: de.cau.cs.kieler.formats.json
 

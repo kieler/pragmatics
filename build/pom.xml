@@ -3,17 +3,25 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.cau.cs.kieler</groupId>
-  <artifactId>parent</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <artifactId>pragmatics</artifactId>
+  <version>0.50.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
 
   <!-- Define a few properties used throughout all build profiles. -->
   <properties>
-    <tycho-version>2.7.3</tycho-version>
-    <targetJdk>1.8</targetJdk>
-    <xtext-version>2.28.0</xtext-version>
     <elk-version>0.8.1</elk-version>
+    <gson-version>2.9.0</gson-version>
+    <guice-version>5.1.0</guice-version>
+    <klighd-version>2.2.1-SNAPSHOT</klighd-version>
+    <lsp4j-version>0.15.0</lsp4j-version>
+    <tycho-version>2.7.3</tycho-version>
+    <xtend-version>2.28.0</xtend-version>
+    <xtext-version>2.28.0</xtext-version>
+
+    <targetJdk>11</targetJdk>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
 
     <!-- chsch: copied from https://eclipse.googlesource.com/recommenders/org.eclipse.recommenders/+/3dae4575d3370da2da25a1cbce3dfcff198f0611/features/pom.xml -->
     <!-- Non-breakable space, as normal spaces are trimmed. -->
@@ -89,6 +97,22 @@
       <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
     </pluginRepository>
   </pluginRepositories>
+
+  <repositories>
+    <!-- FIXME: remove this again when artifacts have found a place on the internet. Temporary Maven repository hosting our artifacts. -->
+    <!-- <repository>
+      <id>rtsys</id>
+      <url>https://rtsys.informatik.uni-kiel.de/~kieler/files/repo/</url>
+    </repository> -->
+  </repositories>
+
+  <!-- while deploying, put the compiled artifact into the following (local) repository -->
+  <distributionManagement>
+    <repository>
+     <id>internal-repo-for-downstream-usage</id>
+     <url>file://pragmatics</url>
+    </repository>
+  </distributionManagement>
 
 
   <!-- Modify the build process to add Tycho and configure some utility plug-ins. -->

@@ -7,3 +7,5 @@ target/
 *.pdf
 build/workspace
 *.java._trace
+# local Maven repository
+build/pragmatics
