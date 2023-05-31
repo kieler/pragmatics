@@ -13,6 +13,10 @@
   <version>0.50.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 
+  <name>KIELER Graph Analysis Text IDE Plugin</name>
+  <description>KIELER Graph Analysis Text IDE Plugin</description>
+  <url>https://github.com/kieler/pragmatics</url>
+
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>

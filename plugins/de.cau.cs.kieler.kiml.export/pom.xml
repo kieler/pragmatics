@@ -12,4 +12,8 @@
   <artifactId>de.cau.cs.kieler.kiml.export</artifactId>
   <version>0.50.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
+
+  <name>KIELER Graph Export</name>
+  <description>KIELER Graph Export</description>
+  <url>https://github.com/kieler/pragmatics</url>
 </project>

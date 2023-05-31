@@ -13,6 +13,10 @@
   <version>0.50.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 
+  <name>KIELER Pragmatics Language Server</name>
+  <description>KIELER Pragmatics Language Server</description>
+  <url>https://github.com/kieler/pragmatics</url>
+
   <dependencyManagement>
     <dependencies>
       <dependency>

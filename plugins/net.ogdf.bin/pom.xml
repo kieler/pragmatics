@@ -13,4 +13,15 @@
   <artifactId>net.ogdf.bin</artifactId>
   <version>2.3.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
+
+  <name>OGDF Server Binaries</name>
+  <description>OGDF Server Binaries</description>
+  <url>https://github.com/kieler/pragmatics</url>
+
+  <licenses>
+    <license>
+      <name>EPL-1.0 AND GPL-2.0/GPL-3.0</name>
+      <url>http://www.eclipse.org/legal/epl-v10.html https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html https://www.gnu.org/licenses/gpl-3.0-standalone.html</url>
+    </license>
+  </licenses>
 </project>

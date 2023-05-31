@@ -45,6 +45,33 @@
     </kieler.pragmatics.nightly>
   </properties>
 
+  <!-- Further required information for publishing on OSSRH, see https://central.sonatype.org/publish/requirements/ -->
+  <name>KIELER Pragmatics - Parent</name>
+  <description>The parent configuration for pragmatics components of the KIELER project.</description>
+  <url>https://github.com/kieler/pragmatics/</url>
+
+  <licenses>
+    <license>
+      <name>EPL-1.0</name>
+      <url>http://www.eclipse.org/legal/epl-v10.html</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Niklas Rentz</name>
+      <email>nre@informatik.uni-kiel.de</email>
+      <organization>Kiel University</organization>
+      <organizationUrl>https://www.rtsys.informatik.uni-kiel.de/</organizationUrl>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:git://github.com:kieler/pragmatics.git</connection>
+    <developerConnection>scm:git:ssh://github.com:kieler/pragmatics.git</developerConnection>
+    <url>https://github.com/kieler/pragmatics/</url>
+  </scm>
+
   <!-- Define one profile for each output target we have.
        Formerly, we had the <repository> definitions repeated below in each profile
        globally defined, i.e. profile independent. This, however, prevents the
@@ -80,6 +107,49 @@
         <tycho.surefire.extra.vmargs>-XstartOnFirstThread</tycho.surefire.extra.vmargs>
       </properties>
     </profile>
+
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <!-- Configure the nexus server to deploy to. -->
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <version>1.6.13</version>
+            <extensions>true</extensions>
+            <configuration>
+              <serverId>ossrh</serverId>
+              <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+              <autoReleaseAfterClose>false</autoReleaseAfterClose> <!-- this allows to manually inspect the staging repository: https://central.sonatype.org/publish/release/
+              trigger a release later with `mvn nexus-staging:release` or set to true if no inspection is wanted.-->
+            </configuration>
+          </plugin>
+
+          <!-- Sign all artifacts with GPG. -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+                <!-- TODO: This is the ID of a KIELER test GPG key. Remove this or replace it with the real KIELER key ID. -->
+                <configuration>
+                  <keyname>0x22B04AC3</keyname>
+                  <!-- TODO: is this needed? Does not seem to. -->
+                  <!-- <passphraseServerId>0x22B04AC3</passphraseServerId> -->
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 
 
@@ -113,6 +183,17 @@
      <url>file://pragmatics</url>
     </repository>
   </distributionManagement>
+  <!-- TODO: replace above with this for deploying to OSSRH -->
+  <!-- <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement> -->
 
 
   <!-- Modify the build process to add Tycho and configure some utility plug-ins. -->
@@ -184,6 +265,43 @@
             </environment>
           </environments>
         </configuration>
+      </plugin>
+
+      <!-- Build Javadoc jars -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.5.0</version>
+        <configuration>
+          <!-- Pin Java Source level to Java 8 for JavaDoc to avoid it getting confused with duplicate packages from P2 dependencies.-->
+          <source>8</source>
+          <tags>
+          <!-- Let JavaDoc know about tags from Xtext -->
+            <tag>
+              <name>generated</name>
+              <placement>a</placement>
+              <head>EMF generated code</head>
+            </tag>
+            <tag>
+              <name>model</name>
+              <placement>a</placement>
+              <head>EMF model element</head>
+            </tag>
+            <tag>
+              <name>ordered</name>
+              <placement>a</placement>
+              <head>EMF ordered element</head>
+            </tag>
+          </tags>
+        </configuration>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
 

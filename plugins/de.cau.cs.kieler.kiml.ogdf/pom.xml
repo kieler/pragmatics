@@ -13,6 +13,10 @@
   <version>0.50.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 
+  <name>KIELER Bridge for OGDF Layout</name>
+  <description>KIELER Bridge for OGDF Layout</description>
+  <url>https://github.com/kieler/pragmatics</url>
+
   <build>
     <plugins>
       <!-- Generate code from .melk files. -->
