@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.graphdrawing.graphml.KeyType#getDesc <em>Desc</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.KeyType#getDefault <em>Default</em>}</li>
@@ -30,7 +31,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.graphdrawing.graphml.KeyType#getFor <em>For</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.KeyType#getId <em>Id</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.graphdrawing.graphml.GraphMLPackage#getKeyType()
  * @model extendedMetaData="name='key.type' kind='elementOnly'"

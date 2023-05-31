@@ -35,8 +35,6 @@ import de.cau.cs.kieler.formats.TransformationData;
  * A graph format handler for Graphviz Dot.
  *
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class DotFormatHandler extends AbstractEmfHandler<GraphvizModel> {
     

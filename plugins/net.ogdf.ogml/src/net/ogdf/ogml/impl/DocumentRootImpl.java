@@ -82,6 +82,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.impl.DocumentRootImpl#getMixed <em>Mixed</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.DocumentRootImpl#getXMLNSPrefixMap <em>XMLNS Prefix Map</em>}</li>
@@ -137,7 +138,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link net.ogdf.ogml.impl.DocumentRootImpl#getText <em>Text</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.DocumentRootImpl#getUri <em>Uri</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

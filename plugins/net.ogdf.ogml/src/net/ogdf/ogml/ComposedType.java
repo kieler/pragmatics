@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.ComposedType#getGroup <em>Group</em>}</li>
  *   <li>{@link net.ogdf.ogml.ComposedType#getNumber <em>Number</em>}</li>
@@ -36,7 +37,6 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  *   <li>{@link net.ogdf.ogml.ComposedType#getComposed <em>Composed</em>}</li>
  *   <li>{@link net.ogdf.ogml.ComposedType#getName <em>Name</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getComposedType()
  * @model extendedMetaData="name='composed.type' kind='elementOnly'"

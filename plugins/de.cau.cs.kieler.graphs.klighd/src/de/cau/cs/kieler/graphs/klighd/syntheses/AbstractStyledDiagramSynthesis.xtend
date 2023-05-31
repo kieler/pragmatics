@@ -327,7 +327,7 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
     //   "Thank you for helping us help you help us all."
     
     /**
-     * Recursively calls {@link #enrichRendering(EObject)} on this object and all of its children.
+     * Recursively calls {@link #enrichRenderings(EObject)} on this object and all of its children.
      * 
      * @param o object to enrich.
      */
@@ -409,7 +409,7 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
      * yet, a default text rendering with a predefined font size is added to it. Also, makes sure that
      * an edge label placement is set on the label if it belongs to an edge.
      * 
-     * @param edge the edge whose rendering to enrich.
+     * @param label the label whose rendering to enrich.
      */
     protected def void enrichLabelRendering(KLabel label) {
         // We do this in any case, whether defaults are turned on or not

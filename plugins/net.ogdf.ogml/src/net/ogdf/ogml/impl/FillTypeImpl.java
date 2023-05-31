@@ -23,12 +23,12 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.impl.FillTypeImpl#getColor <em>Color</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.FillTypeImpl#getPattern <em>Pattern</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.FillTypeImpl#getPatternColor <em>Pattern Color</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

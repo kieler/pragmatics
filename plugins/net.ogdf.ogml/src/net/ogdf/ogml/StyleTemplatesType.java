@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.StyleTemplatesType#getGroup <em>Group</em>}</li>
  *   <li>{@link net.ogdf.ogml.StyleTemplatesType#getData <em>Data</em>}</li>
@@ -32,7 +33,6 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  *   <li>{@link net.ogdf.ogml.StyleTemplatesType#getEdgeStyleTemplate <em>Edge Style Template</em>}</li>
  *   <li>{@link net.ogdf.ogml.StyleTemplatesType#getLabelStyleTemplate <em>Label Style Template</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getStyleTemplatesType()
  * @model extendedMetaData="name='styleTemplates.type' kind='elementOnly'"

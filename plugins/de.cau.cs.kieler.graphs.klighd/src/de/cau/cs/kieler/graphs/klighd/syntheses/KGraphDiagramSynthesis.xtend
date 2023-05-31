@@ -63,7 +63,7 @@ class KGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<KNode> {
         "de.cau.cs.kieler.graphs.klighd.syntheses.KGraphDiagramSynthesis"
 
     // The next two definitions are used to load possibly persisted klighd information
-    //  that is ignored by kiml, e.g. the expansion state of nodes
+    // that is ignored by ELK, e.g. the expansion state of nodes
     private static val PREDICATE_IS_KGRAPHDATA = new Predicate<EMapPropertyHolder>() {
         override apply(EMapPropertyHolder input) {
             return input instanceof KGraphData;
@@ -79,7 +79,7 @@ class KGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<KNode> {
     
     /**
      * Whether the model wants default defaults. This property is no layout option, not registered with
-     * KIML, and has to be loaded explicitly by the 
+     * ELK, and has to be loaded explicitly by the 
      * {@link de.cau.cs.kieler.kgraph.text.KGraphResource KGraphResource}. 
      */
     private static final IProperty<Boolean> DEFAULTS_PROPERTY = new Property<Boolean>(

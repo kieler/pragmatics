@@ -38,6 +38,7 @@ import org.graphdrawing.graphml.PortType;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.graphdrawing.graphml.impl.NodeTypeImpl#getDesc <em>Desc</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.impl.NodeTypeImpl#getGroup <em>Group</em>}</li>
@@ -49,7 +50,6 @@ import org.graphdrawing.graphml.PortType;
  *   <li>{@link org.graphdrawing.graphml.impl.NodeTypeImpl#getParseIndegree <em>Parse Indegree</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.impl.NodeTypeImpl#getParseOutdegree <em>Parse Outdegree</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

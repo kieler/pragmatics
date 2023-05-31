@@ -23,13 +23,13 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.GraphStyleType#getData <em>Data</em>}</li>
  *   <li>{@link net.ogdf.ogml.GraphStyleType#getDefaultEdgeTemplate <em>Default Edge Template</em>}</li>
  *   <li>{@link net.ogdf.ogml.GraphStyleType#getDefaultLabelTemplate <em>Default Label Template</em>}</li>
  *   <li>{@link net.ogdf.ogml.GraphStyleType#getDefaultNodeTemplate <em>Default Node Template</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getGraphStyleType()
  * @model extendedMetaData="name='graphStyle.type' kind='elementOnly'"

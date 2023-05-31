@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.EdgeStyleTemplateType#getData <em>Data</em>}</li>
  *   <li>{@link net.ogdf.ogml.EdgeStyleTemplateType#getTemplate <em>Template</em>}</li>
@@ -31,7 +32,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link net.ogdf.ogml.EdgeStyleTemplateType#getTargetStyle <em>Target Style</em>}</li>
  *   <li>{@link net.ogdf.ogml.EdgeStyleTemplateType#getId <em>Id</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getEdgeStyleTemplateType()
  * @model extendedMetaData="name='edgeStyleTemplate.type' kind='elementOnly'"

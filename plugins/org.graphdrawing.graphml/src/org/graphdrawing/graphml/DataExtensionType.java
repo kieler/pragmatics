@@ -27,10 +27,10 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.graphdrawing.graphml.DataExtensionType#getMixed <em>Mixed</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.graphdrawing.graphml.GraphMLPackage#getDataExtensionType()
  * @model extendedMetaData="name='data-extension.type' kind='mixed'"

@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.LabelLayoutType#getData <em>Data</em>}</li>
  *   <li>{@link net.ogdf.ogml.LabelLayoutType#getTemplate <em>Template</em>}</li>
@@ -31,7 +32,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link net.ogdf.ogml.LabelLayoutType#getFont <em>Font</em>}</li>
  *   <li>{@link net.ogdf.ogml.LabelLayoutType#getIdRef <em>Id Ref</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getLabelLayoutType()
  * @model extendedMetaData="name='label_layout.type' kind='elementOnly'"

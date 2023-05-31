@@ -25,13 +25,13 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.impl.ShapeType1Impl#getHeight <em>Height</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.ShapeType1Impl#getType <em>Type</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.ShapeType1Impl#getUri <em>Uri</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.ShapeType1Impl#getWidth <em>Width</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

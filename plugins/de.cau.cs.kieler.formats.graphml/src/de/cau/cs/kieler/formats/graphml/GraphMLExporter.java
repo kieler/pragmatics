@@ -37,8 +37,6 @@ import de.cau.cs.kieler.formats.TransformationData;
  * Graph exporter for GraphML.
  *
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class GraphMLExporter implements IGraphTransformer<ElkNode, DocumentRoot> {
 

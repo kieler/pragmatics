@@ -29,10 +29,6 @@ import org.eclipse.swt.widgets.Combo;
  * settings using a {@code DialogSettings} instance.
  * 
  * @author cds
- * @kieler.design 2010-03-14
- *      reviewed by msp, pkl
- * @kieler.rating yellow 2010-03-14
- *      reviewed by msp, pkl
  */
 public class ComboHistoryHandler {
     

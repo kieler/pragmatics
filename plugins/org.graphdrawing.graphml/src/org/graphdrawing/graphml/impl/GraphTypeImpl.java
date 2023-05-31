@@ -43,6 +43,7 @@ import org.graphdrawing.graphml.NodeType;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.graphdrawing.graphml.impl.GraphTypeImpl#getDesc <em>Desc</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.impl.GraphTypeImpl#getGroup <em>Group</em>}</li>
@@ -61,7 +62,6 @@ import org.graphdrawing.graphml.NodeType;
  *   <li>{@link org.graphdrawing.graphml.impl.GraphTypeImpl#getParseNodes <em>Parse Nodes</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.impl.GraphTypeImpl#getParseOrder <em>Parse Order</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

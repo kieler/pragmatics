@@ -43,6 +43,7 @@ import org.graphdrawing.graphml.PortType;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.graphdrawing.graphml.impl.DocumentRootImpl#getMixed <em>Mixed</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.impl.DocumentRootImpl#getXMLNSPrefixMap <em>XMLNS Prefix Map</em>}</li>
@@ -60,7 +61,6 @@ import org.graphdrawing.graphml.PortType;
  *   <li>{@link org.graphdrawing.graphml.impl.DocumentRootImpl#getNode <em>Node</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.impl.DocumentRootImpl#getPort <em>Port</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

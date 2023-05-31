@@ -33,13 +33,13 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.impl.SourceTargetTypeImpl#getData <em>Data</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.SourceTargetTypeImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.SourceTargetTypeImpl#getId <em>Id</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.SourceTargetTypeImpl#getIdRef <em>Id Ref</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

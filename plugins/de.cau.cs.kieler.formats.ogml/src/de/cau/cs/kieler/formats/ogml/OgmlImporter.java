@@ -63,8 +63,6 @@ import net.ogdf.ogml.StylesType;
  * </ul>
  * 
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class OgmlImporter implements IGraphTransformer<DocumentRoot, ElkNode> {
 

@@ -27,8 +27,6 @@ import net.ogdf.bin.OgdfServerPool;
  * 
  * @author msp
  * @author mri
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class OgdfLayoutProvider extends AbstractLayoutProvider {
 
@@ -40,7 +38,7 @@ public class OgdfLayoutProvider extends AbstractLayoutProvider {
     /**
      * {@inheritDoc}
      * 
-     * @throws KielerException
+     * @throws IllegalArgumentException
      */
     @Override
     public void initialize(final String parameter) {

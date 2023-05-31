@@ -15,11 +15,11 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.EdgeConstraintType#getIdRef <em>Id Ref</em>}</li>
  *   <li>{@link net.ogdf.ogml.EdgeConstraintType#getName <em>Name</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getEdgeConstraintType()
  * @model extendedMetaData="name='edge_constraint.type' kind='empty'"

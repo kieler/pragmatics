@@ -36,6 +36,7 @@ import org.graphdrawing.graphml.KeyType;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.graphdrawing.graphml.impl.GraphmlTypeImpl#getDesc <em>Desc</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.impl.GraphmlTypeImpl#getKey <em>Key</em>}</li>
@@ -43,7 +44,6 @@ import org.graphdrawing.graphml.KeyType;
  *   <li>{@link org.graphdrawing.graphml.impl.GraphmlTypeImpl#getGraph <em>Graph</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.impl.GraphmlTypeImpl#getData <em>Data</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.FontType#getColor <em>Color</em>}</li>
  *   <li>{@link net.ogdf.ogml.FontType#getFamily <em>Family</em>}</li>
@@ -32,7 +33,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link net.ogdf.ogml.FontType#getVariant <em>Variant</em>}</li>
  *   <li>{@link net.ogdf.ogml.FontType#getWeight <em>Weight</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getFontType()
  * @model extendedMetaData="name='font.type' kind='empty'"

@@ -37,6 +37,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.impl.ConstraintsTypeImpl#getGroup <em>Group</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.ConstraintsTypeImpl#getNumber <em>Number</em>}</li>
@@ -47,7 +48,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link net.ogdf.ogml.impl.ConstraintsTypeImpl#getLabelRef <em>Label Ref</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.ConstraintsTypeImpl#getComposed <em>Composed</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

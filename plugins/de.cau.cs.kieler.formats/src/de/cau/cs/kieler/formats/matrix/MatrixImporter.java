@@ -32,8 +32,6 @@ import de.cau.cs.kieler.formats.TransformationData;
  * Importer for matrices into the KGraph format.
  *
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class MatrixImporter implements IGraphTransformer<Matrix, ElkNode> {
 

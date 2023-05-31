@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.graphdrawing.graphml.HyperedgeType#getDesc <em>Desc</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.HyperedgeType#getGroup <em>Group</em>}</li>
@@ -33,7 +34,6 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  *   <li>{@link org.graphdrawing.graphml.HyperedgeType#getGraph <em>Graph</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.HyperedgeType#getId <em>Id</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.graphdrawing.graphml.GraphMLPackage#getHyperedgeType()
  * @model extendedMetaData="name='hyperedge.type' kind='elementOnly'"

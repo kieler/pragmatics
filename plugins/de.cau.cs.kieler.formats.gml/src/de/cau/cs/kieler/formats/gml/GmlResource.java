@@ -69,7 +69,7 @@ public class GmlResource extends ResourceImpl {
     }
 
     /**
-     * {@link IResourceFactory} for {@link GmlResource}s to be registered 
+     * {@link Resource.Factory} for {@link GmlResource}s to be registered 
      * via EMF's 'extension_parser' extension point.
      */
     public static class GmlResourceFactory implements Resource.Factory {

@@ -31,6 +31,7 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.EdgeType#getData <em>Data</em>}</li>
  *   <li>{@link net.ogdf.ogml.EdgeType#getLabel <em>Label</em>}</li>
@@ -40,7 +41,6 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  *   <li>{@link net.ogdf.ogml.EdgeType#getLabel1 <em>Label1</em>}</li>
  *   <li>{@link net.ogdf.ogml.EdgeType#getId <em>Id</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getEdgeType()
  * @model extendedMetaData="name='edge.type' kind='elementOnly'"

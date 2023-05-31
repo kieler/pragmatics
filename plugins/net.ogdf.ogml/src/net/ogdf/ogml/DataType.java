@@ -21,11 +21,11 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.DataType#getValue <em>Value</em>}</li>
  *   <li>{@link net.ogdf.ogml.DataType#getIdRef <em>Id Ref</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getDataType()
  * @model extendedMetaData="name='data.type' kind='simple'"
