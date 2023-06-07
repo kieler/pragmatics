@@ -13,7 +13,7 @@
     <elk-version>0.8.1</elk-version>
     <gson-version>2.9.0</gson-version>
     <guice-version>5.1.0</guice-version>
-    <klighd-version>2.2.1-SNAPSHOT</klighd-version>
+    <klighd-version>2.3.0</klighd-version>
     <lsp4j-version>0.15.0</lsp4j-version>
     <tycho-version>2.7.3</tycho-version>
     <xtend-version>2.28.0</xtend-version>
@@ -138,11 +138,9 @@
                 <goals>
                   <goal>sign</goal>
                 </goals>
-                <!-- TODO: This is the ID of a KIELER test GPG key. Remove this or replace it with the real KIELER key ID. -->
+                <!-- This is the ID of the KIELER GPG key. -->
                 <configuration>
-                  <keyname>0x22B04AC3</keyname>
-                  <!-- TODO: is this needed? Does not seem to. -->
-                  <!-- <passphraseServerId>0x22B04AC3</passphraseServerId> -->
+                  <keyname>0x22228C2E</keyname>
                 </configuration>
               </execution>
             </executions>
@@ -168,23 +166,15 @@
     </pluginRepository>
   </pluginRepositories>
 
-  <repositories>
-    <!-- FIXME: remove this again when artifacts have found a place on the internet. Temporary Maven repository hosting our artifacts. -->
-    <!-- <repository>
-      <id>rtsys</id>
-      <url>https://rtsys.informatik.uni-kiel.de/~kieler/files/repo/</url>
-    </repository> -->
-  </repositories>
-
   <!-- while deploying, put the compiled artifact into the following (local) repository -->
-  <distributionManagement>
+  <!-- <distributionManagement>
     <repository>
      <id>internal-repo-for-downstream-usage</id>
      <url>file://pragmatics</url>
     </repository>
-  </distributionManagement>
-  <!-- TODO: replace above with this for deploying to OSSRH -->
-  <!-- <distributionManagement>
+  </distributionManagement> -->
+  <!-- Use this for deploying to OSSRH -->
+  <distributionManagement>
     <snapshotRepository>
       <id>ossrh</id>
       <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
@@ -193,7 +183,7 @@
       <id>ossrh</id>
       <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
-  </distributionManagement> -->
+  </distributionManagement>
 
 
   <!-- Modify the build process to add Tycho and configure some utility plug-ins. -->
