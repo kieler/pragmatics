@@ -832,6 +832,6 @@ advanced option crossingBeautifier: CrossBeautifModule {
 advanced option adaptPortPositions: boolean {
     targets parents
     default = true
-    description "Whether ports should be moved to the point where edges cross the node&apos;s bounds."
+    description "Whether ports should be moved to the point where edges cross the node&#39;s bounds."
     label "Adapt Port Positions"
 }
