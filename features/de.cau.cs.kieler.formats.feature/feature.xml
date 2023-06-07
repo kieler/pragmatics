@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<feature id="de.cau.cs.kieler.formats.feature" label="KIELER Layout - Formats (optional)" version="0.50.0.qualifier" provider-name="Kiel University" plugin="de.cau.cs.kieler.formats">
+<feature id="de.cau.cs.kieler.formats.feature" label="KIELER Layout - Formats (optional)" version="0.50.0.v20230607" provider-name="Kiel University" plugin="de.cau.cs.kieler.formats">
 
    <description url="http://rtsys.informatik.uni-kiel.de/confluence/">
 

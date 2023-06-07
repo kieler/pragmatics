@@ -26,24 +26,24 @@
 
    <!-- LAYOUT -->
 
-   <feature url="features/de.cau.cs.kieler.kiml.ogdf.feature_0.50.0.qualifier.jar" id="de.cau.cs.kieler.kiml.ogdf.feature" version="0.50.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.kiml.ogdf.feature_0.50.0.v20230607.jar" id="de.cau.cs.kieler.kiml.ogdf.feature" version="0.50.0.v20230607">
       <category name="kieler-layout"/>
    </feature>
-   <feature url="features/de.cau.cs.kieler.kiml.ogdf.feature.source_0.50.0.qualifier.jar" id="de.cau.cs.kieler.kiml.ogdf.feature.source" version="0.50.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.kiml.ogdf.feature.source_0.50.0.v20230607.jar" id="de.cau.cs.kieler.kiml.ogdf.feature.source" version="0.50.0.v20230607">
       <category name="kieler-sources"/>
    </feature>
    <feature url="features/net.ogdf.bin.feature_2.3.0.qualifier.jar" id="net.ogdf.bin.feature" version="2.3.0.qualifier" os="linux,macosx,solaris,win32" arch="sparc,x86,x86_64">
       <category name="kieler-layout"/>
    </feature>
 
-   <feature url="features/de.cau.cs.kieler.kgraph.feature_0.50.0.qualifier.jar" id="de.cau.cs.kieler.kgraph.feature" version="0.50.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.kgraph.feature_0.50.0.v20230607.jar" id="de.cau.cs.kieler.kgraph.feature" version="0.50.0.v20230607">
       <category name="kieler-layout"/>
    </feature>
-   <feature url="features/de.cau.cs.kieler.kgraph.feature.source_0.50.0.qualifier.jar" id="de.cau.cs.kieler.kgraph.feature.source" version="0.50.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.kgraph.feature.source_0.50.0.v20230607.jar" id="de.cau.cs.kieler.kgraph.feature.source" version="0.50.0.v20230607">
       <category name="kieler-sources"/>
    </feature>
 
-   <bundle id="de.cau.cs.kieler.pragmatics.language.server" version="0.50.0.qualifier"/>
+   <bundle id="de.cau.cs.kieler.pragmatics.language.server" version="0.50.0.v20230607"/>
 
    <repository-reference location="https://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/klighd/" enabled="true"/>
 
