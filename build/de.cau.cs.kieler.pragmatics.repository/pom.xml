@@ -36,19 +36,19 @@
                 <!-- Eclipse -->
                 <associateSite>https://download.eclipse.org/releases/2022-09/</associateSite>
                 <!-- Eclipse Layout Kernel -->
-                <associateSite>https://download.eclipse.org/elk/updates/nightly/</associateSite>
+                <associateSite>https://download.eclipse.org/elk/updates/releases/0.8.1/</associateSite>
                 <!-- Eclipse Orbit -->
                 <associateSite>http://download.eclipse.org/tools/orbit/downloads/drops/R20220830213456/repository/</associateSite>
                 <!-- Xtext repository -->
                 <associateSite>https://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.28.0/</associateSite>
                 <!-- KLighD -->
-                <associateSite>https://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/klighd/</associateSite>
+                <associateSite>https://kieler.github.io/KLighD/v2.3.0/</associateSite>
               </associateSites>
               <siteTemplateFolder>siteTemplate</siteTemplateFolder>
               <skipBuildInfo>true</skipBuildInfo>
               <symbols>
                 <update.site.name>KIELER Pragmatics</update.site.name>
-                <update.site.description>Nightly</update.site.description>
+                <update.site.description>Release</update.site.description>
                 <update.site.version>${unqualifiedVersion}.${buildQualifier}</update.site.version>
               </symbols>
             </configuration>
