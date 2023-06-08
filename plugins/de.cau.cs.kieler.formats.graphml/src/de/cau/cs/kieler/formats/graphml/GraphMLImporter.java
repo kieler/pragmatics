@@ -55,8 +55,6 @@ import de.cau.cs.kieler.formats.TransformationData;
  * A transformer for GraphML.
  *
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class GraphMLImporter implements IGraphTransformer<DocumentRoot, ElkNode> {
     

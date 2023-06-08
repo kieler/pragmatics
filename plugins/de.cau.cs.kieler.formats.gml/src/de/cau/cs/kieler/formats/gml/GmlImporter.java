@@ -41,8 +41,6 @@ import de.cau.cs.kieler.formats.TransformationData;
  * 
  * @author msp
  * @author mkr
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class GmlImporter implements IGraphTransformer<GMLModel, ElkNode> {
 

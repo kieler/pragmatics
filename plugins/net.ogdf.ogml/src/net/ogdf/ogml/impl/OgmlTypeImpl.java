@@ -26,11 +26,11 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.impl.OgmlTypeImpl#getKeys <em>Keys</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.OgmlTypeImpl#getGraph <em>Graph</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

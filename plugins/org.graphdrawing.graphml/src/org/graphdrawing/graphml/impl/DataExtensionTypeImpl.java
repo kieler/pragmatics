@@ -26,10 +26,10 @@ import org.graphdrawing.graphml.GraphMLPackage;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.graphdrawing.graphml.impl.DataExtensionTypeImpl#getMixed <em>Mixed</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

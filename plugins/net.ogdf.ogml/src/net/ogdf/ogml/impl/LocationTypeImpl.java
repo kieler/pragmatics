@@ -22,12 +22,12 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.impl.LocationTypeImpl#getX <em>X</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.LocationTypeImpl#getY <em>Y</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.LocationTypeImpl#getZ <em>Z</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

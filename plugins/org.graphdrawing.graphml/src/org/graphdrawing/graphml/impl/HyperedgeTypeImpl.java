@@ -35,6 +35,7 @@ import org.graphdrawing.graphml.HyperedgeType;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.graphdrawing.graphml.impl.HyperedgeTypeImpl#getDesc <em>Desc</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.impl.HyperedgeTypeImpl#getGroup <em>Group</em>}</li>
@@ -43,7 +44,6 @@ import org.graphdrawing.graphml.HyperedgeType;
  *   <li>{@link org.graphdrawing.graphml.impl.HyperedgeTypeImpl#getGraph <em>Graph</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.impl.HyperedgeTypeImpl#getId <em>Id</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

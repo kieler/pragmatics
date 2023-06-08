@@ -27,6 +27,7 @@ import org.graphdrawing.graphml.KeyTypeType;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.graphdrawing.graphml.impl.KeyTypeImpl#getDesc <em>Desc</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.impl.KeyTypeImpl#getDefault <em>Default</em>}</li>
@@ -36,7 +37,6 @@ import org.graphdrawing.graphml.KeyTypeType;
  *   <li>{@link org.graphdrawing.graphml.impl.KeyTypeImpl#getFor <em>For</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.impl.KeyTypeImpl#getId <em>Id</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

@@ -35,6 +35,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.impl.NodeTypeImpl#getData <em>Data</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.NodeTypeImpl#getGroup <em>Group</em>}</li>
@@ -42,7 +43,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link net.ogdf.ogml.impl.NodeTypeImpl#getNode <em>Node</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.NodeTypeImpl#getId <em>Id</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

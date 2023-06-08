@@ -17,11 +17,11 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.IntType#getName <em>Name</em>}</li>
  *   <li>{@link net.ogdf.ogml.IntType#getValue <em>Value</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getIntType()
  * @model extendedMetaData="name='int.type' kind='empty'"

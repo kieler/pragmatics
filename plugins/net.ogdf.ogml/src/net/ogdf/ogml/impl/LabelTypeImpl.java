@@ -32,12 +32,12 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.impl.LabelTypeImpl#getData <em>Data</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.LabelTypeImpl#getContent <em>Content</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.LabelTypeImpl#getId <em>Id</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

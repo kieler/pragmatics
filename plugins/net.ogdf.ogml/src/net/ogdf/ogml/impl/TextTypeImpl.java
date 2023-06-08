@@ -27,13 +27,13 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.impl.TextTypeImpl#getAlignment <em>Alignment</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.TextTypeImpl#getDecoration <em>Decoration</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.TextTypeImpl#getRotation <em>Rotation</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.TextTypeImpl#getTransform <em>Transform</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

@@ -38,6 +38,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.impl.EdgeLayoutTypeImpl#getData <em>Data</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.EdgeLayoutTypeImpl#getTemplate <em>Template</em>}</li>
@@ -48,7 +49,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link net.ogdf.ogml.impl.EdgeLayoutTypeImpl#getSegment <em>Segment</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.EdgeLayoutTypeImpl#getIdRef <em>Id Ref</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

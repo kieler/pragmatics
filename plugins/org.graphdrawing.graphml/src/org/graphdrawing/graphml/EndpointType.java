@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.graphdrawing.graphml.EndpointType#getDesc <em>Desc</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.EndpointType#getId <em>Id</em>}</li>
@@ -28,7 +29,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.graphdrawing.graphml.EndpointType#getPort <em>Port</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.EndpointType#getType <em>Type</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.graphdrawing.graphml.GraphMLPackage#getEndpointType()
  * @model extendedMetaData="name='endpoint.type' kind='elementOnly'"

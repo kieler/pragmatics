@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.graphdrawing.graphml.GraphType#getDesc <em>Desc</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.GraphType#getGroup <em>Group</em>}</li>
@@ -45,7 +46,6 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  *   <li>{@link org.graphdrawing.graphml.GraphType#getParseNodes <em>Parse Nodes</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.GraphType#getParseOrder <em>Parse Order</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.graphdrawing.graphml.GraphMLPackage#getGraphType()
  * @model extendedMetaData="name='graph.type' kind='elementOnly'"

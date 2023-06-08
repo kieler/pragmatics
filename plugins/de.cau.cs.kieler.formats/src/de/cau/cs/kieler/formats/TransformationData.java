@@ -24,8 +24,6 @@ import org.eclipse.elk.graph.properties.MapPropertyHolder;
  * @param <S> source graph type
  * @param <T> target graph type
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class TransformationData<S, T> extends MapPropertyHolder {
     

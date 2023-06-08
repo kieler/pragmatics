@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.NodeType#getData <em>Data</em>}</li>
  *   <li>{@link net.ogdf.ogml.NodeType#getGroup <em>Group</em>}</li>
@@ -32,7 +33,6 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  *   <li>{@link net.ogdf.ogml.NodeType#getNode <em>Node</em>}</li>
  *   <li>{@link net.ogdf.ogml.NodeType#getId <em>Id</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getNodeType()
  * @model extendedMetaData="name='node.type' kind='elementOnly'"

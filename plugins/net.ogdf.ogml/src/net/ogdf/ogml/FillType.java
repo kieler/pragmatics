@@ -15,12 +15,12 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.FillType#getColor <em>Color</em>}</li>
  *   <li>{@link net.ogdf.ogml.FillType#getPattern <em>Pattern</em>}</li>
  *   <li>{@link net.ogdf.ogml.FillType#getPatternColor <em>Pattern Color</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getFillType()
  * @model extendedMetaData="name='fill_._type' kind='empty'"

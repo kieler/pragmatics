@@ -38,6 +38,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.impl.ComposedTypeImpl#getGroup <em>Group</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.ComposedTypeImpl#getNumber <em>Number</em>}</li>
@@ -49,7 +50,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link net.ogdf.ogml.impl.ComposedTypeImpl#getComposed <em>Composed</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.ComposedTypeImpl#getName <em>Name</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

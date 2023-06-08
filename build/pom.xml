@@ -3,17 +3,25 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.cau.cs.kieler</groupId>
-  <artifactId>parent</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <artifactId>pragmatics</artifactId>
+  <version>0.50.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
 
   <!-- Define a few properties used throughout all build profiles. -->
   <properties>
-    <tycho-version>2.7.3</tycho-version>
-    <targetJdk>1.8</targetJdk>
-    <xtext-version>2.28.0</xtext-version>
     <elk-version>0.8.1</elk-version>
+    <gson-version>2.9.0</gson-version>
+    <guice-version>5.1.0</guice-version>
+    <klighd-version>2.3.0.v20230606</klighd-version>
+    <lsp4j-version>0.15.0</lsp4j-version>
+    <tycho-version>2.7.3</tycho-version>
+    <xtend-version>2.28.0</xtend-version>
+    <xtext-version>2.28.0</xtext-version>
+
+    <targetJdk>11</targetJdk>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
 
     <!-- chsch: copied from https://eclipse.googlesource.com/recommenders/org.eclipse.recommenders/+/3dae4575d3370da2da25a1cbce3dfcff198f0611/features/pom.xml -->
     <!-- Non-breakable space, as normal spaces are trimmed. -->
@@ -36,6 +44,33 @@
       http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/
     </kieler.pragmatics.nightly>
   </properties>
+
+  <!-- Further required information for publishing on OSSRH, see https://central.sonatype.org/publish/requirements/ -->
+  <name>KIELER Pragmatics - Parent</name>
+  <description>The parent configuration for pragmatics components of the KIELER project.</description>
+  <url>https://github.com/kieler/pragmatics/</url>
+
+  <licenses>
+    <license>
+      <name>EPL-1.0</name>
+      <url>http://www.eclipse.org/legal/epl-v10.html</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Niklas Rentz</name>
+      <email>nre@informatik.uni-kiel.de</email>
+      <organization>Kiel University</organization>
+      <organizationUrl>https://www.rtsys.informatik.uni-kiel.de/</organizationUrl>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:git://github.com:kieler/pragmatics.git</connection>
+    <developerConnection>scm:git:ssh://github.com:kieler/pragmatics.git</developerConnection>
+    <url>https://github.com/kieler/pragmatics/</url>
+  </scm>
 
   <!-- Define one profile for each output target we have.
        Formerly, we had the <repository> definitions repeated below in each profile
@@ -72,6 +107,47 @@
         <tycho.surefire.extra.vmargs>-XstartOnFirstThread</tycho.surefire.extra.vmargs>
       </properties>
     </profile>
+
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <!-- Configure the nexus server to deploy to. -->
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <version>1.6.13</version>
+            <extensions>true</extensions>
+            <configuration>
+              <serverId>ossrh</serverId>
+              <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+              <autoReleaseAfterClose>false</autoReleaseAfterClose> <!-- this allows to manually inspect the staging repository: https://central.sonatype.org/publish/release/
+              trigger a release later with `mvn nexus-staging:release` or set to true if no inspection is wanted.-->
+            </configuration>
+          </plugin>
+
+          <!-- Sign all artifacts with GPG. -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+                <!-- This is the ID of the KIELER GPG key. -->
+                <configuration>
+                  <keyname>0x22228C2E</keyname>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 
 
@@ -89,6 +165,25 @@
       <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
     </pluginRepository>
   </pluginRepositories>
+
+  <!-- while deploying, put the compiled artifact into the following (local) repository -->
+  <!-- <distributionManagement>
+    <repository>
+     <id>internal-repo-for-downstream-usage</id>
+     <url>file://pragmatics</url>
+    </repository>
+  </distributionManagement> -->
+  <!-- Use this for deploying to OSSRH -->
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
 
 
   <!-- Modify the build process to add Tycho and configure some utility plug-ins. -->
@@ -160,6 +255,43 @@
             </environment>
           </environments>
         </configuration>
+      </plugin>
+
+      <!-- Build Javadoc jars -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.5.0</version>
+        <configuration>
+          <!-- Pin Java Source level to Java 8 for JavaDoc to avoid it getting confused with duplicate packages from P2 dependencies.-->
+          <source>8</source>
+          <tags>
+          <!-- Let JavaDoc know about tags from Xtext -->
+            <tag>
+              <name>generated</name>
+              <placement>a</placement>
+              <head>EMF generated code</head>
+            </tag>
+            <tag>
+              <name>model</name>
+              <placement>a</placement>
+              <head>EMF model element</head>
+            </tag>
+            <tag>
+              <name>ordered</name>
+              <placement>a</placement>
+              <head>EMF ordered element</head>
+            </tag>
+          </tags>
+        </configuration>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
 

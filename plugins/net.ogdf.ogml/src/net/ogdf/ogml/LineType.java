@@ -17,12 +17,12 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.LineType#getColor <em>Color</em>}</li>
  *   <li>{@link net.ogdf.ogml.LineType#getType <em>Type</em>}</li>
  *   <li>{@link net.ogdf.ogml.LineType#getWidth <em>Width</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getLineType()
  * @model extendedMetaData="name='line_._type' kind='empty'"

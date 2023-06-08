@@ -24,11 +24,11 @@ import org.w3._1999.xlink.TypeType;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.graphdrawing.graphml.impl.LocatorTypeImpl#getHref <em>Href</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.impl.LocatorTypeImpl#getType <em>Type</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

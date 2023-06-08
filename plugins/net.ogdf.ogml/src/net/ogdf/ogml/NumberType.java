@@ -15,11 +15,11 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.NumberType#getName <em>Name</em>}</li>
  *   <li>{@link net.ogdf.ogml.NumberType#getValue <em>Value</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getNumberType()
  * @model extendedMetaData="name='number.type' kind='empty'"

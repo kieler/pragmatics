@@ -28,8 +28,6 @@ import de.cau.cs.kieler.formats.IGraphTransformer;
  * A transformer for GraphML.
  *
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class GraphMLFormatHandler extends AbstractEmfHandler<DocumentRoot> {
 

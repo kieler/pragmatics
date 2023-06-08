@@ -49,10 +49,6 @@ import org.eclipse.swt.widgets.Composite;
  * loaded.</p>
  * 
  * @author cds
- * @kieler.design 2010-03-14
- *      reviewed by haf, msp, pkl
- * @kieler.rating yellow 2010-03-14
- *      reviewed by haf, msp, pkl
  */
 public class WorkspaceResourcesPage extends ResourceTreeAndListPage {
     

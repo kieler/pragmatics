@@ -30,9 +30,10 @@ import de.cau.cs.kieler.formats.TransformationException;
 
 /**
  * A handler for matrices as defined by Matrix Market.
- * See {@link http://math.nist.gov/MatrixMarket/}.
+ * See <a href="http://math.nist.gov/MatrixMarket/">http://math.nist.gov/MatrixMarket/</a>.
  * <p>
  * The handler supports three format types:
+ * </p>
  * <ul>
  *   <li><b>Coordinate format:</b> Each edge is given explicitly with source and target node index.</li>
  *   <li><b>Array format:</b> The full adjacency matrix is written column-wise.</li>
@@ -40,16 +41,15 @@ import de.cau.cs.kieler.formats.TransformationException;
  *     The first part contains coordinates for all nodes sorted by their index, while the
  *     second part contains bend points for all edges.</li>
  * </ul>
+ * <p>
  * The coordinate and array formats are supported for import and export, while the layout format
  * is only supported for export. The default format for graph serialization is the layout format.
- * This can be overridden using the {@link de.cau.cs.kieler.kiml.options.LayoutOptions#NO_LAYOUT}
+ * This can be overridden using the {@link org.eclipse.elk.core.options.CoreOptions#NO_LAYOUT}
  * option: if defined, the output format is either coordinate or array, depending on the number
  * of edges in the graph.
  * </p>
  *
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class MatrixFormatHandler implements IGraphFormatHandler<Matrix> {
     

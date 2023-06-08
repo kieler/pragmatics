@@ -17,13 +17,13 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.TargetStyleType#getColor <em>Color</em>}</li>
  *   <li>{@link net.ogdf.ogml.TargetStyleType#getType <em>Type</em>}</li>
  *   <li>{@link net.ogdf.ogml.TargetStyleType#getUri <em>Uri</em>}</li>
  *   <li>{@link net.ogdf.ogml.TargetStyleType#getWidth <em>Width</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getTargetStyleType()
  * @model extendedMetaData="name='targetStyle_._type' kind='empty'"

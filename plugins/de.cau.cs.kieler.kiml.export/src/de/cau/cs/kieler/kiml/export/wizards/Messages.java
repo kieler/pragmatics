@@ -17,7 +17,6 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * @generated
- * @kieler.ignore (excluded from review process)
  */
 public class Messages extends NLS {
     

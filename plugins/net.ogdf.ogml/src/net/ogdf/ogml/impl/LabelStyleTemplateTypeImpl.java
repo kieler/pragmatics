@@ -35,6 +35,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.impl.LabelStyleTemplateTypeImpl#getData <em>Data</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.LabelStyleTemplateTypeImpl#getTemplate <em>Template</em>}</li>
@@ -42,7 +43,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link net.ogdf.ogml.impl.LabelStyleTemplateTypeImpl#getFont <em>Font</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.LabelStyleTemplateTypeImpl#getId <em>Id</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

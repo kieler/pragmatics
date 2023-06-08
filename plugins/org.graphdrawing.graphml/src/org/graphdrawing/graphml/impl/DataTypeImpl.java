@@ -21,12 +21,12 @@ import org.graphdrawing.graphml.GraphMLPackage;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.graphdrawing.graphml.impl.DataTypeImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.impl.DataTypeImpl#getKey <em>Key</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.impl.DataTypeImpl#getTime <em>Time</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

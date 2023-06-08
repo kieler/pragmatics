@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.DocumentRoot#getMixed <em>Mixed</em>}</li>
  *   <li>{@link net.ogdf.ogml.DocumentRoot#getXMLNSPrefixMap <em>XMLNS Prefix Map</em>}</li>
@@ -74,7 +75,6 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  *   <li>{@link net.ogdf.ogml.DocumentRoot#getText <em>Text</em>}</li>
  *   <li>{@link net.ogdf.ogml.DocumentRoot#getUri <em>Uri</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getDocumentRoot()
  * @model extendedMetaData="name='' kind='mixed'"
@@ -110,7 +110,7 @@ public interface DocumentRoot extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>XMLNS Prefix Map</em>' map.
      * @see net.ogdf.ogml.OgmlPackage#getDocumentRoot_XMLNSPrefixMap()
-     * @model mapType="org.eclipse.emf.ecore.EStringToStringMapEntry<org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EString>" transient="true"
+     * @model mapType="org.eclipse.emf.ecore.EStringToStringMapEntry&lt;org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EString&gt;" transient="true"
      *        extendedMetaData="kind='attribute' name='xmlns:prefix'"
      * @generated
      */
@@ -128,7 +128,7 @@ public interface DocumentRoot extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>XSI Schema Location</em>' map.
      * @see net.ogdf.ogml.OgmlPackage#getDocumentRoot_XSISchemaLocation()
-     * @model mapType="org.eclipse.emf.ecore.EStringToStringMapEntry<org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EString>" transient="true"
+     * @model mapType="org.eclipse.emf.ecore.EStringToStringMapEntry&lt;org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EString&gt;" transient="true"
      *        extendedMetaData="kind='attribute' name='xsi:schemaLocation'"
      * @generated
      */

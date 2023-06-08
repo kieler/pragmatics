@@ -30,10 +30,10 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.impl.KeysTypeImpl#getKey <em>Key</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

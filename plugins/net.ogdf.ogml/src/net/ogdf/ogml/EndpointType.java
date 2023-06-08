@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.EndpointType#getColor <em>Color</em>}</li>
  *   <li>{@link net.ogdf.ogml.EndpointType#getIdRef <em>Id Ref</em>}</li>
@@ -32,7 +33,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link net.ogdf.ogml.EndpointType#getSize <em>Size</em>}</li>
  *   <li>{@link net.ogdf.ogml.EndpointType#getStyle <em>Style</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getEndpointType()
  * @model extendedMetaData="name='endpoint.type' kind='empty'"

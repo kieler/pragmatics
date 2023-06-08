@@ -17,8 +17,6 @@ package de.cau.cs.kieler.kiml.ogdf.options;
  * Definition of the speed option for the Davidson-Harel layouter.
  * 
  * @author mri
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public enum Speed {
     

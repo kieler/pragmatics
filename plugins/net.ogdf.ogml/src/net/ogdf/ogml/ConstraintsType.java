@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.ConstraintsType#getGroup <em>Group</em>}</li>
  *   <li>{@link net.ogdf.ogml.ConstraintsType#getNumber <em>Number</em>}</li>
@@ -29,7 +30,6 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  *   <li>{@link net.ogdf.ogml.ConstraintsType#getLabelRef <em>Label Ref</em>}</li>
  *   <li>{@link net.ogdf.ogml.ConstraintsType#getComposed <em>Composed</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getConstraintsType()
  * @model extendedMetaData="name='constraints.type' kind='elementOnly'"

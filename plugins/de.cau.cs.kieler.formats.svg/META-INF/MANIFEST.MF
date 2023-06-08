@@ -4,7 +4,7 @@ Bundle-Name: KIELER Graph Export for SVG
 Bundle-SymbolicName: de.cau.cs.kieler.formats.svg;singleton:=true
 Bundle-Version: 0.50.0.qualifier
 Bundle-Vendor: Kiel University
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.apache.batik.svggen;bundle-version="1.6.0",
  org.apache.batik.dom;bundle-version="1.6.0",
  org.apache.batik.ext.awt;bundle-version="1.6.0",

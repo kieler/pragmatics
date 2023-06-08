@@ -32,6 +32,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.impl.PointTypeImpl#getData <em>Data</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.PointTypeImpl#getId <em>Id</em>}</li>
@@ -39,7 +40,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link net.ogdf.ogml.impl.PointTypeImpl#getY <em>Y</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.PointTypeImpl#getZ <em>Z</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

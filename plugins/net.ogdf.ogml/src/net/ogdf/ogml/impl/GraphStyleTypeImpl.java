@@ -32,13 +32,13 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.impl.GraphStyleTypeImpl#getData <em>Data</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.GraphStyleTypeImpl#getDefaultEdgeTemplate <em>Default Edge Template</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.GraphStyleTypeImpl#getDefaultLabelTemplate <em>Default Label Template</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.GraphStyleTypeImpl#getDefaultNodeTemplate <em>Default Node Template</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

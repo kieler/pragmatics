@@ -24,11 +24,11 @@ import org.w3._1999.xlink.TypeType;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.graphdrawing.graphml.LocatorType#getHref <em>Href</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.LocatorType#getType <em>Type</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.graphdrawing.graphml.GraphMLPackage#getLocatorType()
  * @model extendedMetaData="name='locator.type' kind='empty'"

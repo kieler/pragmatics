@@ -15,10 +15,10 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.TemplateType#getIdRef <em>Id Ref</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getTemplateType()
  * @model extendedMetaData="name='template.type' kind='empty'"

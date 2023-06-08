@@ -22,12 +22,12 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.impl.KeyValueTypeImpl#getDafault <em>Dafault</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.KeyValueTypeImpl#getName <em>Name</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.KeyValueTypeImpl#getType <em>Type</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

@@ -23,13 +23,13 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.LayoutType#getData <em>Data</em>}</li>
  *   <li>{@link net.ogdf.ogml.LayoutType#getStyleTemplates <em>Style Templates</em>}</li>
  *   <li>{@link net.ogdf.ogml.LayoutType#getStyles <em>Styles</em>}</li>
  *   <li>{@link net.ogdf.ogml.LayoutType#getConstraints <em>Constraints</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getLayoutType()
  * @model extendedMetaData="name='layout.type' kind='elementOnly'"

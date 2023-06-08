@@ -9,7 +9,7 @@ Require-Bundle: org.eclipse.xtend.lib;bundle-version="2.7.0",
  org.eclipse.elk.graph;bundle-version="0.1.0",
  de.cau.cs.kieler.formats,
  org.eclipse.elk.core
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: 
  de.cau.cs.kieler.formats.gml
 Automatic-Module-Name: de.cau.cs.kieler.formats.gml
