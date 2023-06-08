@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<feature id="de.cau.cs.kieler.kgraph.feature" label="KIELER KGraph Editing and Visualization" version="0.50.0.qualifier" provider-name="Kiel University" plugin="de.cau.cs.kieler.graphs.klighd">
+<feature id="de.cau.cs.kieler.kgraph.feature" label="KIELER KGraph Editing and Visualization" version="0.51.0.qualifier" provider-name="Kiel University" plugin="de.cau.cs.kieler.graphs.klighd">
 
    <description url="http://www.informatik.uni-kiel.de/rtsys/kieler">
       Textual editing of KGraphs and visualization using KLighD technology. This feature is all you need to start developing layout algorithms.

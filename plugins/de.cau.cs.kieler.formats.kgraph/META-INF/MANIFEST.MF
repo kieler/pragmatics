@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Formats KGraph
 Bundle-SymbolicName: de.cau.cs.kieler.formats.kgraph;singleton:=true
-Bundle-Version: 0.50.0.qualifier
+Bundle-Version: 0.51.0.qualifier
 Bundle-Vendor: Kiel University
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: com.google.guava,
