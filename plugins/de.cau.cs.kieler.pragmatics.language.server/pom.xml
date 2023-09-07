@@ -32,17 +32,6 @@
       </dependency>
       <dependency>
         <groupId>de.cau.cs.kieler.klighd</groupId>
-        <artifactId>de.cau.cs.kieler.klighd.incremental</artifactId>
-        <version>${klighd-version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.eclipse.platform</groupId>
-            <artifactId>org.eclipse.swt</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>de.cau.cs.kieler.klighd</groupId>
         <artifactId>de.cau.cs.kieler.klighd.lsp</artifactId>
         <version>${klighd-version}</version>
         <exclusions>
@@ -107,10 +96,6 @@
       <groupId>de.cau.cs.kieler.klighd</groupId>
       <artifactId>de.cau.cs.kieler.klighd.ide</artifactId>
       <version>${klighd-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>de.cau.cs.kieler.klighd</groupId>
-      <artifactId>de.cau.cs.kieler.klighd.incremental</artifactId>
     </dependency>
     <dependency>
       <groupId>de.cau.cs.kieler.klighd</groupId>
