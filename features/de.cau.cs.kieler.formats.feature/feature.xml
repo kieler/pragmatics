@@ -230,7 +230,7 @@ litigation.
 
    <plugin id="de.cau.cs.kieler.formats.ogml" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
 
-   <plugin id="de.cau.cs.kieler.formats.svg" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
+   <!-- <plugin id="de.cau.cs.kieler.formats.svg" download-size="0" install-size="0" version="0.0.0" unpack="false"/> -->
 
    <plugin id="de.cau.cs.kieler.kiml.export" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
 
