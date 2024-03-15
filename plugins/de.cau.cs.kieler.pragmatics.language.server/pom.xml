@@ -210,6 +210,11 @@
           </execution>
         </executions>
       </plugin>
+      <!-- make sure the source jar is also signed, putting the signing after it. -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+      </plugin>
 
       <!-- Build an uber jar with Maven Shade -->
       <plugin>
