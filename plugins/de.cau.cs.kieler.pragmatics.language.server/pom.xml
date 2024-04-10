@@ -102,7 +102,7 @@
     </dependency>
     <dependency>
       <groupId>de.cau.cs.kieler.klighd</groupId>
-      <artifactId>de.cau.cs.kieler.klighd.standalone</artifactId>
+      <artifactId>de.cau.cs.kieler.klighd.setup</artifactId>
       <version>${klighd-version}</version>
     </dependency>
     <dependency>
