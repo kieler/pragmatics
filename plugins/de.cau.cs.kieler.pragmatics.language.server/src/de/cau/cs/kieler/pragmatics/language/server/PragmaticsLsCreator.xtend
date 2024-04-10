@@ -12,10 +12,12 @@
  */
 package de.cau.cs.kieler.pragmatics.language.server
 
+import de.cau.cs.kieler.core.services.KielerServiceLoader
 import de.cau.cs.kieler.klighd.lsp.KGraphLanguageClient
 import de.cau.cs.kieler.klighd.lsp.interactive.layered.LayeredInteractiveLanguageServerExtension
 import de.cau.cs.kieler.klighd.lsp.interactive.rectpacking.RectpackingInteractiveLanguageServerExtension
 import de.cau.cs.kieler.klighd.lsp.launch.AbstractLsCreator
+import de.cau.cs.kieler.klighd.lsp.structuredProgramming.IStructuredProgrammingLanguageServerContribution
 
 /** 
  * Provides methods to create a LS.
@@ -29,12 +31,17 @@ class PragmaticsLsCreator extends AbstractLsCreator {
     
     RectpackingInteractiveLanguageServerExtension rectPack
     
+    
     override getLanguageServerExtensions() {
         constraints = injector.getInstance(LayeredInteractiveLanguageServerExtension)
         rectPack = injector.getInstance(RectpackingInteractiveLanguageServerExtension)
+        
         val iLanguageServerExtensions = newArrayList(
             injector.getInstance(PragmaticsRegistrationLanguageServerExtension), constraints, rectPack
         )
+        for (lse : KielerServiceLoader.load(IStructuredProgrammingLanguageServerContribution)){
+            iLanguageServerExtensions.add(lse.getLanguageServerExtension(injector))
+        }
         return iLanguageServerExtensions
     }
     
