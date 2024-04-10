@@ -34,6 +34,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.impl.StructureTypeImpl#getGroup <em>Group</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.StructureTypeImpl#getData <em>Data</em>}</li>
@@ -41,7 +42,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link net.ogdf.ogml.impl.StructureTypeImpl#getEdge <em>Edge</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.StructureTypeImpl#getLabel <em>Label</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

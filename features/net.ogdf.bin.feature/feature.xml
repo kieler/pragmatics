@@ -5,7 +5,7 @@
       version="2.3.0.qualifier"
       provider-name="Kiel University"
       os="linux,macosx,solaris,win32"
-      arch="sparc,x86,x86_64">
+      arch="sparc,x86,x86_64,aarch64">
 
    <description url="http://www.ogdf.net/">
       The OGDF library provides a wide range of graph drawing algorithms that allow to reuse and replace particular algorithm phases by using a dedicated module mechanism. It includes sophisticated data structures that are commonly used in graph drawing, equipped with rich public interfaces. This feature is built with the release version 2012.07 (Sakura) of OGDF. It provides a program that can be executed as layout server with standard I/O communication.

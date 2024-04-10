@@ -19,8 +19,6 @@ import org.eclipse.elk.core.options.Direction;
  * Definition of OGDF-style direction.
  * 
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public enum OgdfDirection {
 

@@ -17,13 +17,13 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.ShapeType1#getHeight <em>Height</em>}</li>
  *   <li>{@link net.ogdf.ogml.ShapeType1#getType <em>Type</em>}</li>
  *   <li>{@link net.ogdf.ogml.ShapeType1#getUri <em>Uri</em>}</li>
  *   <li>{@link net.ogdf.ogml.ShapeType1#getWidth <em>Width</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getShapeType1()
  * @model extendedMetaData="name='shape_._type' kind='empty'"

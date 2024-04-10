@@ -52,8 +52,6 @@ import net.ogdf.ogml.StylesType;
  * Graph exporter for OGML.
  *
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class OgmlExporter implements IGraphTransformer<ElkNode, DocumentRoot> {
 

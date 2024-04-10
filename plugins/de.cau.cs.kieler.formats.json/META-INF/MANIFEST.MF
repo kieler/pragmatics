@@ -2,13 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Support for the JSON Format
 Bundle-Vendor: Kiel University
-Bundle-Version: 0.50.0.qualifier
+Bundle-Version: 0.51.0.qualifier
 Bundle-SymbolicName: de.cau.cs.kieler.formats.json;singleton:=true
 Require-Bundle: de.cau.cs.kieler.formats,
  org.eclipse.elk.core,
  org.eclipse.elk.graph,
  org.eclipse.elk.graph.json
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Export-Package: de.cau.cs.kieler.formats.json
 

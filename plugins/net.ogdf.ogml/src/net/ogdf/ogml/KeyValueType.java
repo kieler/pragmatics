@@ -21,12 +21,12 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.KeyValueType#getDafault <em>Dafault</em>}</li>
  *   <li>{@link net.ogdf.ogml.KeyValueType#getName <em>Name</em>}</li>
  *   <li>{@link net.ogdf.ogml.KeyValueType#getType <em>Type</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getKeyValueType()
  * @model extendedMetaData="name='keyValue.type' kind='elementOnly'"

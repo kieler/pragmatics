@@ -4,13 +4,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.cau.cs.kieler</groupId>
   <artifactId>plugins</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.50.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <parent>
     <groupId>de.cau.cs.kieler</groupId>
-    <artifactId>parent</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>pragmatics</artifactId>
+    <version>0.50.0-SNAPSHOT</version>
     <relativePath>../build/pom.xml</relativePath>
   </parent>
 
@@ -25,7 +25,8 @@
     <module>de.cau.cs.kieler.formats.json</module>
     <module>de.cau.cs.kieler.formats.kgraph</module>
     <module>de.cau.cs.kieler.formats.ogml</module>
-    <module>de.cau.cs.kieler.formats.svg</module>
+    <!-- The required dependency org.apache.batik.ext.awt is not in the current orbit releases anymore, breaking the formats.svg module. -->
+    <!-- <module>de.cau.cs.kieler.formats.svg</module> -->
     <!-- <module>de.cau.cs.kieler.grana</module> -->
     <!-- <module>de.cau.cs.kieler.grana.text</module> -->
     <!-- <module>de.cau.cs.kieler.grana.text.ui</module> -->
@@ -38,5 +39,17 @@
     <module>net.ogdf.ogml</module>
     <module>org.graphdrawing.graphml</module>
   </modules>
+
+  <build>
+    <plugins>
+      <!-- do not publish this artifact to Maven repositories -->
+      <plugin>
+        <artifactId>maven-deploy-plugin</artifactId>
+          <configuration>
+            <skip>true</skip>
+          </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>

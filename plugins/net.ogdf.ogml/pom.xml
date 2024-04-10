@@ -4,12 +4,24 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>de.cau.cs.kieler</groupId>
-    <artifactId>plugins</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>pragmatics</artifactId>
+    <version>0.50.0-SNAPSHOT</version>
+    <relativePath>../../build/pom.xml</relativePath>
   </parent>
 
   <groupId>de.cau.cs.kieler</groupId>
   <artifactId>net.ogdf.ogml</artifactId>
   <version>1.2.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
+
+  <name>net.ogdf.ogml</name>
+  <description>net.ogdf.ogml</description>
+  <url>https://github.com/kieler/pragmatics</url>
+
+  <licenses>
+    <license>
+      <name>EPL-1.0 AND GPL-2.0/GPL-3.0</name>
+      <url>http://www.eclipse.org/legal/epl-v10.html https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html https://www.gnu.org/licenses/gpl-3.0-standalone.html</url>
+    </license>
+  </licenses>
 </project>

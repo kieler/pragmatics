@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.impl.EndpointTypeImpl#getColor <em>Color</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.EndpointTypeImpl#getIdRef <em>Id Ref</em>}</li>
@@ -32,7 +33,6 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  *   <li>{@link net.ogdf.ogml.impl.EndpointTypeImpl#getSize <em>Size</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.EndpointTypeImpl#getStyle <em>Style</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

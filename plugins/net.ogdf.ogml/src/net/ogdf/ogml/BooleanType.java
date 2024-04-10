@@ -15,11 +15,11 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.BooleanType#getName <em>Name</em>}</li>
  *   <li>{@link net.ogdf.ogml.BooleanType#getValue <em>Value</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getBooleanType()
  * @model extendedMetaData="name='boolean.type' kind='empty'"

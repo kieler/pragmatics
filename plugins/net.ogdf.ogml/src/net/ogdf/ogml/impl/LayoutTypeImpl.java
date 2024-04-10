@@ -35,13 +35,13 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.impl.LayoutTypeImpl#getData <em>Data</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.LayoutTypeImpl#getStyleTemplates <em>Style Templates</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.LayoutTypeImpl#getStyles <em>Styles</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.LayoutTypeImpl#getConstraints <em>Constraints</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

@@ -25,8 +25,6 @@ import de.cau.cs.kieler.formats.TransformationException;
  * Internal data structure for matrices.
  *
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class Matrix {
 

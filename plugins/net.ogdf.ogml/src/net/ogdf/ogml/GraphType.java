@@ -25,12 +25,12 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.GraphType#getData <em>Data</em>}</li>
  *   <li>{@link net.ogdf.ogml.GraphType#getStructure <em>Structure</em>}</li>
  *   <li>{@link net.ogdf.ogml.GraphType#getLayout <em>Layout</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getGraphType()
  * @model extendedMetaData="name='graph.type' kind='elementOnly'"

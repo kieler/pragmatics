@@ -2,25 +2,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <version>0.50.0-SNAPSHOT</version>
+  <version>0.51.0-SNAPSHOT</version>
   <artifactId>de.cau.cs.kieler.pragmatics.repository</artifactId>
   <packaging>eclipse-repository</packaging>
   <name>KIELER Pragmatics Repository</name>
 
   <parent>
     <groupId>de.cau.cs.kieler</groupId>
-    <artifactId>parent</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>pragmatics</artifactId>
+    <version>0.50.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-
-  <!-- These are a few properties we use for the small update site index.html that is generated. -->
-  <properties>
-    <update.site.name>KIELER Pragmatics</update.site.name>
-    <update.site.description>Nightly</update.site.description>
-    <update.site.version>2020-09</update.site.version>
-    <target.eclipse.version>2020-06</target.eclipse.version>
-  </properties>
 
   <build>
     <plugins>
@@ -31,7 +23,7 @@
       <plugin>
         <groupId>org.jboss.tools.tycho-plugins</groupId>
         <artifactId>repository-utils</artifactId>
-        <version>2.5.0</version>
+        <version>2.7.5</version>
         <executions>
           <execution>
             <id>generate-facade</id>
@@ -42,27 +34,33 @@
             <configuration>
               <associateSites>
                 <!-- Eclipse -->
-                <associateSite>http://download.eclipse.org/releases/2020-06</associateSite>
+                <associateSite>https://download.eclipse.org/releases/2023-12/</associateSite>
                 <!-- Eclipse Layout Kernel -->
                 <associateSite>https://download.eclipse.org/elk/updates/nightly/</associateSite>
                 <!-- Eclipse Orbit -->
-                <associateSite>http://download.eclipse.org/tools/orbit/downloads/drops/R20200529191137/repository/</associateSite>
+                <associateSite>https://download.eclipse.org/tools/orbit/simrel/orbit-aggregation/release/4.30.0</associateSite>
                 <!-- Xtext repository -->
-                <associateSite>https://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.22.0/</associateSite>
+                <associateSite>https://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.33.0/</associateSite>
                 <!-- KLighD -->
                 <associateSite>https://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/klighd/</associateSite>
               </associateSites>
               <siteTemplateFolder>siteTemplate</siteTemplateFolder>
               <skipBuildInfo>true</skipBuildInfo>
               <symbols>
-                <update.site.name>${update.site.name}</update.site.name>
-                <update.site.description>${update.site.description}</update.site.description>
-                <update.site.version>${update.site.version}</update.site.version>
-                <target.eclipse.version>${target.eclipse.version}</target.eclipse.version>
+                <update.site.name>KIELER Pragmatics</update.site.name>
+                <update.site.description>Nightly</update.site.description>
+                <update.site.version>${unqualifiedVersion}.${buildQualifier}</update.site.version>
               </symbols>
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <!-- do not publish this artifact to Maven repositories -->
+      <plugin>
+        <artifactId>maven-deploy-plugin</artifactId>
+          <configuration>
+            <skip>true</skip>
+          </configuration>
       </plugin>
     </plugins>
   </build>

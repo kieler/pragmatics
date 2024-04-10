@@ -41,8 +41,6 @@ import com.google.common.collect.Maps;
  * Service class for graph formats.
  *
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class GraphFormatsService {
 

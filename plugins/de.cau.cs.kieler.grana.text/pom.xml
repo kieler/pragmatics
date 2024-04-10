@@ -3,14 +3,19 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>de.cau.cs.kieler</groupId>
-    <artifactId>plugins</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>pragmatics</artifactId>
+    <version>0.50.0-SNAPSHOT</version>
+    <relativePath>../../build/pom.xml</relativePath>
   </parent>
 
   <groupId>de.cau.cs.kieler</groupId>
   <artifactId>de.cau.cs.kieler.grana.text</artifactId>
-  <version>0.50.0-SNAPSHOT</version>
+  <version>0.51.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
+
+  <name>KIELER Graph Analysis Text</name>
+  <description>KIELER Graph Analysis Text</description>
+  <url>https://github.com/kieler/pragmatics</url>
 
   <build>
     <sourceDirectory>src</sourceDirectory>

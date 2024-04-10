@@ -47,8 +47,6 @@ import net.ogdf.bin.OgdfServer;
  * Setup for OGDF layout algorithm configurations.
  * 
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public final class AlgorithmSetup {
 

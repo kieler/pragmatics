@@ -23,13 +23,13 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.TextType#getAlignment <em>Alignment</em>}</li>
  *   <li>{@link net.ogdf.ogml.TextType#getDecoration <em>Decoration</em>}</li>
  *   <li>{@link net.ogdf.ogml.TextType#getRotation <em>Rotation</em>}</li>
  *   <li>{@link net.ogdf.ogml.TextType#getTransform <em>Transform</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getTextType()
  * @model extendedMetaData="name='text.type' kind='empty'"

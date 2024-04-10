@@ -47,7 +47,6 @@ import de.cau.cs.kieler.formats.GraphFormatsService;
  * the target folder.
  * 
  * @author wah
- * @kieler.ignore (excluded from review process)
  */
 public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
 

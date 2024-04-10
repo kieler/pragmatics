@@ -23,6 +23,7 @@ import org.graphdrawing.graphml.GraphMLPackage;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.graphdrawing.graphml.impl.EndpointTypeImpl#getDesc <em>Desc</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.impl.EndpointTypeImpl#getId <em>Id</em>}</li>
@@ -30,7 +31,6 @@ import org.graphdrawing.graphml.GraphMLPackage;
  *   <li>{@link org.graphdrawing.graphml.impl.EndpointTypeImpl#getPort <em>Port</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.impl.EndpointTypeImpl#getType <em>Type</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

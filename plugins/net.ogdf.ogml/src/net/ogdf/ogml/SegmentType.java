@@ -23,12 +23,12 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.SegmentType#getData <em>Data</em>}</li>
  *   <li>{@link net.ogdf.ogml.SegmentType#getLine <em>Line</em>}</li>
  *   <li>{@link net.ogdf.ogml.SegmentType#getEndpoint <em>Endpoint</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getSegmentType()
  * @model extendedMetaData="name='segment.type' kind='elementOnly'"

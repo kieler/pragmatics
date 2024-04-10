@@ -34,12 +34,12 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.impl.SegmentTypeImpl#getData <em>Data</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.SegmentTypeImpl#getLine <em>Line</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.SegmentTypeImpl#getEndpoint <em>Endpoint</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

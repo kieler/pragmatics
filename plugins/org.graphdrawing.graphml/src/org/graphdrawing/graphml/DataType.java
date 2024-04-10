@@ -23,12 +23,12 @@ package org.graphdrawing.graphml;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.graphdrawing.graphml.DataType#getId <em>Id</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.DataType#getKey <em>Key</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.DataType#getTime <em>Time</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.graphdrawing.graphml.GraphMLPackage#getDataType()
  * @model extendedMetaData="name='data.type' kind='mixed'"

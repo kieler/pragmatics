@@ -21,12 +21,12 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.LocationType#getX <em>X</em>}</li>
  *   <li>{@link net.ogdf.ogml.LocationType#getY <em>Y</em>}</li>
  *   <li>{@link net.ogdf.ogml.LocationType#getZ <em>Z</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getLocationType()
  * @model extendedMetaData="name='location.type' kind='empty'"

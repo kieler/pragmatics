@@ -33,6 +33,7 @@ import org.graphdrawing.graphml.GraphType;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.graphdrawing.graphml.impl.EdgeTypeImpl#getDesc <em>Desc</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.impl.EdgeTypeImpl#getData <em>Data</em>}</li>
@@ -44,7 +45,6 @@ import org.graphdrawing.graphml.GraphType;
  *   <li>{@link org.graphdrawing.graphml.impl.EdgeTypeImpl#getTarget <em>Target</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.impl.EdgeTypeImpl#getTargetport <em>Targetport</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

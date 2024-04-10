@@ -71,8 +71,6 @@ import net.ogdf.ogml.util.OgmlResourceFactoryImpl;
  * 
  * @author mri
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class OgmlServerCommunicator {
 

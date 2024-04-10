@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Textual Layout Configuration
 Bundle-Vendor: Kiel University
-Bundle-Version: 0.50.0.qualifier
+Bundle-Version: 0.51.0.qualifier
 Bundle-SymbolicName: de.cau.cs.kieler.config.text; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext,
@@ -15,7 +15,7 @@ Require-Bundle: org.eclipse.xtext,
  org.antlr.runtime,
  org.eclipse.xtext.util,
  org.eclipse.xtend.lib
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: de.cau.cs.kieler.config.text,
  de.cau.cs.kieler.config.text.generator,
  de.cau.cs.kieler.config.text.parser.antlr,

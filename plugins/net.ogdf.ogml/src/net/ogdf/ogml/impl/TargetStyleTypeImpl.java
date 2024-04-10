@@ -25,13 +25,13 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.impl.TargetStyleTypeImpl#getColor <em>Color</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.TargetStyleTypeImpl#getType <em>Type</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.TargetStyleTypeImpl#getUri <em>Uri</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.TargetStyleTypeImpl#getWidth <em>Width</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

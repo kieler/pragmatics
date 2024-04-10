@@ -19,8 +19,6 @@ import org.eclipse.elk.core.data.ILayoutMetaData;
  * Data type used to store information for a graph format.
  *
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class GraphFormatData implements ILayoutMetaData {
 

@@ -34,6 +34,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.impl.StyleTemplatesTypeImpl#getGroup <em>Group</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.StyleTemplatesTypeImpl#getData <em>Data</em>}</li>
@@ -41,7 +42,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link net.ogdf.ogml.impl.StyleTemplatesTypeImpl#getEdgeStyleTemplate <em>Edge Style Template</em>}</li>
  *   <li>{@link net.ogdf.ogml.impl.StyleTemplatesTypeImpl#getLabelStyleTemplate <em>Label Style Template</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

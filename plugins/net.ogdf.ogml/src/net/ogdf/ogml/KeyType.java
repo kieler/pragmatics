@@ -23,11 +23,11 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.KeyType#getKeyValue <em>Key Value</em>}</li>
  *   <li>{@link net.ogdf.ogml.KeyType#getId <em>Id</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getKeyType()
  * @model extendedMetaData="name='key.type' kind='elementOnly'"

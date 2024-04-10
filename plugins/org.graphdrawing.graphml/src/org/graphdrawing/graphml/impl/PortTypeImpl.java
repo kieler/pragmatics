@@ -33,6 +33,7 @@ import org.graphdrawing.graphml.PortType;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.graphdrawing.graphml.impl.PortTypeImpl#getDesc <em>Desc</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.impl.PortTypeImpl#getGroup <em>Group</em>}</li>
@@ -40,7 +41,6 @@ import org.graphdrawing.graphml.PortType;
  *   <li>{@link org.graphdrawing.graphml.impl.PortTypeImpl#getPort <em>Port</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.impl.PortTypeImpl#getName <em>Name</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

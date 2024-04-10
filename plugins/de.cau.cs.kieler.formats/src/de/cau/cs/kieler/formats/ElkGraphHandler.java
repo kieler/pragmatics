@@ -28,8 +28,6 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
  * Transformer for the KGraph model and XMI serialization.
  *
  * @author swe
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class ElkGraphHandler extends AbstractEmfHandler<ElkNode> {
     

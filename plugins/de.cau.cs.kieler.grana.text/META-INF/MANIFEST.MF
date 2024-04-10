@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Graph Analysis Text
 Bundle-Vendor: Kiel University
-Bundle-Version: 0.50.0.qualifier
+Bundle-Version: 0.51.0.qualifier
 Bundle-SymbolicName: de.cau.cs.kieler.grana.text; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext,
@@ -21,7 +21,7 @@ Require-Bundle: org.eclipse.xtext,
  org.eclipse.emf.common,
  de.cau.cs.kieler.grana,
  de.cau.cs.kieler.config.text
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: de.cau.cs.kieler.grana.text,
  de.cau.cs.kieler.grana.text.formatting2,
  de.cau.cs.kieler.grana.text.generator,

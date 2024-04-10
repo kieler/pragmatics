@@ -19,6 +19,7 @@ import de.cau.cs.kieler.klighd.SynthesisOption
 import de.cau.cs.kieler.klighd.kgraph.EMapPropertyHolder
 import de.cau.cs.kieler.klighd.kgraph.KEdge
 import de.cau.cs.kieler.klighd.kgraph.KGraphData
+import de.cau.cs.kieler.klighd.kgraph.KGraphElement
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.kgraph.KPort
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphDataUtil
@@ -63,10 +64,11 @@ class KGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<KNode> {
         "de.cau.cs.kieler.graphs.klighd.syntheses.KGraphDiagramSynthesis"
 
     // The next two definitions are used to load possibly persisted klighd information
-    //  that is ignored by kiml, e.g. the expansion state of nodes
-    private static val PREDICATE_IS_KGRAPHDATA = new Predicate<EMapPropertyHolder>() {
+    // that is ignored by ELK, e.g. the expansion state of nodes
+    private static val PREDICATE_IS_KGRAPH_OR_DATA = new Predicate<EMapPropertyHolder>() {
         override apply(EMapPropertyHolder input) {
-            return input instanceof KGraphData;
+            return input instanceof KGraphData
+                || input instanceof KGraphElement;
         }
     }
     private static val KNOWN_PROPS = ImmutableList.of(KlighdProperties.EXPAND,
@@ -79,7 +81,7 @@ class KGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<KNode> {
     
     /**
      * Whether the model wants default defaults. This property is no layout option, not registered with
-     * KIML, and has to be loaded explicitly by the 
+     * ELK, and has to be loaded explicitly by the 
      * {@link de.cau.cs.kieler.kgraph.text.KGraphResource KGraphResource}. 
      */
     private static final IProperty<Boolean> DEFAULTS_PROPERTY = new Property<Boolean>(
@@ -158,7 +160,7 @@ class KGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<KNode> {
         //  but until now nobody knows about any persisted entries that originate from KLighD.
         // First, this might be the expansion state of nodes. Second, also KRendering elements
         //  may carry persisted entries that have to be parsed before we build the view model.
-        KGraphDataUtil.loadDataElements(result, PREDICATE_IS_KGRAPHDATA, KNOWN_PROPS)
+        KGraphDataUtil.loadDataElements(result, PREDICATE_IS_KGRAPH_OR_DATA, KNOWN_PROPS)
 
         // Evaluate the defaults property
         try {

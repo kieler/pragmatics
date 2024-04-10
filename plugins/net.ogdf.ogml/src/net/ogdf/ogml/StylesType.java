@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.StylesType#getGraphStyle <em>Graph Style</em>}</li>
  *   <li>{@link net.ogdf.ogml.StylesType#getGroup <em>Group</em>}</li>
@@ -33,7 +34,6 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  *   <li>{@link net.ogdf.ogml.StylesType#getEdgeStyle <em>Edge Style</em>}</li>
  *   <li>{@link net.ogdf.ogml.StylesType#getLabelStyle <em>Label Style</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getStylesType()
  * @model extendedMetaData="name='styles.type' kind='elementOnly'"

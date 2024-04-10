@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.graphdrawing.graphml.PortType#getDesc <em>Desc</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.PortType#getGroup <em>Group</em>}</li>
@@ -32,7 +33,6 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  *   <li>{@link org.graphdrawing.graphml.PortType#getPort <em>Port</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.PortType#getName <em>Name</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.graphdrawing.graphml.GraphMLPackage#getPortType()
  * @model extendedMetaData="name='port.type' kind='elementOnly'"

@@ -17,8 +17,6 @@ package de.cau.cs.kieler.kiml.ogdf.options;
  * Definition of the "quality vs. speed" option for the FMMM layout algorithm.
  * 
  * @author mri
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public enum QualityVsSpeed {
     

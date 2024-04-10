@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link net.ogdf.ogml.StructureType#getGroup <em>Group</em>}</li>
  *   <li>{@link net.ogdf.ogml.StructureType#getData <em>Data</em>}</li>
@@ -32,7 +33,6 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  *   <li>{@link net.ogdf.ogml.StructureType#getEdge <em>Edge</em>}</li>
  *   <li>{@link net.ogdf.ogml.StructureType#getLabel <em>Label</em>}</li>
  * </ul>
- * </p>
  *
  * @see net.ogdf.ogml.OgmlPackage#getStructureType()
  * @model extendedMetaData="name='structure.type' kind='elementOnly'"

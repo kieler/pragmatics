@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.graphdrawing.graphml.EdgeType#getDesc <em>Desc</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.EdgeType#getData <em>Data</em>}</li>
@@ -34,7 +35,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.graphdrawing.graphml.EdgeType#getTarget <em>Target</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.EdgeType#getTargetport <em>Targetport</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.graphdrawing.graphml.GraphMLPackage#getEdgeType()
  * @model extendedMetaData="name='edge.type' kind='elementOnly'"

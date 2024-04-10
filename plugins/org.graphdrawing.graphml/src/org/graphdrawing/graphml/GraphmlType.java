@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.graphdrawing.graphml.GraphmlType#getDesc <em>Desc</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.GraphmlType#getKey <em>Key</em>}</li>
@@ -32,7 +33,6 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  *   <li>{@link org.graphdrawing.graphml.GraphmlType#getGraph <em>Graph</em>}</li>
  *   <li>{@link org.graphdrawing.graphml.GraphmlType#getData <em>Data</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.graphdrawing.graphml.GraphMLPackage#getGraphmlType()
  * @model extendedMetaData="name='graphml.type' kind='elementOnly'"

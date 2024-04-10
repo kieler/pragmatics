@@ -18,8 +18,6 @@ package de.cau.cs.kieler.formats;
  * An exception for graph transformation errors.
  *
  * @author swe
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class TransformationException extends RuntimeException {
 

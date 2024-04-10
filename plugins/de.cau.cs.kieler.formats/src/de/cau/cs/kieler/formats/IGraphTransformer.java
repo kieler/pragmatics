@@ -20,8 +20,6 @@ package de.cau.cs.kieler.formats;
  * @param <S> source graph type
  * @param <T> target graph type
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow 2012-07-10 msp
  */
 @FunctionalInterface
 public interface IGraphTransformer<S, T> {

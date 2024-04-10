@@ -49,7 +49,6 @@ import de.cau.cs.kieler.formats.GraphFormatData;
  * 
  * @author wah
  * @author msp
- * @kieler.ignore (excluded from review process)
  */
 public class ExportGraphWizard extends Wizard implements IExportWizard {
 
