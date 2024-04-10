@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<feature id="de.cau.cs.kieler.kiml.ogdf.feature" label="KIELER Layout - OGDF Support (optional)" version="0.51.0.qualifier" provider-name="Kiel University" plugin="de.cau.cs.kieler.kiml.ogdf">
+<feature id="de.cau.cs.kieler.kiml.ogdf.feature" label="KIELER Layout - OGDF Support (optional)" version="0.51.0.v20240410" provider-name="Kiel University" plugin="de.cau.cs.kieler.kiml.ogdf">
 
    <description url="http://rtsys.informatik.uni-kiel.de/confluence/x/jgEF">
       Connector for OGDF layouts (Open Graph Drawing Framework). OGDF is a self-contained C++ class library for the automatic layout of diagrams. See www.ogdf.net for more information.
@@ -209,7 +209,7 @@ litigation.
    </license>
 
    <url>
-      <update label="KIELER Nightly Builds" url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/"/>
+      <update label="KIELER Releases" url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/"/>
    </url>
 
    <includes id="net.ogdf.bin.feature" version="0.0.0"/>

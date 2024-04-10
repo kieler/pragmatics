@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <version>0.51.0-SNAPSHOT</version>
+  <version>0.51.0.v20240410</version>
   <artifactId>de.cau.cs.kieler.pragmatics.repository</artifactId>
   <packaging>eclipse-repository</packaging>
   <name>KIELER Pragmatics Repository</name>
@@ -10,7 +10,7 @@
   <parent>
     <groupId>de.cau.cs.kieler</groupId>
     <artifactId>pragmatics</artifactId>
-    <version>0.50.0-SNAPSHOT</version>
+    <version>0.51.0.v20240410</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -36,19 +36,19 @@
                 <!-- Eclipse -->
                 <associateSite>https://download.eclipse.org/releases/2023-12/</associateSite>
                 <!-- Eclipse Layout Kernel -->
-                <associateSite>https://download.eclipse.org/elk/updates/nightly/</associateSite>
+                <associateSite>https://download.eclipse.org/elk/updates/releases/0.9.1/</associateSite>
                 <!-- Eclipse Orbit -->
                 <associateSite>https://download.eclipse.org/tools/orbit/simrel/orbit-aggregation/release/4.30.0</associateSite>
                 <!-- Xtext repository -->
                 <associateSite>https://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.33.0/</associateSite>
                 <!-- KLighD -->
-                <associateSite>https://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/klighd/</associateSite>
+                <associateSite>https://kieler.github.io/KLighD/v3.0.1/</associateSite>
               </associateSites>
               <siteTemplateFolder>siteTemplate</siteTemplateFolder>
               <skipBuildInfo>true</skipBuildInfo>
               <symbols>
                 <update.site.name>KIELER Pragmatics</update.site.name>
-                <update.site.description>Nightly</update.site.description>
+                <update.site.description>Release</update.site.description>
                 <update.site.version>${unqualifiedVersion}.${buildQualifier}</update.site.version>
               </symbols>
             </configuration>

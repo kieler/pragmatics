@@ -26,7 +26,7 @@
       <unit id="org.eclipse.elk.sdk.feature.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.elk.ui.feature.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.elk.ui.feature.source.feature.group" version="0.0.0"/>
-      <repository location="https://download.eclipse.org/elk/updates/nightly"/>
+      <repository location="https://download.eclipse.org/elk/updates/releases/0.9.1/"/>
     </location>
     <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
       <unit id="com.google.guava" version="0.0.0"/>
@@ -44,7 +44,7 @@
       <unit id="de.cau.cs.kieler.kgraph.text" version="0.0.0"/>
       <unit id="de.cau.cs.kieler.kgraph.text.ide" version="0.0.0"/>
       <unit id="de.cau.cs.kieler.kgraph.text.ui" version="0.0.0"/>
-      <repository location="https://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/klighd/"/>
+      <repository location="https://kieler.github.io/KLighD/v3.0.1/"/>
     </location>
   </locations>
 </target>
