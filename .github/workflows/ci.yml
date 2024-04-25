@@ -37,7 +37,7 @@ jobs:
         run: MAVEN_OPTS="-Xmx2048M" mvn --update-snapshots clean verify -P pragmatics --file build/pom.xml
 
       - name: Archive Pragmatics Repository Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Pragmatics Repository Artifact
           path: build/de.cau.cs.kieler.pragmatics.repository/target/repository/
