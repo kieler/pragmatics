@@ -3,7 +3,7 @@
  * 
  * http://rtsys.informatik.uni-kiel.de/kieler
  * 
- * Copyright 2019, 2020 by
+ * Copyright 2019-2024 by
  * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -14,6 +14,7 @@ package de.cau.cs.kieler.pragmatics.language.server
 
 import de.cau.cs.kieler.klighd.lsp.KGraphLanguageClient
 import de.cau.cs.kieler.klighd.lsp.interactive.layered.LayeredInteractiveLanguageServerExtension
+import de.cau.cs.kieler.klighd.lsp.interactive.mrtree.MrTreeInteractiveLanguageServerExtension
 import de.cau.cs.kieler.klighd.lsp.interactive.rectpacking.RectpackingInteractiveLanguageServerExtension
 import de.cau.cs.kieler.klighd.lsp.launch.AbstractLsCreator
 
@@ -29,11 +30,14 @@ class PragmaticsLsCreator extends AbstractLsCreator {
     
     RectpackingInteractiveLanguageServerExtension rectPack
     
+    MrTreeInteractiveLanguageServerExtension mrTree
+    
     override getLanguageServerExtensions() {
         constraints = injector.getInstance(LayeredInteractiveLanguageServerExtension)
         rectPack = injector.getInstance(RectpackingInteractiveLanguageServerExtension)
+        mrTree = injector.getInstance(MrTreeInteractiveLanguageServerExtension)
         val iLanguageServerExtensions = newArrayList(
-            injector.getInstance(PragmaticsRegistrationLanguageServerExtension), constraints, rectPack
+            injector.getInstance(PragmaticsRegistrationLanguageServerExtension), constraints, rectPack, mrTree
         )
         return iLanguageServerExtensions
     }
@@ -46,6 +50,7 @@ class PragmaticsLsCreator extends AbstractLsCreator {
         super.onConnect()
         constraints.client = languageClient
         rectPack.client = languageClient
+        mrTree.client = languageClient
     }
     
 }
