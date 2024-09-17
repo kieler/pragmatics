@@ -34,6 +34,7 @@ import de.cau.cs.kieler.klighd.labels.decoration.RectangleDecorator
 import java.awt.Color
 import java.util.List
 import org.eclipse.elk.alg.layered.InteractiveLayeredGraphVisitor
+import org.eclipse.elk.alg.mrtree.InteractiveMrTreeGraphVisitor
 import org.eclipse.elk.alg.rectpacking.InteractiveRectPackingGraphVisitor
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.service.util.CompoundGraphElementVisitor
@@ -303,7 +304,8 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
         if (viewModel.getProperty(CoreOptions.INTERACTIVE_LAYOUT)) {
             additionalLayoutRuns.add(new CompoundGraphElementVisitor(
                     new InteractiveRectPackingGraphVisitor(),
-                    new InteractiveLayeredGraphVisitor()));
+                    new InteractiveLayeredGraphVisitor(),
+                    new InteractiveMrTreeGraphVisitor()));
         }
         return additionalLayoutRuns;
     }
