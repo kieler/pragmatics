@@ -8,7 +8,9 @@ Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtend.lib;bundle-version="2.7.0",
  org.eclipse.elk.graph;bundle-version="0.1.0",
  de.cau.cs.kieler.formats,
- org.eclipse.elk.core
+ org.eclipse.elk.core,
+ org.eclipse.emf.common,
+ org.eclipse.emf.ecore
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: 
  de.cau.cs.kieler.formats.gml
