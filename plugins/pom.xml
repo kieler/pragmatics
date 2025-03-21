@@ -31,7 +31,7 @@
     <module>de.cau.cs.kieler.graphs.klighd</module>
     <module>de.cau.cs.kieler.graphs.klighd.ui</module>
     <module>de.cau.cs.kieler.kiml.export</module>
-    <module>de.cau.cs.kieler.kiml.ogdf</module>
+    <!-- <module>de.cau.cs.kieler.kiml.ogdf</module> --> <!-- Throws errors in Maven build -->
     <module>de.cau.cs.kieler.pragmatics.language.server</module>
     <module>net.ogdf.bin</module>
     <module>net.ogdf.ogml</module>
