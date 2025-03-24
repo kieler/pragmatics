@@ -220,7 +220,7 @@ litigation.
       <import plugin="org.apache.log4j"/>
       <import feature="org.eclipse.emf" version="2.6.0" match="greaterOrEqual"/>
       <import feature="de.cau.cs.kieler.klighd.feature"/>
-      <import feature="de.cau.cs.kieler.kiml.ogdf.feature"/>
+      <!-- <import feature="de.cau.cs.kieler.kiml.ogdf.feature"/> -->
       <import feature="org.eclipse.elk.feature"/>
       <import feature="org.eclipse.elk.graphviz.feature"/>
       <import feature="org.eclipse.elk.ui.feature"/>
