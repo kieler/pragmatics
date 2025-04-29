@@ -36,10 +36,10 @@
       <category name="kieler-layout"/>
    </feature> -->
 
-   <feature url="features/de.cau.cs.kieler.kgraph.feature_0.51.1.qualifier.jar" id="de.cau.cs.kieler.kgraph.feature" version="0.51.1.qualifier">
+   <feature url="features/de.cau.cs.kieler.kgraph.feature_0.52.1.qualifier.jar" id="de.cau.cs.kieler.kgraph.feature" version="0.52.1.qualifier">
       <category name="kieler-layout"/>
    </feature>
-   <feature url="features/de.cau.cs.kieler.kgraph.feature.source_0.51.1.qualifier.jar" id="de.cau.cs.kieler.kgraph.feature.source" version="0.51.1.qualifier">
+   <feature url="features/de.cau.cs.kieler.kgraph.feature.source_0.52.1.qualifier.jar" id="de.cau.cs.kieler.kgraph.feature.source" version="0.52.1.qualifier">
       <category name="kieler-sources"/>
    </feature>
 

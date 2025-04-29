@@ -10,7 +10,7 @@
   <parent>
     <groupId>de.cau.cs.kieler</groupId>
     <artifactId>pragmatics</artifactId>
-    <version>0.51.1-SNAPSHOT</version>
+    <version>0.52.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
