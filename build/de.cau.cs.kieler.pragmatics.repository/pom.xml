@@ -9,7 +9,7 @@
   <parent>
     <groupId>de.cau.cs.kieler</groupId>
     <artifactId>pragmatics</artifactId>
-    <version>0.51.1-SNAPSHOT</version>
+    <version>0.52.0.v20250429</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -45,7 +45,7 @@
               <skipBuildInfo>true</skipBuildInfo>
               <symbols>
                 <update.site.name>KIELER Pragmatics</update.site.name>
-                <update.site.description>Nightly</update.site.description>
+                <update.site.description>Release</update.site.description>
                 <update.site.version>${unqualifiedVersion}.${buildQualifier}</update.site.version>
               </symbols>
             </configuration>
