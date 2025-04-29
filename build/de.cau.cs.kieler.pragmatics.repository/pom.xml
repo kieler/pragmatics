@@ -35,11 +35,11 @@
                 <!-- Eclipse -->
                 <associateSite>https://download.eclipse.org/releases/2024-12/</associateSite>
                 <!-- Eclipse Layout Kernel -->
-                <associateSite>https://download.eclipse.org/elk/updates/nightly/</associateSite>
+                <associateSite>https://download.eclipse.org/elk/updates/releases/0.10.0/</associateSite>
                 <!-- Eclipse Orbit -->
                 <associateSite>https://download.eclipse.org/tools/orbit/simrel/orbit-aggregation/release/4.34.0</associateSite>
                 <!-- KLighD -->
-                <associateSite>https://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/klighd/</associateSite>
+                <associateSite>https://kieler.github.io/KLighD/v3.1.0/</associateSite>
               </associateSites>
               <siteTemplateFolder>siteTemplate</siteTemplateFolder>
               <skipBuildInfo>true</skipBuildInfo>
