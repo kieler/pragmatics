@@ -244,7 +244,7 @@ litigation.
 
    <plugin id="de.cau.cs.kieler.formats.graphml" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
 
-   <plugin id="de.cau.cs.kieler.formats.ogml" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
+   <!-- <plugin id="de.cau.cs.kieler.formats.ogml" download-size="0" install-size="0" version="0.0.0" unpack="false"/> -->
 
    <plugin id="de.cau.cs.kieler.formats" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
 

@@ -22,7 +22,7 @@
     <module>de.cau.cs.kieler.formats.graphml</module>
     <module>de.cau.cs.kieler.formats.json</module>
     <module>de.cau.cs.kieler.formats.kgraph</module>
-    <module>de.cau.cs.kieler.formats.ogml</module>
+    <!-- <module>de.cau.cs.kieler.formats.ogml</module> -->
     <!-- The required dependency org.apache.batik.ext.awt is not in the current orbit releases anymore, breaking the formats.svg module. -->
     <!-- <module>de.cau.cs.kieler.formats.svg</module> -->
     <!-- <module>de.cau.cs.kieler.grana</module> -->
