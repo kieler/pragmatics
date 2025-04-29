@@ -11,7 +11,7 @@ Require-Bundle: org.eclipse.xtend.lib;bundle-version="2.7.0",
  org.eclipse.elk.core,
  org.eclipse.emf.common,
  org.eclipse.emf.ecore
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: 
  de.cau.cs.kieler.formats.gml
 Automatic-Module-Name: de.cau.cs.kieler.formats.gml

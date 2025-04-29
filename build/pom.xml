@@ -10,18 +10,18 @@
 
   <!-- Define a few properties used throughout all build profiles. -->
   <properties>
-    <elk-version>0.9.1</elk-version>
-    <gson-version>2.10.1</gson-version>
+    <elk-version>0.10.0</elk-version>
+    <gson-version>2.11.0</gson-version>
     <guice-version>7.0.0</guice-version>
-    <klighd-version>3.0.2.v20240507</klighd-version>
-    <lsp4j-version>0.22.0</lsp4j-version>
-    <tycho-version>2.7.3</tycho-version>
-    <xtend-version>2.33.0</xtend-version>
-    <xtext-version>2.33.0</xtext-version>
+    <klighd-version>3.1.0.v20250428</klighd-version>
+    <lsp4j-version>0.23.1</lsp4j-version>
+    <tycho-version>4.0.12</tycho-version>
+    <xtend-version>2.37.0</xtend-version>
+    <xtext-version>2.37.0</xtext-version>
 
-    <targetJdk>11</targetJdk>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
+    <targetJdk>21</targetJdk>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
 
     <!-- chsch: copied from https://eclipse.googlesource.com/recommenders/org.eclipse.recommenders/+/3dae4575d3370da2da25a1cbce3dfcff198f0611/features/pom.xml -->
     <!-- Non-breakable space, as normal spaces are trimmed. -->
@@ -266,7 +266,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.5.0</version>
+        <version>3.11.2</version>
         <configuration>
           <!-- Pin Java Source level to Java 8 for JavaDoc to avoid it getting confused with duplicate packages from P2 dependencies.-->
           <source>8</source>
@@ -371,7 +371,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
-          <version>3.5.0</version>
+          <version>3.6.0</version>
           <executions>
             <execution>
               <id>add-source</id>
@@ -394,7 +394,7 @@
         <!-- generated code needs cleanup too -->
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
-          <version>2.5</version>
+          <version>3.4.1</version>
           <configuration>
             <filesets>
               <fileset>
@@ -408,74 +408,6 @@
         </plugin>
         <!-- Configure Eclipse m2e to ignore certain plugin goals when integrating Maven build
           settings into Eclipse. -->
-        <plugin>
-          <groupId>org.eclipse.m2e</groupId>
-          <artifactId>lifecycle-mapping</artifactId>
-          <version>1.0.0</version>
-          <configuration>
-            <lifecycleMappingMetadata>
-              <pluginExecutions>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.eclipse.tycho</groupId>
-                    <artifactId>tycho-compiler-plugin</artifactId>
-                    <versionRange>${tycho-version}</versionRange>
-                    <goals>
-                      <goal>compile</goal>
-                      <goal>testCompile</goal>
-                      <goal>validate-classpath</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore/>
-                  </action>
-                </pluginExecution>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.eclipse.tycho</groupId>
-                    <artifactId>tycho-packaging-plugin</artifactId>
-                    <versionRange>${tycho-version}</versionRange>
-                    <goals>
-                      <goal>build-qualifier</goal>
-                      <goal>build-qualifier-aggregator</goal>
-                      <goal>validate-id</goal>
-                      <goal>validate-version</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore/>
-                  </action>
-                </pluginExecution>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-clean-plugin</artifactId>
-                    <versionRange>[3.0.0,)</versionRange>
-                    <goals>
-                      <goal>clean</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore/>
-                  </action>
-                </pluginExecution>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.eclipse.tycho</groupId>
-                    <artifactId>target-platform-configuration</artifactId>
-                    <versionRange>[2.7.3,)</versionRange>
-                    <goals>
-                      <goal>target-platform</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore></ignore>
-                  </action>
-                </pluginExecution>
-              </pluginExecutions>
-            </lifecycleMappingMetadata>
-          </configuration>
-        </plugin>
       </plugins>
     </pluginManagement>
   </build>

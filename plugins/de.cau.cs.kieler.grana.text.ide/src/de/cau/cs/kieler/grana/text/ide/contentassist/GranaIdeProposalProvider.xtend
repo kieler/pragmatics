@@ -12,13 +12,13 @@
  */
 package de.cau.cs.kieler.grana.text.ide.contentassist
 
+import com.google.inject.Inject
 import de.cau.cs.kieler.grana.AnalysisService
 import de.cau.cs.kieler.grana.text.grana.EnumRange
 import de.cau.cs.kieler.grana.text.grana.Job
 import de.cau.cs.kieler.grana.text.grana.RangeJob
 import de.cau.cs.kieler.grana.text.services.GranaGrammarAccess
 import java.io.File
-import javax.inject.Inject
 import org.eclipse.core.resources.IContainer
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.elk.core.data.LayoutMetaDataService

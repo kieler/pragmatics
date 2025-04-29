@@ -197,7 +197,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <version>3.3.0</version>
+        <version>3.3.1</version>
         <executions>
           <execution>
             <id>attach-sources</id>
@@ -218,7 +218,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.2.4</version>
+        <version>3.6.0</version>
         <configuration>
           <shadedArtifactAttached>true</shadedArtifactAttached>
           <transformers>
@@ -277,6 +277,7 @@
           <shadedArtifactAttached>true</shadedArtifactAttached>
           <shadedClassifierName>app</shadedClassifierName>
           <minimizeJar>false</minimizeJar>
+          <createDependencyReducedPom>false</createDependencyReducedPom>
         </configuration>
         <executions>
           <execution>

@@ -15,7 +15,7 @@
   <!-- all features are listed as modules -->
   <modules>
     <module>de.cau.cs.kieler.kgraph.feature</module>
-    <module>de.cau.cs.kieler.kiml.ogdf.feature</module>
+    <!-- <module>de.cau.cs.kieler.kiml.ogdf.feature</module> --> <!-- kiml.ogdf throws errors in Maven build -->
     <module>net.ogdf.bin.feature</module>
   </modules>
 
@@ -27,15 +27,15 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.eclipse.tycho.extras</groupId>
-        <artifactId>tycho-source-feature-plugin</artifactId>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-source-plugin</artifactId>
         <version>${tycho-version}</version>
         <executions>
           <execution>
-            <id>source-feature</id>
+            <id>feature-source</id>
             <phase>package</phase>
             <goals>
-              <goal>source-feature</goal>
+              <goal>feature-source</goal>
             </goals>
             <configuration>
               <labelSuffix>${sourceFeatureLabelSuffix}</labelSuffix>
