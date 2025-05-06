@@ -2,14 +2,16 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Support for the GML Format
 Bundle-Vendor: Kiel University
-Bundle-Version: 0.51.1.qualifier
+Bundle-Version: 0.52.1.qualifier
 Bundle-SymbolicName: de.cau.cs.kieler.formats.gml;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtend.lib;bundle-version="2.7.0",
  org.eclipse.elk.graph;bundle-version="0.1.0",
  de.cau.cs.kieler.formats,
- org.eclipse.elk.core
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+ org.eclipse.elk.core,
+ org.eclipse.emf.common,
+ org.eclipse.emf.ecore
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: 
  de.cau.cs.kieler.formats.gml
 Automatic-Module-Name: de.cau.cs.kieler.formats.gml

@@ -21,7 +21,7 @@ Require-Bundle: org.eclipse.xtext,
  org.eclipse.emf.common,
  de.cau.cs.kieler.grana,
  de.cau.cs.kieler.config.text
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: de.cau.cs.kieler.grana.text,
  de.cau.cs.kieler.grana.text.formatting2,
  de.cau.cs.kieler.grana.text.generator,

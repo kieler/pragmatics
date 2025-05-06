@@ -3,7 +3,7 @@
  *
  * http://rtsys.informatik.uni-kiel.de/kieler
  * 
- * Copyright 2017 by
+ * Copyright 2017-2025 by
  * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -26,6 +26,7 @@ import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil
 import de.cau.cs.kieler.klighd.krendering.KRendering
 import de.cau.cs.kieler.klighd.krendering.KRenderingFactory
 import de.cau.cs.kieler.klighd.krendering.KRenderingLibrary
+import de.cau.cs.kieler.klighd.krendering.LineCap
 import de.cau.cs.kieler.klighd.krendering.extensions.KColorExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KLibraryExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KPolylineExtensions
@@ -200,7 +201,35 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
     }
 
     private def initSpongebobFactory(KRenderingLibrary library) {
-        library.initEdgeRenderings
+        defaultPolylineRendering = createSpongebobArmRendering(false, true) => [
+            it.id = "DefaultEdgeRendering"
+            setJunctionPointDecorator(renderingFactory.createKEllipse => [
+                setBackgroundColor(237,249,107)
+            ], 10, 10)
+        ]
+        library.renderings += defaultPolylineRendering
+
+        // Create a common rendering for polylines without arrowheads
+        defaultNoArrowPolylineRendering = createSpongebobArmRendering(false, false) => [
+            it.id = "DefaultNoArrowPolylineEdgeRendering"
+            setJunctionPointDecorator(renderingFactory.createKEllipse => [
+                setBackgroundColor(237,249,107)
+            ], 10, 10)
+        ];
+        library.renderings += defaultNoArrowPolylineRendering
+
+        // Create a common rendering for splines
+        defaultSplineRendering = createSpongebobArmRendering(true, true) => [
+            it.id = "SplineEdgeRendering"
+        ];
+        library.renderings += defaultSplineRendering
+
+        // Create a common rendering for splines without arrowheads
+        defaultNoArrowSplineRendering = createSpongebobArmRendering(true, false) => [
+            it.id = "NoArrowSplineEdgeRendering"
+        ];
+        library.renderings += defaultNoArrowSplineRendering
+        
         defaultNodeRendering = renderingFactory.createKRectangle => [
             it.id = "DefaultNodeRendering"
             it.setBackgroundColor(237,249,107)
@@ -312,6 +341,108 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
             ]
         ]
         library.renderings += defaultNodeRendering
+    }
+    
+    private def createSpongebobArmRendering(boolean isSpline, boolean decorators) {
+        val outerLine = isSpline ? renderingFactory.createKSpline : renderingFactory.createKPolyline()
+        return outerLine => [
+            // Arm
+            setForegroundColor(0,0,0)
+            lineWidth = 4
+            
+            val innerLine = isSpline ? renderingFactory.createKSpline : renderingFactory.createKPolyline()
+            children += innerLine => [
+                setForegroundColor(237,249,107)
+                lineWidth = 2
+            ]
+            
+            if (decorators) {
+                lineCap = LineCap::CAP_FLAT
+                // Sleeve
+                children += renderingFactory.createKRectangle => [
+                    setBackgroundColor(255,255,255)
+                    setForegroundColor(0,0,0)
+                    it.placementData = renderingFactory.createKDecoratorPlacementData => [
+                        it.rotateWithLine = true
+                        it.relative = 0f
+                        it.absolute = 0f
+                        it.width = 8
+                        it.height = 6
+                        it.XOffset = -1f 
+                        it.YOffset = -3f
+                    ]
+                ]
+                
+                // Hand
+                children += renderingFactory.createKRectangle => [
+                    invisible = true
+                    it.placementData = renderingFactory.createKDecoratorPlacementData => [
+                        it.rotateWithLine = true
+                        it.relative = 1f
+                        it.absolute = 0f
+                        it.width = 12
+                        it.height = 8
+                        it.XOffset = -12f
+                        it.YOffset = -4f
+                    ]
+                    
+                    // Hide the edge behind the hand
+                    children += renderingFactory.createKRectangle => [
+                        setBackgroundColor(255,255,255)
+                        it.lineWidth = 0
+                         it.placementData = renderingFactory.createKAreaPlacementData => [
+                            from(LEFT, 2.5f, 0, TOP, 1.9f, 0).to(RIGHT, 0, 0, BOTTOM, 1.9f, 0)
+                        ]
+                        
+                    ]
+                    
+                    // main part
+                    children += renderingFactory.createKEllipse => [
+                        setBackgroundColor(237,249,107)
+                        setForegroundColor(0,0,0)
+                        it.placementData = renderingFactory.createKAreaPlacementData => [
+                            from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 5, 0, BOTTOM, 0, 0)
+                        ]
+                    ]
+                    
+                    // small finger
+                    children += renderingFactory.createKEllipse => [
+                        setBackgroundColor(237,249,107)
+                        setForegroundColor(0,0,0)
+                        it.placementData = renderingFactory.createKAreaPlacementData => [
+                            from(LEFT, 3.8f, 0, TOP, 5, 0).to(RIGHT, 4.2f, 0, BOTTOM, 0f, 0)
+                        ]
+                    ]
+                    
+                    // middle finger
+                    children += renderingFactory.createKEllipse => [
+                        setBackgroundColor(237,249,107)
+                        setForegroundColor(0,0,0)
+                        it.placementData = renderingFactory.createKAreaPlacementData => [
+                            from(LEFT, 3.8f, 0, TOP, 3, 0).to(RIGHT, 4.2f, 0, BOTTOM, 2f, 0)
+                        ]
+                    ]
+                    
+                    // index finger
+                    children += renderingFactory.createKEllipse => [
+                        setBackgroundColor(237,249,107)
+                        setForegroundColor(0,0,0)
+                        it.placementData = renderingFactory.createKAreaPlacementData => [
+                            from(LEFT, 3.8f, 0, TOP, 0.8f, 0).to(RIGHT, 0, 0, BOTTOM, 4.3f, 0)
+                        ]
+                    ]
+                    
+                    // thumb
+                    children += renderingFactory.createKEllipse => [
+                        setBackgroundColor(237,249,107)
+                        setForegroundColor(0,0,0)
+                        it.placementData = renderingFactory.createKAreaPlacementData => [
+                            from(LEFT, 2, 0, TOP, 0, 0).to(RIGHT, 6.5f, 0, BOTTOM, 3.8f, 0)
+                        ]
+                    ]
+                ]
+            }
+        ]
     }
     
     /**

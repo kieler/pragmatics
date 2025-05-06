@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: OGDF Server Binaries
 Bundle-SymbolicName: net.ogdf.bin;singleton:=true
 Bundle-Version: 2.3.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: org.eclipse.ui;bundle-version="3.6.0";resolution:=optional,
  org.eclipse.core.runtime;bundle-version="3.6.0"
 Bundle-Activator: net.ogdf.bin.OgdfPlugin

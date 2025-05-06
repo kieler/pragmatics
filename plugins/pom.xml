@@ -9,7 +9,7 @@
   <parent>
     <groupId>de.cau.cs.kieler</groupId>
     <artifactId>pragmatics</artifactId>
-    <version>0.51.1-SNAPSHOT</version>
+    <version>0.52.1-SNAPSHOT</version>
     <relativePath>../build/pom.xml</relativePath>
   </parent>
 
@@ -22,7 +22,7 @@
     <module>de.cau.cs.kieler.formats.graphml</module>
     <module>de.cau.cs.kieler.formats.json</module>
     <module>de.cau.cs.kieler.formats.kgraph</module>
-    <module>de.cau.cs.kieler.formats.ogml</module>
+    <!-- <module>de.cau.cs.kieler.formats.ogml</module> -->
     <!-- The required dependency org.apache.batik.ext.awt is not in the current orbit releases anymore, breaking the formats.svg module. -->
     <!-- <module>de.cau.cs.kieler.formats.svg</module> -->
     <!-- <module>de.cau.cs.kieler.grana</module> -->
@@ -31,7 +31,7 @@
     <module>de.cau.cs.kieler.graphs.klighd</module>
     <module>de.cau.cs.kieler.graphs.klighd.ui</module>
     <module>de.cau.cs.kieler.kiml.export</module>
-    <module>de.cau.cs.kieler.kiml.ogdf</module>
+    <!-- <module>de.cau.cs.kieler.kiml.ogdf</module> --> <!-- Throws errors in Maven build -->
     <module>de.cau.cs.kieler.pragmatics.language.server</module>
     <module>net.ogdf.bin</module>
     <module>net.ogdf.ogml</module>
