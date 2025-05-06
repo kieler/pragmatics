@@ -10,10 +10,10 @@
 
   <!-- Define a few properties used throughout all build profiles. -->
   <properties>
-    <elk-version>0.9.1</elk-version>
+    <elk-version>0.11.0-SNAPSHOT</elk-version>
     <gson-version>2.10.1</gson-version>
     <guice-version>7.0.0</guice-version>
-    <klighd-version>3.0.2.v20240507</klighd-version>
+    <klighd-version>3.1.1-SNAPSHOT</klighd-version>
     <lsp4j-version>0.22.0</lsp4j-version>
     <tycho-version>2.7.3</tycho-version>
     <xtend-version>2.33.0</xtend-version>
