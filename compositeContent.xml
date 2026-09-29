@@ -1,0 +1,12 @@
+<?compositeMetadataRepository version='1.0.0'?>
+<repository name="KIELER Pragmatics Update Site (Releases)" type="org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository" version="1.0.0">
+  <properties size="1">
+    <property name="p2.timestamp" value="1745924606000"/>
+  </properties>
+  <children size="4">
+    <child location="release_pragmatics_2025-04"/>
+    <child location="release_pragmatics_2024-04"/>
+    <child location="release_pragmatics_2023-06"/>
+    <child location="release_pragmatics_2022-07"/>
+  </children>
+</repository>

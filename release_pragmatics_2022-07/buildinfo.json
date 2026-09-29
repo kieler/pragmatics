@@ -1,0 +1,31 @@
+{
+    "timestamp" : 1657724029205,
+    "revision" : {
+        "HEAD" : "f032bd52fb52c2fe7f4d7992f94be981dd0c8e83",
+        "currentBranch" : "refs/heads/releases/pragmatics-2022-07",
+        "knownReferences" : [{
+            "name" : "origin",
+            "url" : "https://github.com/kieler/pragmatics",
+            "ref" : "releases/pragmatics-2022-07"
+        }]
+    },
+    "properties" : {
+        "TARGET_PLATFORM_VERSION_MAXIMUM" : "null",
+        "java.version" : "11.0.11",
+        "user.dir" : "/home/runner/work/pragmatics/pragmatics",
+        "os.arch" : "amd64",
+        "RELEASE" : "null",
+        "BUILD_ALIAS" : "null",
+        "JOB_NAME" : "null",
+        "os.version" : "5.13.0-1031-azure",
+        "BUILD_NUMBER" : "null",
+        "TARGET_PLATFORM_VERSION" : "null",
+        "NODE_NAME" : "null",
+        "HOSTNAME" : "fv-az36-129",
+        "java.vendor" : "AdoptOpenJDK",
+        "os.name" : "Linux",
+        "ZIPSUFFIX" : "null",
+        "WORKSPACE" : "/home/runner/work/pragmatics/pragmatics"
+    },
+    "upstream" : null
+}
